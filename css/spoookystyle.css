@@ -1,0 +1,624 @@
+/*
+    Styles for SpoookyJS
+    Jan G. Wieners <jan@jan-wieners.de>
+*/
+
+body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+
+    background-color: #e1e3e4;
+    font-family: Helvetica Neue, Arial, sans-serif;
+}
+
+/* Game Styles */
+
+.amazons {
+    background-color: #8C3F5B;
+}
+
+.backgammon {
+    background-color: #9BBFA8;
+}
+
+.checkers {
+    background-color: #BF5A5A;
+}
+
+.chess {
+    background-color: #049DBF;
+}
+
+.gomoku9 {
+    background-color: #0C8E82;
+}
+
+.gomoku15 {
+    background-color: #61B8B7;
+}
+
+.tictactoe {
+    background-color: #74b45b;
+}
+
+#firstStartModal .input-group {
+     margin: 20px 0 0 0;
+}
+
+#firstStartModal #techDescription {
+    margin-top: 15px;
+    color: #777;
+    font-size: 13px;
+}
+
+#infowrap {
+    text-align: justify;
+    font-size: 17px;
+}
+
+#postGameReloadButton {
+    margin: 5px 0 7px 0;
+}
+
+/* Statistics Styles */
+#statistics #chart-0, #statistics #chart-1 {
+    max-height: 350px !important;
+    overflow: hidden;
+}
+
+#statistics .c3-line-Rollouts {
+    stroke-width: 2px;
+}
+
+#statistics .c3-bar-Simulationsschritte {
+    fill: #004b86;
+}
+
+#statistics .c3-event-rect {
+    fill: #ccc;
+}
+
+/* MCTS Graph View Styles */
+#mctsgraph {
+    /*max-width: 995px;*/
+    margin: auto;
+}
+
+#mctsgraph #d3graph {
+    height: 700px;
+}
+
+#mctsgraph .node circle {
+    /*fill: red;*/
+    /*
+    stroke: #004b86;
+    stroke-width: 1px;
+    */
+    cursor: pointer;
+}
+
+#mctsgraph .node text.info {
+    font: 12px sans-serif;
+
+}
+
+#mctsgraph .link {
+    fill: none;
+    stroke: #556b7c;
+    stroke-width: 1px;
+}
+
+/* ... */
+html,
+body {
+    height: 100%;
+    /* The html and body elements cannot have any padding or margin. */
+}
+
+.navbar {
+    background-color: #f4f4f4;
+    color: #424951;
+    border-bottom: 2px solid #ccc;
+}
+
+.navbar a {
+    color: #333;
+}
+
+.dropdown-toggle a:hover {
+    background-color: #ccc;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    /* Negative indent footer by its height */
+    margin: 0 auto -40px;
+    /* Pad bottom by footer height */
+    padding: 0 0 40px;
+
+    margin-left: 70px;
+}
+
+/*
+.backgammon #wrap {
+    margin-left: 40px;
+}
+*/
+
+.navbar-header {
+    margin-left: 40px !important;
+}
+
+.affix {
+position: fixed;
+    top: 50px;
+}
+.affix-bottom {
+    width: inherit;
+    position: absolute;
+    top: auto;
+    bottom: 200px;
+}
+.affix-top {
+
+}
+
+.ensembleTooltip {
+    color: #333333;
+}
+
+.ensembleTooltip:hover {
+    color: #333333;
+    text-decoration: none;
+}
+
+.ensembleTooltip + .tooltip > .tooltip-inner {
+    background-color: #004b86;
+}
+.ensembleTooltip + .tooltip > .tooltip-arrow {
+    border-top-color: #004b86;
+}
+
+#symbolNavigation {
+
+    position: fixed;
+    margin-left: -90px;
+
+    background-color: #f4f4f4;
+
+    width: 60px;
+
+    font-size: 30px;
+    text-align: center;
+
+    padding: 15px;
+
+    border-radius: 15px 0 0 15px;
+}
+
+#symbolNavigation a {
+    display: block;
+    color: #6b7279;
+}
+
+#symbolNavigation a:hover {
+    color: #004b86;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+    padding: 10px 0 0 0;
+    height: 42px;
+    background-color: #f4f4f4;
+
+    margin-top: 7px;
+    text-align: center;
+}
+
+#footer .text-muted, #footer a {
+    font-weight: normal;
+    font-size: 15px;
+    color: #424951;
+}
+
+#footer a {
+    color: #004b86;
+}
+
+#gameDescription {
+}
+
+.statsContent {
+    padding: 0 0 0 1px;
+    width: 1000px;
+    overflow: auto;
+}
+
+#descriptiontoggle, #settingstoggle,
+#processtoggle, #statstoggle, #mctsgraphtoggle {
+    cursor: pointer;
+    font-size: 23px;
+    /* top: -15px; */
+    color: #6b7279;
+    margin-right: 5px;
+}
+
+.activeToggle {
+    color: #004b86 !important;
+}
+
+#descriptiontoggle:hover, #settingstoggle:hover,
+#statstoggle:hover, #mctsgraphtoggle:hover {
+    color: #004b86;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+    #footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+#gameGrid {
+    padding: 0;
+    border-left: 5px solid #424951;
+}
+
+#gameheader {
+    margin: 5px 0 5px 0;
+    padding: 3px 25px 25px 25px;
+    background-color: #f1f1f1;
+    border-left: 5px solid #004b86;
+    font-family: Helvetica Neue, Arial, sans-serif;
+
+    color: #333;
+    color: #424951;
+    font-size: 15px;
+}
+
+#gameheader h1 {
+    font-size: 41px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+#logogfx {
+    margin-top: -7px;
+    margin-right: 15px;
+    height: 25px;
+}
+
+.container {
+}
+
+.gridCell {
+    padding: 5px;
+    width: 55px;
+    height: 55px;
+    /* border: 1px solid #555; */
+}
+
+.move_standard, .move_goal, .move_place {
+    cursor: pointer;
+    font-size: 31px;
+    color: #000;
+    text-align: center;
+}
+
+.agentimage {
+    width: 25px;
+    padding: 0 5px 0 0;
+    margin-top: -13px;
+}
+
+#ensembleInformation {
+    /* text-align: center; */
+}
+
+#ensembleInformation h5 {
+    font-size: 19px;
+    margin: 5px 0 15px 0;
+    text-align: left;
+}
+
+.agentContainer {
+    text-align: left;
+    background-color: #ddd;
+    width: 335px;
+    display: inline-block;
+    padding: 23px;
+}
+
+.my-animation {
+    opacity: 1;
+}
+
+.my-animation.ng-hide {
+    opacity: 0;
+}
+
+.my-animation.ng-hide-add,
+.my-animation.ng-hide-remove {
+    -webkit-transition: 0.5s linear all;
+    transition: 0.5s linear all;
+}
+
+
+.bg-0 {
+     background-color: #C0E1CC;
+ }
+
+.bg-1 {
+    background-color: #C2DEEB;
+}
+
+.bg-2 {
+    background-color: #BADFE1;
+}
+
+.bg-3 {
+    background-color: #DAC9C6;
+}
+
+.bg-4 {
+    background-color: #BAC5D4;
+}
+
+.bg-5 {
+    background-color: #DBDCDD;
+}
+
+.bg-6 {
+    background-color: #DEE1C5;
+}
+
+.bg-7 {
+    background-color: #E1C0BB;
+}
+
+.bg-8 {
+    background-color: #BCBCE1;
+}
+
+#agentEnsemble {
+    padding: 5px 15px 15px 15px !important;
+}
+
+.agentContainer .deleteAgent {
+    position: absolute;
+    margin-left: 290px;
+    margin-top: -15px;
+    cursor: pointer;
+    color: #6b7279;
+}
+
+.addEnsembleAgent {
+    color: #6b7279;
+    font-size: 25px;
+    text-align: center;
+    cursor: pointer;
+    margin-top: -150px !important;
+}
+
+.agentContainer ul {
+    margin: 5px 0 15px 0;
+    list-style-type: none;
+    padding: 0 0 0 0;
+}
+
+.agentContainer ul li {
+    padding: 10px 0 10px 0;
+    margin: 0;
+}
+
+.move_standard {
+    background-color: #54db94 !important;
+}
+
+.move_place {
+    /* TODO later */
+}
+
+.move_place:hover {
+    background-color: #54db94;
+}
+
+.move_goal {
+    background-color: #ed5b5b !important;
+}
+
+/* For Demonstration / Documentation Purposes */
+/*
+.move_standard:before, .move_place:before {
+    height: 50px;
+    content: "X";
+}
+*/
+
+/* For Demonstration / Documentation Purposes */
+/*
+.move_goal:before {
+    content: "XX";
+}
+*/
+
+.highlightedCell {
+    background-color: #06C !important;
+}
+
+.clickedEntity {
+    background-color: #06C !important;
+}
+
+#gridWelt {
+    /*
+    margin-left: auto;
+    margin-right: auto;
+    */
+    padding: 15px;
+    padding-top: 15px;
+    background-color: #fff;
+    color:#555;
+    font-size:11px;
+    text-decoration:none;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    /* For Documenting Purposes */
+    margin-bottom: 5px;
+}
+
+.gridCellWhiteWithBorder {
+    background-color: #fff;
+    border: 1px solid #e1e3e4;
+}
+
+.gridCellWhite {
+    background-color: #fff;
+}
+
+.gridcellblackWithBorder {
+    background-color: #6b7279;
+    border: 1px solid #e1e3e4;
+}
+
+.gridCellBlack {
+    background-color: #6b7279;
+}
+
+.entityAtCell {
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+}
+
+#gameProcess, #agentLog, #gameInteraction, #agentEnsemble {
+    /* max-height: 487px; */
+    padding: 5px 25px 15px 15px;
+    background-color: #f4f4f4;
+    border-left: 5px solid #6b7279;
+    margin-bottom: 5px;
+    min-height: 200px;
+}
+
+#gameProcess .output, #agentLog .output {
+    overflow: auto;
+    min-height: 200px;
+    max-height: 200px;
+}
+
+#agentLog ul {
+    font-size: 13px;
+    list-style-type: square;
+    margin: 0 0 0 0;
+    padding: 5px 5px 5px 25px;
+}
+
+#agentLog ul li {
+    margin: 0;
+}
+
+#gameProcess h4, #gameSetup h4, #agentLog h4, #gameInteraction h4, #gameDescription h4, #agentEnsemble h4, #statistics h4, #mctsgraph h4 {
+    font-size: 25px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+#gameProcess ul {
+    font-size: 13px;
+    list-style-type: square;
+    margin: 0 0 0 0;
+    padding: 5px 5px 5px 25px;
+}
+
+#gameprocess ul li {
+    margin: 0;
+}
+
+
+.fieldDescriptionsVerticalLeft,
+.fieldDescriptionsVerticalRight,
+.fieldDescriptionsHorizontalTop,
+.fieldDescriptionsHorizontalBottom {
+    color: #555;
+    text-align: center;
+    font-size: 13px;
+}
+
+.fieldDescriptionsVerticalLeft {
+    padding: 0 14px 0 0;
+}
+
+.fieldDescriptionsVerticalRight {
+    padding: 0 0 0 14px;
+}
+
+.fieldDescriptionsHorizontalTop {
+    padding: 0 0 6px 0;
+}
+
+.fieldDescriptionsHorizontalBottom {
+    padding: 10px 0 0 0;
+}
+
+/* Special Styles for Backgammon */
+#gridWelt.backgammon .gridCell {
+    margin: 1px 1px 0 0;
+    padding: 1px;
+    width: 50px;
+    height: 50px;
+}
+
+#player1BearOffArea, #player2BearOffArea {
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+
+    padding: 10px 0 10px 16px;
+    text-align: center;
+    color: #333;
+}
+
+#player1BearOffArea img, #player2BearOffArea img {
+    display: block;
+    width: 40px;
+}
+
+#player2BearOffArea {
+    margin-top: 1px;
+}
+
+.move_bearoff {
+    background-color: #7aba7b !important;
+}
+
+#offBoard {
+    padding: 0 0 25px 0;
+}
+
+#diceboxinteraction {
+    clear: both;
+    padding-top: 10px;
+}
+
+#dicevalues {
+    float:left;
+}
+
+.playername {
+    clear: both;
+}
+
+.playerentities img {
+    float: left;
+    height: 45px !important;
+    cursor: pointer !important;
+}

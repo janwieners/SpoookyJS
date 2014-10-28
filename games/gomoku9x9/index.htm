@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html ng-app="SpoookyGame">
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="Jan G. Wieners - jan@jan-wieners.de">
+        <meta name="keywords" content="Board Games, Multi Agent Systems, Artificial Intelligence">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" media="screen" href="../../css/bootstrap.min.css" >
+        <link rel="stylesheet" media="screen" href="../../css/spoookystyle.css">
+
+        <!-- Dependencies for Spoooky.js -->
+        <script src="../../js/libs/jquery.min.js"></script>
+        <script src="../../js/libs/angular.min.js"></script>
+        <script src="../../js/libs/underscore-min.js"></script>
+        <script src="../../js/libs/bootstrap.min.js"></script>
+        <script src="../../js/libs/ui-bootstrap-tpls.min.js"></script>
+        <script src="../../js/libs/FileSaver.js"></script>
+
+        <!-- Libraries for statistics view -->
+        <link href="../../css/c3.css" rel="stylesheet" type="text/css">
+        <script src="../../js/libs/d3.min.js" charset="utf-8"></script>
+        <script src="../../js/libs/c3.min.js"></script>
+
+        <!-- Spoooky.js -->
+        <script src="../../js/spoooky.min.js"></script>
+        <script src="../../js/spoooky.AI.min.js"></script>
+        <script src="../../js/spoooky.Modules.js"></script>
+        <script src="../../js/spoooky.Blueprints.min.js"></script>
+
+        <!-- Game Specific Code -->
+        <script src="game.js"></script>
+
+        <title>SpoookyJS - Ein multiagentenbasiertes Brettspielframework</title>
+
+    </head>
+
+    <body class="gomoku9">
+
+        <div id="wrap">
+
+            <!-- Container for top navigation -->
+            <div id="topnavigation" ng-include="'../../templates/topnavigation.htm'"></div>
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-md-11 col-lg-11">
+                        <div id="gameheader" ng-include="'../../templates/gameheader.htm'" ng-controller="HeadingCtrl"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- GridWelt -->
+                    <div class="col-md-7 col-lg-6">
+                        <div id="gameGrid" ng-include="'../../templates/gridwelt.htm'"></div>
+                    </div>
+
+                    <!-- Game Process -->
+                    <div class="col-md-4 col-lg-5">
+                        <div id="gameProcess" ng-include="'../../templates/gameprocess.htm'"></div>
+                    </div>
+
+                    <!-- Agent Log -->
+                    <div class="col-md-4 col-lg-5">
+                        <div id="agentLog" ng-include="'../../templates/agentlog.htm'"></div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <!-- Agent Ensemble -->
+                    <div class="col-md-11 col-lg-11">
+                        <div id="agentEnsemble" ng-include="'../../templates/agentensemble.htm'"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div id="footer" ng-include="'../../templates/footer.htm'"></div>
+
+    </body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jan G. Wieners">
+
+    <title>SpoookyJS</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/start.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="#page-top">
+                <img id="logoghost" src="img/spoooky-ghost.png" alt="Spoooky Logo" /> SpoookyJS
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+            <ul class="nav navbar-nav">
+                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li class="page-scroll">
+                    <a href="#about">Über SpoookyJS</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spiele<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="games/amazons/index.htm">Amazons</a></li>
+                        <li><a href="games/backgammon/index.htm">Backgammon</a></li>
+                        <li><a href="games/checkers/index.htm">Dame</a></li>
+                        <li><a href="games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
+                        <li><a href="games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
+                        <li><a href="games/chess/index.htm">Schach</a></li>
+                        <li><a href="games/tictactoe/index.htm">Tic Tac Toe</a></li>
+                    </ul>
+                </li>
+                <li class="page-scroll">
+                    <a href="#download">Download</a>
+                </li>
+                <li class="page-scroll">
+                    <a href="#contact">Kontakt und Impressum</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<section class="intro">
+    <div class="intro-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1 class="brand-heading"><img id="startspoooky" src="img/spoooky-ghost.png" alt="Spoooky Logo" /> SpoookyJS</h1>
+                    <p class="intro-text">
+                        Ein multiagentenbasiertes JavaScript Framework zur flexiblen Implementation digitaler webbasierter Brettspiele und spielübergreifender künstlicher Intelligenz auf Grundlage von Monte Carlo Methoden
+                    </p>
+                    <div class="page-scroll">
+                        <a href="#about">
+                            <span style="font-size: 75px; color: #aaa;" class="btn glyphicon glyphicon-chevron-down animated"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="container content-section text-center">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <h2>About Grayscale</h2>
+            <p>Grayscale is a premium quality, free Bootstrap 3 theme created by Start Bootstrap. It can be yours right now, all you need to do is download the template on the preview page. You can use this template for any purpose, personal or commercial.</p>
+            <p>This striking, black and white theme features stock photographs by <a href="http://gratisography.com/">Gratisography</a> along with a custom Google Map skin courtesy of <a href="http://snazzymaps.com/">Snazzy Maps</a>.</p>
+            <p>With this template, just the slightest splash of color can make a huge impact on the overall presentation and design.</p>
+        </div>
+    </div>
+</section>
+
+<section id="download" class="content-section text-center">
+    <div class="download-section">
+        <div class="container">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Download Grayscale</h2>
+                <p>You can download Grayscale for free on the download page at Start Bootstrap. You can also get the source code directly from GitHub if you prefer. Additionally, Grayscale is the first Start Bootstrap theme to come with a LESS file for easy color customization!</p>
+                <a href="http://startbootstrap.com/grayscale" class="btn btn-default btn-lg">Visit Download Page</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="container content-section text-center">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <h2>Contact Start Bootstrap</h2>
+            <p>Feel free to email us to provide some feedback on our templates, give us suggestions for new templates and themes, or to just say hello!</p>
+            <p>feedback@startbootstrap.com</p>
+            <ul class="list-inline banner-social-buttons">
+                <li><a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                </li>
+                <li><a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                </li>
+                <li><a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Core JavaScript Files -->
+<script src="js/libs/jquery.min.js"></script>
+<script src="js/libs/bootstrap.min.js"></script>
+<script src="js/libs/jquery.easing.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script>
+    //jQuery to collapse the navbar on scroll
+    $(window).scroll(function() {
+        if ($(".navbar").offset().top > 50) {
+            $(".navbar-fixed-top").addClass("top-nav-collapse");
+        } else {
+            $(".navbar-fixed-top").removeClass("top-nav-collapse");
+        }
+    });
+
+    //jQuery for page scrolling feature - requires jQuery Easing plugin
+    $(function() {
+        $('.page-scroll a').bind('click', function(event) {
+            var $anchor = $(this);
+            $('html, body').stop().animate({
+                scrollTop: $($anchor.attr('href')).offset().top
+            }, 1500, 'easeInOutExpo');
+            event.preventDefault();
+        });
+    });
+</script>
+
+</body>
+
+</html>

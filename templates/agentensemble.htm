@@ -1,0 +1,94 @@
+<div ng-controller="AgentEnsembleCtrl">
+
+    <h4>Ensemble</h4>
+    <!-- <div id="ensembleInformation" ng-bind-html="printAgentEnsemble() | unsafe"> -->
+    <div id="ensembleInformation">
+
+        <div id="ensemble" ng-repeat="metaAgent in metaAgents">
+
+            <h5>Meta Agent #{{metaAgent.ID}} ({{metaAgent.name}}) arbeitet mit Ensemble:</h5>
+
+            <div class="agentContainer bg-{{$index}}"
+                 id="{{metaAgent.ID}}-{{agent.ID}}"
+                 ng-repeat="agent in metaAgent.agents">
+
+                <div ng-if="metaAgent.countAgents() > 1"
+                     class="deleteAgent" ng-click="deleteAgent(metaAgent.ID, agent.ID)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </div>
+                <img class="agentimage" ng-src="../../img/spoooky-ghost_{{$index}}.png" alt="Spoooky Logo" /> Agent #{{agent.ID}}
+                <ul>
+                    <li>
+                        <a class="ensembleTooltip" title="Die Fitness des Agenten gibt darüber Aufschluss, wie erfolgreich sich der Agent im Laufe
+                        der Partie verhalten hat. Nicht erfolgreiche Agenten werden bei Erreichen einer Fitness von 0 ausgetauscht."
+                           data-toggle="tooltip" href="#" data-original-title="Default tooltip">Fitness: {{agent.fitness}}</a>
+                        <form>
+                            <input type="range"
+                                   min="0.0"
+                                   step="0.1"
+                                   ng-model="agent.fitness" float>
+                        </form>
+                    </li>
+                    <li>
+                        <a class="ensembleTooltip" title="Zeit, die dem Agenten für die Analyse des aktuellen Spielzustandes zur Verfügung steht."
+                           data-toggle="tooltip" href="#" data-original-title="Default tooltip">Nachdenkzeit: {{agent.thinkingTime/1000}} Sekunden</a>
+                        <form>
+                            <input type="range"
+                                   min="1000"
+                                   max="180000"
+                                   step="1000"
+                                   ng-model="agent.thinkingTime" integer>
+                        </form>
+                    </li>
+                    <li>
+                        <a class="ensembleTooltip" title="Anhand der UCT-Konstante lässt sich das Verhalten der Monte Carlo Spielbaumsuche steuern.
+                        Wird die Konstante klein gewählt, betrachtet der Agent einzelne Züge intensiver. Bei einem hohen Konstantenwert
+                        versucht der Agent, Zugmöglichkeiten und ihre Folgen gleichmäßig zu betrachten."
+                           data-toggle="tooltip" href="#" data-original-title="Default tooltip">UCT-Konstante: {{agent.uctConstant}}</a>
+                        <form>
+                            <input type="range"
+                                   min="0.0"
+                                   max="1.0"
+                                   step="0.01"
+                                   ng-model="agent.uctConstant" float>
+                        </form>
+                    </li>
+                    <li>
+                        <a class="ensembleTooltip" title="Maximale Anzahl der ausgeführten Spielrunden in den simulierten Spielen (Rollouts)."
+                           data-toggle="tooltip" href="#" data-original-title="Default tooltip">Max. Simulationsschritte: {{agent.maximumSteps}}</a>
+                        <form>
+                            <input type="range"
+                                   min="10"
+                                   max="20000"
+                                   step="10"
+                                   ng-model="agent.maximumSteps" integer>
+                        </form>
+                    </li>
+                    <li>
+                        <a class="ensembleTooltip" title="Art und Weise, wie der Agent die Spielwelt und seine Zugmöglichkeiten betrachtet.
+                        Ein Agent mit dem Fokus 'MOVES NEAR OPPONENT FIELDS' untersucht alle Zugmöglichkeiten, die auf Felder der Spielwelt führen, die an gegnerische Spielsteine angrenzen."
+                           data-toggle="tooltip" href="#" data-original-title="Default tooltip">Fokusssierung:</a>
+                        <div class="input-group input-group-sm">
+                            <select class="form-control"
+                                    ng-model="agent.focus"
+                                    ng-options="v for v in focusOptions">
+                            </select>
+                        </div>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <!--
+            <div class="agentContainer addEnsembleAgent">
+                <span class="glyphicon glyphicon-plus-sign"></span>
+            </div>
+            -->
+
+        </div>
+
+    </div>
+
+</div>

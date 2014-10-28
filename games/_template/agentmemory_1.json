@@ -1,0 +1,34 @@
+{
+    "game" : "Template",
+    "metaAgentID" : 1,
+    "bestAgentEnsemble" : [
+        {
+            "ID": 1,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "ALL MOVES",
+            "fitness": 5,
+            "uctConstant" : 0.9,
+            "thinkingTime": 5000,
+            "maximumSteps": 5000
+        },
+        {
+            "ID": 2,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "ALL MOVES",
+            "fitness": 5,
+            "uctConstant" : 0.1,
+            "thinkingTime": 5000,
+            "maximumSteps": 5000
+        },
+        {
+            "ID": 3,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "ALL MOVES",
+            "fitness": 5,
+            "uctConstant" : 0.1,
+            "thinkingTime": 5000,
+            "maximumSteps": 5000
+        }
+    ],
+    "learnModule" : {"alpha":0,"gamma":0.8,"rho":0.2,"nu":0,"rewards":{},"gameStates":{}}
+}

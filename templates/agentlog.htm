@@ -1,0 +1,11 @@
+<h4>Agent Log</h4>
+<div ng-controller="AgentLogCtrl">
+
+    <div class="output">
+        <ul class="unstyled">
+            <li ng-repeat="message in messages | orderBy:'id':true"
+                ng-bind-html="message.message | unsafe">{{message.message}}</li>
+        </ul>
+    </div>
+
+</div>

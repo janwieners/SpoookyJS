@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3 class="modal-title">Herzlich willkommen bei SpoookyJS!</h3>
+</div>
+
+<div class="modal-body">
+
+    <p>Wenn Sie mir Ihren Namen verraten, passe ich die Spielverlaufsdarstellung gerne für Sie an.</p>
+
+    <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+        <input type="text" id="userName" ng-model="player1.name" class="form-control" placeholder="Ihr Name">
+    </div>
+
+    <br />
+    Tipp: Sie können die Spieleigenschaften jederzeit im <span class="glyphicon glyphicon-cog"></span>-Bereich ändern.
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="modalCancel()">Abbrechen</button>
+    <button class="btn btn-primary" ng-click="modalSave()">Speichern</button>
+</div>

@@ -1,0 +1,41 @@
+<div>
+
+    <table ng-controller="GridWeltCtrl" setContainerHeight id="gridWelt" border="0">
+        <tr>
+            <td class="fieldDescriptionsHorizontalTop">&nbsp;</td>
+            <td class="fieldDescriptionsHorizontalTop"
+                ng-repeat="row in gameGrid" ng-cloak>
+                {{getCharFromInt($index);}}
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+
+        <tr ng-repeat="row in gameGrid track by $index" ng-cloak>
+
+            <td class="fieldDescriptionsVerticalLeft">{{row.length-$index}}</td>
+
+            <td ng-repeat="cell in row" id="cell_{{$index}}-{{$parent.$index}}"
+                class="gridCell {{cell.view.baseClass}} {{cell.view.cellClass}}"
+                ng-click="cellClicked($index, $parent.$index)"
+                ng-style="styleCell()" ng-cloak>
+
+                <div ng-if="entityAtCell(cell)"
+                     class="entityAtCell"
+                     id="{{getEntityName(cell)}}"
+                     style="background-image: url('{{getEntityImage(cell)}}');">
+                </div>
+            </td>
+            <td class="fieldDescriptionsVerticalRight">{{row.length-$index}}</td>
+        </tr>
+        <tr>
+            <td class="fieldDescriptionsHorizontalBottom">&nbsp;</td>
+            <td class="fieldDescriptionsHorizontalBottom"
+                ng-repeat="row in gameGrid" ng-cloak>
+                {{getCharFromInt($index);}}
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+
+    </table>
+
+</div>
