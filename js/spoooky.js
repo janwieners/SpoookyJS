@@ -6672,7 +6672,7 @@ Spoooky = {};
          */
         self_MetaAgent.artificialMove = function() {
 
-            Spoooky.GameProcess.pushMessage(self_MetaAgent.getName() + " denkt nach...<br />" +
+            Spoooky.GameProcess.pushMessage(self_MetaAgent.getName() + " denkt nach...<br>" +
             '<div class="progress progress-striped active">' +
             '<div class="progress-bar"  role="progressbar" style="width: 100%">'+
             '<span class="sr-only">Ich denke nach...</span></div></div>', "thinking");

@@ -317,7 +317,7 @@ Spoooky.AngularWrapper = function(arguments) {
                     if (graphData[i].mctsGraph.children.length === 0) {
 
                         $("#graphs").append("Spielbaumdarstellung konnte leider aufgrund " +
-                        "zu hoher Komplexität des Graphen nicht generiert werden.<br />");
+                        "zu hoher Komplexität des Graphen nicht generiert werden.<br>");
 
                         continue;
                     }

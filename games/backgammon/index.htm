@@ -78,14 +78,14 @@
                                     <td ng-if="$index == 0" rowspan="5">
                                         <div id="player1BearOffArea" ng-click="p1BearOffAreaClicked()"
                                              class="{{player1BearOffArea.display}}">
-                                            <img src="assets/white_01.png" />
+                                            <img src="assets/white_01.png">
                                             {{player1BearOffArea.elementCounter}}
                                         </div>
                                     </td>
                                     <td ng-if="$index == 5" rowspan="5">
                                         <div id="player2BearOffArea" ng-click="p2BearOffAreaClicked()"
                                              class="{{player2BearOffArea.display}}">
-                                            <img src="assets/black_01.png" />
+                                            <img src="assets/black_01.png">
                                             {{player2BearOffArea.elementCounter}}
                                         </div>
                                     </td>
@@ -115,17 +115,17 @@
                             <h4>W&uuml;rfelbox</h4>
                             <h6>{{getCurrentPlayerName()}} ist am Zug</h6>
                             <div ng-repeat="value in getDiceValues() track by $index" id="dicevalues">
-                                <img ng-src="assets/dicevalue_{{value}}.png" alt="Dice Value {{value}}" />
+                                <img ng-src="assets/dicevalue_{{value}}.png" alt="Dice Value {{value}}">
                             </div>
                             <div id="diceboxinteraction">
                                 <input ng-if="gotDiceValues()" type="submit" class="btn btn-success"
                                        value="W&uuml;rfel rollen" id="diceroller"
-                                       ng-click="rollDices()" />
+                                       ng-click="rollDices()">
                             </div>
 
                         </div>
 
-                        <hr />
+                        <hr>
 
                         <!-- Off Board Area shows captured entities -->
                         <div id="offBoard" ng-controller="OffBoardCtrl">
@@ -135,7 +135,7 @@
                                 <div class="playername">{{firstPlayerName}}</div>
                                 <div class="playerentities" ng-repeat="entity in getOffBoardEntities(0)">
                                     <img ng-src="{{entity.visualRepresentation.imageURL}}" alt="{{entity.name}}"
-                                         id="{{entity.name}}" ng-click="reEnter(entity)" />
+                                         id="{{entity.name}}" ng-click="reEnter(entity)">
                                 </div>
                             </div>
 
@@ -143,7 +143,7 @@
                                 <div class="playername">{{secondPlayerName}}</div>
                                 <div class="playerentities" ng-repeat="entity in getOffBoardEntities(1)">
                                     <img ng-src="{{entity.visualRepresentation.imageURL}}" alt="{{entity.name}}"
-                                         id="{{entity.name}}" ng-click="reEnter(entity)" />
+                                         id="{{entity.name}}" ng-click="reEnter(entity)">
                                 </div>
                             </div>
                         </div>
