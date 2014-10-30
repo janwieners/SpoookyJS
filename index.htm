@@ -8,147 +8,211 @@
 
     <title>SpoookyJS</title>
 
+    <link rel="shortcut icon" href="img/favicon.ico">
+
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/start.css" rel="stylesheet" type="text/css">
 
+    <script src="js/libs/angular.min.js"></script>
+
 </head>
+
+<a href="https://github.com/janwieners/SpoookyJS"><img style="position: fixed; top: 0; left: 0; border: 0; z-index: 1000" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-custom">
 
-<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
-                <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="#page-top">
-                <img id="logoghost" src="img/spoooky-ghost.png" alt="Spoooky Logo"> SpoookyJS
-            </a>
-        </div>
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-            <ul class="nav navbar-nav">
-                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                <li class="hidden">
-                    <a href="#page-top"></a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#about">Über SpoookyJS</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spiele<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="games/amazons/index.htm">Amazons</a></li>
-                        <li><a href="games/backgammon/index.htm">Backgammon</a></li>
-                        <li><a href="games/checkers/index.htm">Dame</a></li>
-                        <li><a href="games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
-                        <li><a href="games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
-                        <li><a href="games/chess/index.htm">Schach</a></li>
-                        <li><a href="games/tictactoe/index.htm">Tic Tac Toe</a></li>
-                    </ul>
-                </li>
-                <li class="page-scroll">
-                    <a href="#download">Download</a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#contact">Kontakt und Impressum</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-    <!-- /.container -->
-</nav>
-
-<section class="intro">
-    <div class="intro-body">
         <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <h1 class="brand-heading"><img id="startspoooky" src="img/spoooky-ghost.png" alt="Spoooky Logo"> SpoookyJS</h1>
-                    <p class="intro-text">
-                        Ein multiagentenbasiertes JavaScript Framework zur flexiblen Implementation digitaler webbasierter Brettspiele und spielübergreifender künstlicher Intelligenz auf Grundlage von Monte Carlo Methoden
-                    </p>
-                    <div class="page-scroll">
-                        <a href="#about">
-                            <span style="font-size: 75px; color: #aaa;" class="btn glyphicon glyphicon-chevron-down animated"></span>
-                        </a>
+
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#page-top">
+                    <img id="logoghost" src="img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spiele<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="games/amazons/index.htm">Amazons</a></li>
+                            <li><a href="games/backgammon/index.htm">Backgammon</a></li>
+                            <li><a href="games/checkers/index.htm">Dame</a></li>
+                            <li><a href="games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
+                            <li><a href="games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
+                            <li><a href="games/chess/index.htm">Schach</a></li>
+                            <li><a href="games/tictactoe/index.htm">Tic Tac Toe</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="page-scroll">
+                        <a href="#download">Download</a>
+                    </li>
+
+                    <li class="">
+                        <a href="#">Tutorial</a>
+                    </li>
+
+                    <li class="">
+                        <a href="docs/index.html">API</a>
+                    </li>
+
+                    <li class="page-scroll">
+                        <a href="#contact">Kontakt und Impressum</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <section class="intro">
+
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-10">
+
+                        <h1 class="brand-heading">SpoookyJS</h1>
+                        <p class="intro-text">
+                            Ein multiagentenbasiertes JavaScript-Framework für browserbasierte Brettspiele und spielübergreifende künstlicher Intelligenz
+                        </p>
+                        <div class="page-scroll">
+                            <a href="#about" class="btn btn-circle page-scroll glyphicon glyphicon-arrow-down">
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="container content-section">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Über SpoookyJS</h1>
+                <div class="linedivider"></div>
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <h3>Browserbasierte Brettspiele</h3>
+                        <img src="img/frontpage/screenshot-chess.jpg" alt="Browserbasierte Brettspiele">
+                        <br>
+
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <h3>Leichte Spielerstellung</h3>
+                        <img src="img/frontpage/screenshot-ide-checkers_thumb.jpg" alt="Browserbasierte Brettspiele">
+                        <br>
+                    </div>
+
+                    <div class="col-md-4">
+                        <h3>Künstliche Intelligenz</h3>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="games" class="content-section">
+        <div class="games-section">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img class="img-responsive" src="img/frontpage/checkers.png" alt="checkers">
+                            </div>
+                            <div class="col-md-3">
+                                <img class="img-responsive" src="img/frontpage/chess.png" alt="chess">
+                            </div>
+                            <div class="col-md-3">
+                                <img class="img-responsive" src="img/frontpage/amazons.png" alt="amazons">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section id="about" class="container content-section text-center">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2">
-            <h2>About Grayscale</h2>
-            <p>Grayscale is a premium quality, free Bootstrap 3 theme created by Start Bootstrap. It can be yours right now, all you need to do is download the template on the preview page. You can use this template for any purpose, personal or commercial.</p>
-            <p>This striking, black and white theme features stock photographs by <a href="http://gratisography.com/">Gratisography</a> along with a custom Google Map skin courtesy of <a href="http://snazzymaps.com/">Snazzy Maps</a>.</p>
-            <p>With this template, just the slightest splash of color can make a huge impact on the overall presentation and design.</p>
-        </div>
-    </div>
-</section>
+    <section id="contact" class="container content-section">
 
-<section id="download" class="content-section text-center">
-    <div class="download-section">
-        <div class="container">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>Download Grayscale</h2>
-                <p>You can download Grayscale for free on the download page at Start Bootstrap. You can also get the source code directly from GitHub if you prefer. Additionally, Grayscale is the first Start Bootstrap theme to come with a LESS file for easy color customization!</p>
-                <a href="http://startbootstrap.com/grayscale" class="btn btn-default btn-lg">Visit Download Page</a>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Kontakt und Impressum</h1>
+                <div class="linedivider"></div>
+
+                    SpoookyJS entstand im Rahmen der Dissertation "SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework
+                    zur flexiblen Implementation digitaler browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz"
+                    am Institut für Historisch-Kulturwissenschaftliche Informationsverarbeitung der Universität zu Köln.
+                    <br><br>
+                    Nach Veröffentlichung wird die Dissertation unter <a href="http://www.jan-wieners.de/dissertation">http://www.jan-wieners.de/dissertation</a> bereitgestellt.
+                    <br><br>
+                    Jan G. Wieners
+                    <br>
+                    Sülzburgstr.
+                    <br>
+                    50937 Köln
+                    <br>
+                    <a href="mailto:mail@spoookyjs.de">mail@spoookyjs.de</a>
+                    <br>
+                    <br>
+                    &copy; 2012-2014 Jan G. Wieners
+
             </div>
         </div>
-    </div>
-</section>
 
-<section id="contact" class="container content-section text-center">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2">
-            <h2>Contact Start Bootstrap</h2>
-            <p>Feel free to email us to provide some feedback on our templates, give us suggestions for new templates and themes, or to just say hello!</p>
-            <p>feedback@startbootstrap.com</p>
-            <ul class="list-inline banner-social-buttons">
-                <li><a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                </li>
-                <li><a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                </li>
-                <li><a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- Core JavaScript Files -->
-<script src="js/libs/jquery.min.js"></script>
-<script src="js/libs/bootstrap.min.js"></script>
-<script src="js/libs/jquery.easing.min.js"></script>
+    <!-- Core JavaScript Files -->
+    <script src="js/libs/jquery.min.js"></script>
+    <script src="js/libs/bootstrap.min.js"></script>
+    <script src="js/libs/jquery.easing.min.js"></script>
 
-<!-- Custom Theme JavaScript -->
-<script>
-    //jQuery to collapse the navbar on scroll
-    $(window).scroll(function() {
-        if ($(".navbar").offset().top > 50) {
-            $(".navbar-fixed-top").addClass("top-nav-collapse");
-        } else {
-            $(".navbar-fixed-top").removeClass("top-nav-collapse");
-        }
-    });
+    <script>
 
-    //jQuery for page scrolling feature - requires jQuery Easing plugin
-    $(function() {
-        $('.page-scroll a').bind('click', function(event) {
-            var $anchor = $(this);
-            $('html, body').stop().animate({
-                scrollTop: $($anchor.attr('href')).offset().top
-            }, 1500, 'easeInOutExpo');
-            event.preventDefault();
+        // use jQuery to collapse the navbar on scroll
+        $(window).scroll(function() {
+            if ($(".navbar").offset().top > 50) {
+                $(".navbar-fixed-top").addClass("top-nav-collapse");
+            } else {
+                $(".navbar-fixed-top").removeClass("top-nav-collapse");
+            }
         });
-    });
-</script>
+
+        //jQuery for page scrolling feature - requires jQuery Easing plugin
+        $(function() {
+            $('.page-scroll a').bind('click', function(event) {
+                var $anchor = $(this);
+                $('html, body').stop().animate({
+                    scrollTop: $($anchor.attr('href')).offset().top
+                }, 1500, 'easeInOutExpo');
+                event.preventDefault();
+            });
+        });
+    </script>
 
 </body>
 

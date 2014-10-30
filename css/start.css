@@ -1,8 +1,8 @@
 body {
     width: 100%;
     height: 100%;
-    color: #333;
-    background-color: #a6d2ff;
+    color: #424951;
+    background-color: #424951;
 }
 
 html {
@@ -31,8 +31,9 @@ p {
 
 #logoghost {
     margin-top: -7px;
-    margin-right: 5px;
-    height: 20px;
+    margin-right: 15px;
+    height: 25px;
+    display: inline;
 }
 
 #startspoooky {
@@ -61,7 +62,9 @@ a:focus {
 .navbar {
     margin-bottom: 0;
     border-bottom: 1px solid rgba(255,255,255,.3);
-    background-color: #000;
+    background-color: #fff;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.15);
+    z-index: 100;
 }
 
 .navbar-brand {
@@ -73,7 +76,7 @@ a:focus {
 }
 
 .navbar-custom a {
-    color: #fff;
+    color: #424951;
 }
 
 .navbar-custom .nav li a {
@@ -85,8 +88,9 @@ a:focus {
 .navbar-custom .nav li a:hover,
 .navbar-custom .nav li a:focus,
 .navbar-custom .nav li.active {
+
     outline: 0;
-    background-color: rgba(255,255,255,.2);
+    background-color: #cecece;
 }
 
 .navbar-toggle {
@@ -101,11 +105,12 @@ a:focus {
 }
 
 @media(min-width:767px) {
+
     .navbar {
         padding: 20px 0;
         border-bottom: 0;
         letter-spacing: 1px;
-        background: 0 0;
+
         -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
         -moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
         transition: background .5s ease-in-out,padding .5s ease-in-out;
@@ -113,7 +118,6 @@ a:focus {
 
     .top-nav-collapse {
         padding: 0;
-        background-color: #000;
     }
 
     .navbar-custom.top-nav-collapse {
@@ -126,10 +130,12 @@ a:focus {
     width: 100%;
     height: auto;
     padding: 100px 0;
-    text-align: center;
-    color: #fff;
+    text-align: left;
+    color: #424951;
+
     background: url(../img/intro-bg.jpg) no-repeat bottom center scroll;
-    background-color: #942826;
+
+    background-color: #f1f1f1;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -141,38 +147,15 @@ a:focus {
     vertical-align: middle;
 }
 
-.brand-heading {
-    font-size: 40px;
-}
-
-.intro-text {
-    font-size: 18px;
-}
-
-@media(min-width:767px) {
-    .intro {
-        height: 100%;
-        padding: 0;
-    }
-
-    .brand-heading {
-        font-size: 65px;
-    }
-
-    .intro-text {
-        font-size: 25px;
-    }
-}
-
 .btn-circle {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     margin-top: 15px;
-    padding: 7px 16px;
-    border: 2px solid #fff;
+    padding: 6px 0 0 4px;
+    border: 2px solid #333;
     border-radius: 35px;
-    font-size: 40px;
-    color: #fff;
+    font-size: 25px;
+    color: #333;
     background: 0 0;
     -webkit-transition: background .3s ease-in-out;
     -moz-transition: background .3s ease-in-out;
@@ -182,18 +165,18 @@ a:focus {
 .btn-circle:hover,
 .btn-circle:focus {
     outline: 0;
-    color: #fff;
-    background: rgba(255,255,255,.1);
+    color: #333;
+    background: rgba(1,1,1,.3);
 }
 
-.page-scroll .btn-circle i.animated {
+.btn-circle i.animated {
     -webkit-transition-property: -webkit-transform;
     -webkit-transition-duration: 1s;
     -moz-transition-property: -moz-transform;
     -moz-transition-duration: 1s;
 }
 
-.page-scroll .btn-circle:hover i.animated {
+.btn-circle:hover i.animated {
     -webkit-animation-name: pulse;
     -moz-animation-name: pulse;
     -webkit-animation-duration: 1.5s;
@@ -238,20 +221,62 @@ a:focus {
 }
 }
 
+
+.linedivider {
+    background: none repeat scroll 0 0 #424951;
+    height: 10px;
+    margin-top: 10px;
+    width: 570px;
+
+}
+
+.brand-heading {
+    font-size: 40px;
+}
+
+.intro-text {
+    font-size: 18px;
+}
+
+@media(min-width:767px) {
+
+    .intro {
+        height: 100%;
+        padding: 0;
+    }
+
+    .brand-heading {
+        font-size: 85px;
+    }
+
+    .intro-text {
+        font-size: 25px;
+    }
+}
+
 .content-section {
     /* padding-top: 100px; */
 }
 
-.download-section {
+.games-section {
     width: 100%;
     padding: 50px 0;
+    color: #424951;
+    background-color: #f1f1f1;
+}
+
+#contact {
+    font-weight: normal;
     color: #fff;
-    /* background: url(../img/intro-bg.jpg) no-repeat center center scroll; */
-    background-color: #000;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;
+    padding-bottom: 50px;
+    font-size: 25px;
+}
+
+#contact .linedivider {
+    background: none repeat scroll 0 0 #eee;
+    height: 7px;
+    width: 150px;
+    margin-bottom: 35px;
 }
 
 #map {
@@ -262,10 +287,10 @@ a:focus {
 
 @media(min-width:767px) {
     .content-section {
-        padding-top: 250px;
+        padding-top: 150px;
     }
 
-    .download-section {
+    .games-section {
         padding: 100px 0;
     }
 
@@ -345,4 +370,15 @@ img::-moz-selection {
 
 body {
     webkit-tap-highlight-color: rgba(255,255,255,.2);
+}
+
+#about {
+    color: #eee;
+}
+
+#about .linedivider {
+    background: none repeat scroll 0 0 #eee;
+    height: 7px;
+    width: 350px;
+    margin-bottom: 15px;
 }
