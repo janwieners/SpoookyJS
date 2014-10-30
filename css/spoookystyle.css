@@ -196,6 +196,8 @@ position: fixed;
     padding: 15px;
 
     border-radius: 15px 0 0 15px;
+
+    margin-top: -20px;
 }
 
 #symbolNavigation a {
