@@ -47,11 +47,11 @@ var black = game.addBlueprint(player1, Spoooky.Blueprints.GOMOKU.entities.black)
 
 game.addEntitiesToGameBoard([
     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, black, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, black, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, black, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, white, white, white, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0
