@@ -184,6 +184,10 @@ Spoooky.AngularWrapper = function(arguments) {
             }
         };
 
+        /**
+         * Change the type of the player (HUMAN / ARTIFICIAL)
+         * @param playerID
+         */
         $scope.changePlayerType = function(playerID) {
 
             switch(playerID) {
@@ -226,10 +230,12 @@ Spoooky.AngularWrapper = function(arguments) {
             "MOVES NEAR OPPONENT OR OWN FIELDS"
         ];
 
-        $scope.changeAgentFocus = function(agent) {
-            console.log(agent)
-        };
-
+        /**
+         * Deletes an agent with agenteID from the ensemble of meta agent metaID
+         * @param metaID
+         * @param agentID
+         * @returns {boolean}
+         */
         $scope.deleteAgent = function(metaID, agentID) {
 
             var metaAgents = $scope.metaAgents,
@@ -243,11 +249,18 @@ Spoooky.AngularWrapper = function(arguments) {
             }
 
             var container = "#" + metaID + "-" + agentID;
-            $(container).fadeOut(1000);
 
             metaAgent.deleteAgentWithID(agentID);
 
             return true;
+        };
+
+        /**
+         * Adds an agent to the agent ensemble of meta agent with metaID
+         * @param metaID
+         */
+        $scope.addAgent = function(metaID) {
+            self_AngularWrapper.game.getPlayerWithID(metaID).addStandardAgent();
         };
 
     });

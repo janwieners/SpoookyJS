@@ -6026,6 +6026,32 @@ Spoooky = {};
         };
 
         /**
+         * Adds a default / standard agent to the agent ensemble
+         */
+        self_MetaAgent.addStandardAgent = function() {
+
+            var agentID, agents, lastID = 0;
+
+            // Find free / last agent ID
+            agents = self_MetaAgent.getAgents();
+
+            for (var i = agents.length; i--;) {
+
+                agentID = agents[i].ID;
+
+                if (agentID > lastID) {
+                    lastID = agentID;
+                }
+            }
+
+            lastID += 1;
+console.log(lastID)
+            // Assemble a new agent and put it into the ensemble
+            self_MetaAgent.assembleAgent(lastID, "ANALYZE POSSIBLE MOVES",
+                "ALL MOVES", 10000, 10000, 1, 0.9);
+        };
+
+        /**
          * Delete an agent from the ensemble with a specific identifier
          * @param agentID
          */
@@ -6039,6 +6065,11 @@ Spoooky = {};
             }
         };
 
+        /**
+         * External knowledge embedded into the meta agent
+         * ToDo implement later
+         * @type {boolean}
+         */
         self_MetaAgent.expertKnowledge = false;
 
         /**

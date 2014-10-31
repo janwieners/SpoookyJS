@@ -8,15 +8,15 @@
 
             <h5>Meta Agent #{{metaAgent.ID}} ({{metaAgent.name}}) arbeitet mit Ensemble:</h5>
 
-            <div class="agentContainer bg-{{agent.ID}}"
-                 id="{{metaAgent.ID}}-{{agent.ID}}"
+            <div class="agentContainer bg-{{agent.ID % 10}}"
+                 id="{{metaAgent.ID}}-{{agent.ID % 10}}"
                  ng-repeat="agent in metaAgent.agents">
 
                 <div ng-if="metaAgent.countAgents() > 1"
                      class="deleteAgent" ng-click="deleteAgent(metaAgent.ID, agent.ID)">
                     <span class="glyphicon glyphicon-remove"></span>
                 </div>
-                <img class="agentimage" ng-src="../../img/spoooky-ghost_{{agent.ID}}.png" alt="Spoooky Logo"> Agent #{{agent.ID}}
+                <img class="agentimage" ng-src="../../img/spoooky-ghost_{{agent.ID % 10}}.png" alt="Spoooky Logo"> Agent #{{agent.ID}}
                 <ul>
                     <li>
                         <a class="ensembleTooltip" title="Die Fitness des Agenten gibt darüber Aufschluss, wie erfolgreich sich der Agent im Laufe
@@ -81,11 +81,11 @@
 
             </div>
 
-            <!--
-            <div class="agentContainer addEnsembleAgent">
+            <div ng-if="metaAgent.countAgents() < 9"
+                 class="agentContainer addEnsembleAgent"
+                 ng-click="addAgent(metaAgent.ID)">
                 <span class="glyphicon glyphicon-plus-sign"></span>
             </div>
-            -->
 
         </div>
 

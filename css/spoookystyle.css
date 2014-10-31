@@ -351,6 +351,9 @@ position: fixed;
     transition: 0.5s linear all;
 }
 
+.bg-0 {
+    background-color: #e2c5a5;
+}
 
 .bg-1 {
      background-color: #C0E1CC;
@@ -405,7 +408,9 @@ position: fixed;
     font-size: 25px;
     text-align: center;
     cursor: pointer;
-    margin-top: -150px !important;
+    margin-top: 15px;
+    display: block;
+    width: 100%;
 }
 
 .agentContainer ul {
