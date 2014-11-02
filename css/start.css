@@ -404,12 +404,18 @@ section {
     /*margin-top: -13px; */
 }
 
+.margintoprow {
+    margin-top: 105px;
+}
+
 .animated {
     animation-duration: 0.7s;
     animation-fill-mode: both;
 }
 
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
+    float:none;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:-4px;
 }
