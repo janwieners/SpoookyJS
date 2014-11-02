@@ -2,7 +2,7 @@
  * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
  *
  * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- * Version 0.3.15 "The Erlenmeyer Flask" (October 2014)
+ * Version 0.3.15 "The Erlenmeyer Flask" (November 2014)
  *
  * Dependencies:
  *  - jQuery 2.1.1
