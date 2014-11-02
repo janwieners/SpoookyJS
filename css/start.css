@@ -2,7 +2,7 @@ body {
     width: 100%;
     height: 100%;
     color: #424951;
-    background-color: #424951;
+    /*background-color: #424951;*/
 }
 
 html {
@@ -262,21 +262,14 @@ a:focus {
     width: 100%;
     padding: 50px 0;
     color: #424951;
-    background-color: #f1f1f1;
 }
 
 #contact {
+    text-align: center;
     font-weight: normal;
-    color: #fff;
+    color: #424951;
     padding-bottom: 50px;
-    font-size: 25px;
-}
 
-#contact .linedivider {
-    background: none repeat scroll 0 0 #eee;
-    height: 7px;
-    width: 150px;
-    margin-bottom: 35px;
 }
 
 #map {
@@ -373,12 +366,50 @@ body {
 }
 
 #about {
-    color: #eee;
+    color: #424951;
+    text-align: center;
+    font-size: 19px;
 }
 
-#about .linedivider {
-    background: none repeat scroll 0 0 #eee;
-    height: 7px;
-    width: 350px;
-    margin-bottom: 15px;
+.linedivider {
+    background: none repeat scroll 0 0 #424951;
+    height: 1px;
+    width: 45px;
+    display: block;
+    margin: 25px auto;
+}
+
+pre.prettyprint {
+    border: 1px solid #ccc;
+    margin-bottom: 0;
+    padding: 10px;
+    text-align: left;
+}
+
+.prettyprint ol.linenums li {
+    color: #bebec5;
+    line-height: 20px;
+    list-style: outside none decimal;
+    padding-left: 12px;
+}
+
+section {
+    font-size: 19px;
+    font-weight: 0;
+}
+
+#about #chessimage {
+    padding: 55px;
+    background-color: #049dbf;
+    /*margin-top: -13px; */
+}
+
+.animated {
+    animation-duration: 0.7s;
+    animation-fill-mode: both;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
 }

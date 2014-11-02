@@ -11,9 +11,20 @@
     <link rel="shortcut icon" href="img/favicon.ico">
 
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="css/start.css" rel="stylesheet" type="text/css">
+    <link href="css/prettify.css" rel="stylesheet" type="text/css">
+    <script src="js/libs/jquery.min.js"></script>
 
-    <script src="js/libs/angular.min.js"></script>
+    <script src="js/libs/prettify.js"></script>
+
+    <script type="text/javascript">
+        !function ($) {
+            $(function(){
+                window.prettyPrint && prettyPrint()
+            })
+        }(window.jQuery)
+    </script>
+
+    <link href="css/start.css" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -56,11 +67,15 @@
                     </li>
 
                     <li class="page-scroll">
+                        <a href="#about">Über SpoookyJS</a>
+                    </li>
+
+                    <li class="page-scroll">
                         <a href="#download">Download</a>
                     </li>
 
                     <li class="">
-                        <a href="#">Tutorial</a>
+                        <a href="#">Tutorials</a>
                     </li>
 
                     <li class="">
@@ -87,7 +102,7 @@
 
                         <h1 class="brand-heading">SpoookyJS</h1>
                         <p class="intro-text">
-                            Ein multiagentenbasiertes JavaScript-Framework für browserbasierte Brettspiele und spielübergreifende künstlicher Intelligenz
+                            Ein multiagentenbasiertes JavaScript-Framework für browserbasierte Brettspiele und spielübergreifende künstliche Intelligenz
                         </p>
                         <div class="page-scroll">
                             <a href="#about" class="btn btn-circle page-scroll glyphicon glyphicon-arrow-down">
@@ -101,59 +116,87 @@
     </section>
 
     <section id="about" class="container content-section">
+
         <div class="row">
-            <div class="col-md-12">
-                <h1>Über SpoookyJS</h1>
+
+            <div class="col-md-5 vcenter">
+                <h2>Einfache Spielerstellung</h2>
                 <div class="linedivider"></div>
-
-                <div class="row">
-
-                    <div class="col-md-4">
-                        <h3>Browserbasierte Brettspiele</h3>
-                        <img src="img/frontpage/screenshot-chess.jpg" alt="Browserbasierte Brettspiele">
-                        <br>
-
-
-                    </div>
-
-                    <div class="col-md-4">
-                        <h3>Leichte Spielerstellung</h3>
-                        <img src="img/frontpage/screenshot-ide-checkers_thumb.jpg" alt="Browserbasierte Brettspiele">
-                        <br>
-                    </div>
-
-                    <div class="col-md-4">
-                        <h3>Künstliche Intelligenz</h3>
-                    </div>
-
-
-                </div>
+                Mit SpoookyJS lassen sich browserbasierte Spiele ganz einfach erstellen. Dazu braucht's einzig das aktuelle <a href="#download">Downloadpaket</a> des Frameworks - und eine gute Portion JavaScript.
             </div>
+
+            <div class="col-md-6 col-md-offset-1 vcenter">
+                <pre class="prettyprint linenums" style="height: 300px;">
+game.addGameRuleAtom({
+    atomName : "Player1: Three entities in a row",
+    atomFunction : "Player Has Number Of Entities In Row",
+    atomArguments : {
+        number : 3,
+        playerID : player1.getID(),
+        entityID : white.typeID
+    }
+});
+
+game.assembleGameRule({
+    name     : "Player 1 has three entities in a row",
+    atoms    : ["Player1: Three entities in a row"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Player 1 has three entities in a row",
+    consequences : [{
+        jobName: "Stop the Game",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Output winning Message for player 1",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 1 gewinnt!"
+    }, {
+        jobName: "Set the Winner of the Game",
+        jobFunction: "Set Winner",
+        jobArguments: player1.getID()
+    }]});</pre>
+            </div>
+
         </div>
+
+
+        <!--
+        <div class="row">
+
+            <div class="col-md-5">
+                <img id="chessimage" class="img-responsive" src="img/frontpage/chess.png" alt="chess">
+            </div>
+
+            <div class="col-md-6 col-md-offset-1 ">
+                <h2>Lust auf eine Partie Schach?</h2>
+                <div class="linedivider"></div>
+                Über die Navigationsleiste am oberen Fensterrand finden sich Spiele wie <a href="games/tictactoe/index.htm">Tic Tac Toe</a>,
+                <a href="games/backgammon/index.htm">Backgammon</a>,
+                <a href="games/Dame/index.htm">Dame</a>,
+                <a href="games/backgammon/index.htm">Schach</a>,
+                <a href="games/gomoku15x15/index.htm">Gomoku</a> oder das <a href="games/backgammon/index.htm">Spiel der Amazonen</a>.
+            </div>
+
+        </div>
+        -->
+
     </section>
 
     <section id="games" class="content-section">
         <div class="games-section">
             <div class="container">
-
-                <div class="row">
-                    <div class="col-lg-12">
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <img class="img-responsive" src="img/frontpage/checkers.png" alt="checkers">
-                            </div>
-                            <div class="col-md-3">
-                                <img class="img-responsive" src="img/frontpage/chess.png" alt="chess">
-                            </div>
-                            <div class="col-md-3">
-                                <img class="img-responsive" src="img/frontpage/amazons.png" alt="amazons">
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
             </div>
+        </div>
+    </section>
+
+    <section id="download" class="container content-section">
+
+        <div class="row">
+
+            <div class="col-md-12">
+            </div>
+
         </div>
     </section>
 
@@ -161,22 +204,16 @@
 
         <div class="row">
             <div class="col-md-12">
-                <h1>Kontakt und Impressum</h1>
+                <h2>Kontakt und Impressum</h2>
                 <div class="linedivider"></div>
 
                     SpoookyJS entstand im Rahmen der Dissertation "SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework
-                    zur flexiblen Implementation digitaler browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz"
+                    zur flexiblen Implementation digitaler browserbasierter Spiele und spielübergreifender künstlicher Intelligenz"
                     am Institut für Historisch-Kulturwissenschaftliche Informationsverarbeitung der Universität zu Köln.
                     <br><br>
                     Nach Veröffentlichung wird die Dissertation unter <a href="http://www.jan-wieners.de/dissertation">http://www.jan-wieners.de/dissertation</a> bereitgestellt.
                     <br><br>
-                    Jan G. Wieners
-                    <br>
-                    Sülzburgstr.
-                    <br>
-                    50937 Köln
-                    <br>
-                    <a href="mailto:mail@spoookyjs.de">mail@spoookyjs.de</a>
+                    Jan G. Wieners, Sülzburgstr., 50937 Köln, <a href="mailto:mail@spoookyjs.de">mail@spoookyjs.de</a>
                     <br>
                     <br>
                     &copy; 2012-2014 Jan G. Wieners
