@@ -124,6 +124,10 @@ body {
     color: #333;
 }
 
+.navbar-right {
+    margin-right: 50px;
+}
+
 .dropdown-toggle a:hover {
     background-color: #ccc;
 }
