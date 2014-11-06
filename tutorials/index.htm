@@ -1,105 +1,233 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="expires" content="0">
-    <meta name="author" content="Jan G. Wieners - jan@jan-wieners.de">
-    <meta name="keywords" content="Tutorial, Board Games, Multi Agent Systems, Artificial Intelligence">
-    <meta name="description" content="Tutorials zur Nutzung des JavaScript-Frameworks SpoookyJS">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jan G. Wieners">
+    <meta name="description" content="Tutorial zur Spielerstellung mit SpoookyJS">
+
+    <title>SpoookyJS - Tutorial</title>
 
     <link rel="shortcut icon" href="../img/favicon.ico">
 
-    <link rel="stylesheet" media="screen" href="../css/bootstrap.min.css" >
-    <link rel="stylesheet" media="screen" href="../css/spoookystyle.css">
-
-    <!-- Dependencies for Spoooky.js -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/prettify.css" rel="stylesheet" type="text/css">
     <script src="../js/libs/jquery.min.js"></script>
-    <script src="../js/libs/angular.min.js"></script>
-    <script src="../js/libs/bootstrap.min.js"></script>
 
-    <title>SpoookyJS - Ein multiagentenbasiertes Brettspielframework</title>
+    <script src="../js/libs/prettify.js"></script>
+
+    <script type="text/javascript">
+        !function ($) {
+            $(function(){
+                window.prettyPrint && prettyPrint()
+            })
+        }(window.jQuery)
+    </script>
+
+    <link href="../css/startstyle.css" rel="stylesheet" type="text/css">
+
 </head>
 
-<body ng-app>
+<body id="page-top tutorial" data-spy="scroll" data-target="spoookynavbar">
 
-    <div id="wrap">
-
-        <div class="navbar-default navbar-fixed-top">
-
-            <div class="container">
-
-                <div class="navbar-header">
-
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#spoookynavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="../index.htm">
-                        <img id="logogfx" src="../img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
-                    </a>
-
-                </div>
-
-                <div id="spoookynavbar" class="collapse navbar-collapse">
-
-                    <ul class="nav navbar-nav navbar-right">
-
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spiele<b class="caret"></b></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="../games/amazons/index.htm">Amazons</a></li>
-                                <li><a href="../games/backgammon/index.htm">Backgammon</a></li>
-                                <li><a href="../games/checkers/index.htm">Dame</a></li>
-                                <li><a href="../games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
-                                <li><a href="../games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
-                                <li><a href="../games/chess/index.htm">Schach</a></li>
-                                <li><a href="../games/tictactoe/index.htm">Tic Tac Toe</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="page-scroll">
-                            <a href="../index.htm#about">Über SpoookyJS</a>
-                        </li>
-
-                        <li>
-                            <a href="../index.htm#download">Download</a>
-                        </li>
-
-                        <li class="active">
-                            <a href="../tutorials/index.htm">Tutorials</a>
-                        </li>
-
-                        <li class="">
-                            <a href="../docs/index.html">API</a>
-                        </li>
-
-                        <li class="page-scroll">
-                            <a href="../index.htm#contact">Impressum</a>
-                        </li>
-                    </ul>
-
-                </div>
-
-            </div>
-        </div>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 
         <div class="container">
 
-            <div class="row">
-                <div class="col-md-11 col-lg-11">
+            <div class="navbar-header page-scroll">
+
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".spoookynavbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.htm">
+                    <img id="logoghost" src="../img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
+                </a>
+
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div id="spoookynavbar" class="collapse navbar-collapse navbar-right navbar-main-collapse">
+
+                <ul class="nav navbar-nav">
+
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+
+                    <li class="dropdown page-scroll">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Spiele<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="../games/amazons/index.htm">Amazons</a></li>
+                            <li><a href="../games/backgammon/index.htm">Backgammon</a></li>
+                            <li><a href="../games/checkers/index.htm">Dame</a></li>
+                            <li><a href="../games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
+                            <li><a href="../games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
+                            <li><a href="../games/chess/index.htm">Schach</a></li>
+                            <li><a href="../games/tictactoe/index.htm">Tic Tac Toe</a></li>
+                            <li><a href="#games"></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="page-scroll">
+                        <a href="../index.htm#about">Über SpoookyJS</a>
+                    </li>
+
+                    <li class="page-scroll">
+                        <a href="../index.htm#download">Download</a>
+                    </li>
+
+                    <li class="active">
+                        <a href="#">Tutorial</a>
+                    </li>
+
+                    <li>
+                        <a href="../docs/index.html">API</a>
+                    </li>
+
+                    <li class="page-scroll">
+                        <a href="../index.htm#contact">Impressum</a>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </div>
+
+    <section class="intro">
+
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-10">
+
+                        <h1 class="brand-heading">Tutorial.</h1>
+                        <p class="intro-text">
+                        Spielerstellung mit SpoookyJS in wenigen Schritten:
+                            <ol class="page-scroll">
+                                <li><a href="#downloadspoookyjs">SpoookyJS herunterladen und die Spielumgebung vorbereiten</a></li>
+                                <li><a href="#gamejs">Das Spielskript game.js mit Funktionalität füllen</a></li>
+                            </ol>
+                        </p>
+                    </div>
 
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="downloadspoookyjs" class="container content-section">
+
+        <div class="row">
+
+            <div class="col-md-9">
+                <h2>Schritt 1: SpoookyJS herunterladen und die Spielumgebung vorbereiten</h2>
+                <div class="linedivider"></div>
             </div>
 
         </div>
 
-    </div>
+        <div class="row">
 
-    <!-- Footer -->
-    <div id="footer" ng-include="'../templates/footer.htm'"></div>
+            <div class="col-md-9">
+
+                SpoookyJS wird über <a href="https://github.com/janwieners/SpoookyJS">GitHub</a> bereitgestellt.
+                Nachdem das Framework in seiner aktuellen Version als Zip-Archiv von <a href="https://github.com/janwieners/SpoookyJS/archive/master.zip">https://github.com/janwieners/SpoookyJS/archive/master.zip</a>
+                heruntergeladen und extrahiert wurde, zeigt sich die folgende Ordnerstruktur:
+                <br>
+                <img src="img/spoookyjs-folders.jpg" class="img-responsive" alt="Ordnerstruktur SpoookyJS">
+                Im Ordner <i>games</i> finden sich einige Spiele, die mit dem Framework erstellt wurden; ein guter Startpunkt für die Erstellung eigener Spiele ist der Vorlageordner <i>games/_template</i>.
+                <br><br>
+                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x6 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
+                über zehn Spielfiguren:
+                <ul>
+                    <li>Fünf Bauern</li>
+                    <li>Ein Turm</li>
+                    <li>Eine Dame</li>
+                    <li>Ein König</li>
+                    <li>Ein Springer</li>
+                    <li>Ein Läufer</li>
+                </ul>
+                Um die Schachvariante vorzubereiten, wird der Ordner <i>games/_template</i> kopiert und unter dem Namen <i>chessvariant</i> in den Ordner <i>games</i> eingefügt. Der Ordner <i>chessvariant</i> enthält nun die folgenden Dateien und Ordner:
+                <img src="img/spoookyjs-files-chessvariant.jpg" class="img-responsive" alt="Struktur des Ordners chessvariant">
+                Der Ordner <i>assets</i> enthält sowohl Vorlagegrafiken für die Spielfiguren des Schachspieles als auch Grafiken zur Darstellung von Würfelwerten.
+                Mit den <a href="http://de.wikipedia.org/wiki/JavaScript_Object_Notation">JSON</a>-Dateien <i>agentmemory_1.json</i> und <i>agentmemory_2.json</i>
+                wird das Verhalten der Meta Agenten und ihrer assoziierten Agentenensembles agesteuert. In der HTML-Datei <i>index.htm</i> werden die einzelnen Seitenbereiche
+                realisiert und HTML-Dateien aus dem übergeordneten Ordner <i>templates</i> eingebunden. Weil im Webbrowser das Sicherheitskonzept der
+                <a href="http://de.wikipedia.org/wiki/Same-Origin-Policy">Same-Origin-Policy</a> greift, müssen die Spiele auf einem (lokalen oder externen) Webserver ausgeführt werden
+                oder der Sicherheitsmechanismus deaktiviert werden - im Browser Firefox z.B. durch Eingabe von <i>about:config</i> in der Adressleiste und Änderung der <i>security.fileuri.strict_origin_policy</i> auf <i>false</i>.
+            </div>
+
+        </div>
+
+    </section>
+
+    <section id="gamejs" class="container content-section">
+
+        <div class="row">
+
+            <div class="col-md-9">
+                <h2>Schritt 2: Das Spielskript game.js mit Funktionalität füllen</h2>
+                <div class="linedivider"></div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-9">
+
+                Zentral für die Erstellung eigener Spiele ist die JavaScript-Datei <i>game.js</i> im neu erstellten Ordner <i>chessvariant</i>.
+                Hier werden Spieler dem Spiel hinzugefügt, wird die Spielwelt generiert, Spielfiguren erstellt und Spielregeln definiert.
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Core JavaScript Files -->
+    <script src="../js/libs/jquery.min.js"></script>
+    <script src="../js/libs/bootstrap.min.js"></script>
+    <script src="../js/libs/jquery.easing.min.js"></script>
+
+    <script>
+
+        // use jQuery to collapse the navbar on scroll
+        $(window).scroll(function() {
+            if ($(".navbar").offset().top > 50) {
+                $(".navbar-fixed-top").addClass("top-nav-collapse");
+            } else {
+                $(".navbar-fixed-top").removeClass("top-nav-collapse");
+            }
+        });
+
+        $(function() {
+
+            $('.page-scroll a').bind('click', function(event) {
+
+                var $anchor = $(this);
+
+                $('html, body').stop().animate({
+                    scrollTop: $($anchor.attr('href')).offset().top-50
+                }, 1500, 'easeInOutExpo');
+
+                event.preventDefault();
+            });
+
+        });
+
+    </script>
 
 </body>
+
 </html>

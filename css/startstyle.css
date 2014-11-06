@@ -44,7 +44,7 @@ p {
 }
 
 a {
-    color: #28c3ab;
+    color: #006ec4;
     -webkit-transition: all .2s ease-in-out;
     -moz-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
@@ -53,7 +53,7 @@ a {
 a:hover,
 a:focus {
     text-decoration: none;
-    color: #176e61;
+    color: #004b86;
 }
 
 .light {
@@ -133,7 +133,7 @@ a:focus {
     -o-background-size: cover;
 }
 
-.intro-body {
+.intro-body, .tutorialintro-body {
     display: table-cell;
     vertical-align: middle;
 }
@@ -429,4 +429,23 @@ section {
     display: inline-block;
     vertical-align: middle;
     margin-right: -4px;
+}
+
+/* Styles for tutorial page(s) */
+#gamejs {
+    padding-bottom: 150px;
+}
+
+#downloadspoookyjs img {
+    margin: 10px 0;
+}
+
+#downloadspoookyjs .linedivider, #gamejs .linedivider {
+    margin: 25px 0 25px 0;
+    height: 5px;
+    width: 355px;
+}
+
+#gamejs .linedivider {
+    width: 305px;
 }

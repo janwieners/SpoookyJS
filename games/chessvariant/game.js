@@ -28,15 +28,13 @@ var b = "gridCellBlack",
     w = "gridCellWhite";
 
 // Spielbrett mit 8x8 Spielfeldzellen erstellen
-game.setupGridWorld(8, 8, [
-    w, b, w, b, w, b, w, b,
-    b, w, b, w, b, w, b, w,
-    w, b, w, b, w, b, w, b,
-    b, w, b, w, b, w, b, w,
-    w, b, w, b, w, b, w, b,
-    b, w, b, w, b, w, b, w,
-    w, b, w, b, w, b, w, b,
-    b, w, b, w, b, w, b, w
+game.setupGridWorld(5, 6, [
+    w, b, w, b, w,
+    b, w, b, w, b,
+    w, b, w, b, w,
+    b, w, b, w, b,
+    w, b, w, b, w,
+    b, w, b, w, b
 ]);
 
 // Entitätenblaupausen dem Spiel hinzufügen
@@ -85,14 +83,12 @@ game.connectConsequences(Spoooky.Blueprints.CHESS.consequences.whitePlayer);
 
 // Spielfiguren auf dem Spielbrett ablegen
 game.addEntitiesToGameBoard([
-    black_rook_left, black_knight, black_bishop, black_queen, black_king, black_bishop, black_knight, black_rook_right,
-    black_pawn, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    white_pawn, white_pawn, white_pawn, white_pawn, white_pawn, white_pawn, white_pawn, white_pawn,
-    white_rook_left, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight, white_rook_right
+    black_rook_left, black_queen, black_king, black_knight, black_bishop,
+    black_pawn, black_pawn, black_pawn, black_pawn, black_pawn,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    white_pawn, white_pawn, white_pawn, white_pawn, white_pawn,
+    white_rook_left, white_queen, white_king, white_knight, white_bishop
 ]);
 
 /*
@@ -352,5 +348,5 @@ game.connectGameRuleConsequences({
 // ***************************** //
 var SpoookyGame = new Spoooky.AngularWrapper({
     game : game,
-    cellWidth : 62,
-    cellHeight : 62 });
+    cellWidth : 100,
+    cellHeight : 100 });
