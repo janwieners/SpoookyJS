@@ -29,7 +29,7 @@
 
 </head>
 
-<body id="page-top tutorial" data-spy="scroll" data-target="spoookynavbar">
+<body id="tut">
 
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 
@@ -59,7 +59,7 @@
                         <a href="#page-top"></a>
                     </li>
 
-                    <li class="dropdown page-scroll">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Spiele<b class="caret"></b>
                         </a>
@@ -75,11 +75,11 @@
                         </ul>
                     </li>
 
-                    <li class="page-scroll">
+                    <li>
                         <a href="../index.htm#about">Über SpoookyJS</a>
                     </li>
 
-                    <li class="page-scroll">
+                    <li>
                         <a href="../index.htm#download">Download</a>
                     </li>
 
@@ -91,7 +91,7 @@
                         <a href="../docs/index.html">API</a>
                     </li>
 
-                    <li class="page-scroll">
+                    <li>
                         <a href="../index.htm#contact">Impressum</a>
                     </li>
 
@@ -102,131 +102,95 @@
         <!-- /.container -->
     </div>
 
-    <section class="intro">
+    <div id="tutorial" class="container">
 
-        <div class="intro-body">
-            <div class="container">
-                <div class="row">
+        <div class="row">
 
-                    <div class="col-md-10">
+            <div class="col-md-9">
 
-                        <h1 class="brand-heading">Tutorial.</h1>
-                        <p class="intro-text">
-                        Spielerstellung mit SpoookyJS in wenigen Schritten:
-                            <ol class="page-scroll">
-                                <li><a href="#downloadspoookyjs">SpoookyJS herunterladen und die Spielumgebung vorbereiten</a></li>
-                                <li><a href="#gamejs">Das Spielskript game.js mit Funktionalität füllen</a></li>
-                            </ol>
-                        </p>
+                <div id="overview">
+
+                    <h1>Tutorial - Spielerstellung mit SpoookyJS</h1>
+                    <div class="description">
+                        In diesem Tutorial wird erläutert, wie sich eigene Spiele mit dem JavaScript-Framework SpoookyJS entwickeln lassen.
+                        Umgesetzt wird eine Schachvariante, die auf einem Spielbrett mit 5x8 Spielfeldern gespielt wird.
                     </div>
+                    <div class="content">
+                        Überblick:
+                        <ol class="page-scroll">
+                            <li><a href="#downloadspoookyjs">Download des Frameworks und _template-Ordner</a></li>
+                            <li><a href="#chessvariant">Schachvariante und Spielvorbereitung</a></li>
+                            <li>
+                                <a href="#gamejs">game.js - Das zentrale Spielskript</a>
 
+                            </li>
+                        </ol>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <section id="downloadspoookyjs" class="container content-section">
-
-        <div class="row">
-
-            <div class="col-md-9">
-                <h2>Schritt 1: SpoookyJS herunterladen und die Spielumgebung vorbereiten</h2>
                 <div class="linedivider"></div>
-            </div>
 
-        </div>
-
-        <div class="row">
-
-            <div class="col-md-9">
-
+                <h2 id="downloadspoookyjs">1. Download des Frameworks und _template-Ordner</h2>
                 SpoookyJS wird über <a href="https://github.com/janwieners/SpoookyJS">GitHub</a> bereitgestellt.
                 Nachdem das Framework in seiner aktuellen Version als Zip-Archiv von <a href="https://github.com/janwieners/SpoookyJS/archive/master.zip">https://github.com/janwieners/SpoookyJS/archive/master.zip</a>
                 heruntergeladen und extrahiert wurde, zeigt sich die folgende Ordnerstruktur:
                 <br>
-                <img src="img/spoookyjs-folders.jpg" class="img-responsive" alt="Ordnerstruktur SpoookyJS">
+                <img class="centered" src="img/spoookyjs-folders.jpg" class="img-responsive" alt="Ordnerstruktur SpoookyJS">
                 Im Ordner <i>games</i> finden sich einige Spiele, die mit dem Framework erstellt wurden; ein guter Startpunkt für die Erstellung eigener Spiele ist der Vorlageordner <i>games/_template</i>.
-                <br><br>
-                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x6 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
-                über zehn Spielfiguren:
-                <ul>
-                    <li>Fünf Bauern</li>
-                    <li>Ein Turm</li>
-                    <li>Eine Dame</li>
-                    <li>Ein König</li>
-                    <li>Ein Springer</li>
-                    <li>Ein Läufer</li>
-                </ul>
+
+                <div class="linedivider"></div>
+                <h2 id="chessvariant">2. Schachvariante und Spielvorbereitung</h2>
+
+                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x8 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
+                über zehn Spielfiguren, die zu Beginn des Spieles wie folgend auf dem Spielbrett abgelegt werden:
+
+                <img width="250px" src="img/chessvariant-startconfig.jpg" alt="Startkonfiguration der Schachvariante" class="centered">
+
                 Um die Schachvariante vorzubereiten, wird der Ordner <i>games/_template</i> kopiert und unter dem Namen <i>chessvariant</i> in den Ordner <i>games</i> eingefügt. Der Ordner <i>chessvariant</i> enthält nun die folgenden Dateien und Ordner:
-                <img src="img/spoookyjs-files-chessvariant.jpg" class="img-responsive" alt="Struktur des Ordners chessvariant">
-                Der Ordner <i>assets</i> enthält sowohl Vorlagegrafiken für die Spielfiguren des Schachspieles als auch Grafiken zur Darstellung von Würfelwerten.
+                <img class="centered" src="img/spoookyjs-files-chessvariant.jpg" class="img-responsive" alt="Struktur des Ordners chessvariant">
+                Im Ordner <i>assets</i> finden sich sowohl Vorlagegrafiken für die Spielfiguren des Schachspieles als auch Grafiken zur Darstellung von Würfelwerten.
                 Mit den <a href="http://de.wikipedia.org/wiki/JavaScript_Object_Notation">JSON</a>-Dateien <i>agentmemory_1.json</i> und <i>agentmemory_2.json</i>
                 wird das Verhalten der Meta Agenten und ihrer assoziierten Agentenensembles agesteuert. In der HTML-Datei <i>index.htm</i> werden die einzelnen Seitenbereiche
-                realisiert und HTML-Dateien aus dem übergeordneten Ordner <i>templates</i> eingebunden. Weil im Webbrowser das Sicherheitskonzept der
+                realisiert und HTML-Dateien aus dem übergeordneten Ordner <i>templates</i> eingebunden.
+                <br>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Weil im Webbrowser das Sicherheitskonzept der
                 <a href="http://de.wikipedia.org/wiki/Same-Origin-Policy">Same-Origin-Policy</a> greift, müssen die Spiele auf einem (lokalen oder externen) Webserver ausgeführt werden
-                oder der Sicherheitsmechanismus deaktiviert werden - im Browser Firefox z.B. durch Eingabe von <i>about:config</i> in der Adressleiste und Änderung der <i>security.fileuri.strict_origin_policy</i> auf <i>false</i>.
-            </div>
+                oder muss der Sicherheitsmechanismus deaktiviert werden - im Browser Firefox z.B. durch Eingabe von <i>about:config</i> in der Adressleiste und Änderung der <i>security.fileuri.strict_origin_policy</i> auf <i>false</i>.
 
-        </div>
-
-    </section>
-
-    <section id="gamejs" class="container content-section">
-
-        <div class="row">
-
-            <div class="col-md-9">
-                <h2>Schritt 2: Das Spielskript game.js mit Funktionalität füllen</h2>
                 <div class="linedivider"></div>
-            </div>
-
-        </div>
-
-        <div class="row">
-
-            <div class="col-md-9">
+                <h2 id="gamejs">3. game.js - Das zentrale Spielskript</h2>
 
                 Zentral für die Erstellung eigener Spiele ist die JavaScript-Datei <i>game.js</i> im neu erstellten Ordner <i>chessvariant</i>.
-                Hier werden Spieler dem Spiel hinzugefügt, wird die Spielwelt generiert, Spielfiguren erstellt und Spielregeln definiert.
+                Hier werden Spielerinnen und Spieler dem Spiel hinzugefügt, wird die Spielwelt generiert, Spielfiguren erstellt und Spielregeln definiert.
+                <br>
+                Um die Schachvariante umzusetzen, wird die leere Skriptdatei <i>game.js</i> zuerst um die folgenden Anweisungen ergänzt:
+
+                <pre class="prettyprint">
+// Ein neues SpoookyJS Spiel erstellen
+var game = new Spoooky.Game;
+
+// Bootstrapping-Funktion: Instanzen aller benötigten Controller generieren
+game.initialize("Schachvariante");
+
+// Beschreibung der Schachvariante
+game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
+    "mit 5x8 Spielfeldern und einer reduzierten Anzahl von Spielfiguren. " +
+    "Gespielt wird nach den klassischen Zug- und Spielregeln des Schachspieles - " +
+    "ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren und das Schlagen " +
+    "gegnerischer Spielfiguren en passant.");
+                </pre>
+
 
             </div>
 
         </div>
 
-    </section>
+    </div>
 
-    <!-- Core JavaScript Files -->
-    <script src="../js/libs/jquery.min.js"></script>
-    <script src="../js/libs/bootstrap.min.js"></script>
-    <script src="../js/libs/jquery.easing.min.js"></script>
-
-    <script>
-
-        // use jQuery to collapse the navbar on scroll
-        $(window).scroll(function() {
-            if ($(".navbar").offset().top > 50) {
-                $(".navbar-fixed-top").addClass("top-nav-collapse");
-            } else {
-                $(".navbar-fixed-top").removeClass("top-nav-collapse");
-            }
-        });
-
-        $(function() {
-
-            $('.page-scroll a').bind('click', function(event) {
-
-                var $anchor = $(this);
-
-                $('html, body').stop().animate({
-                    scrollTop: $($anchor.attr('href')).offset().top-50
-                }, 1500, 'easeInOutExpo');
-
-                event.preventDefault();
-            });
-
-        });
-
-    </script>
+    <div id="footer">
+        <div class="text-muted credit">&copy; 2012-2014 Jan G. Wieners <a href="mailto:jan@jan-wieners.de">jan@jan-wieners.de</a></div>
+    </div>
 
 </body>
 

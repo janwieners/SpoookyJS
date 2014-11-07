@@ -1,13 +1,15 @@
 // Ein neues SpoookyJS Spiel erstellen
 var game = new Spoooky.Game;
 
-// Bootstrapping-Funktion: Instanzen aller benötigten Controller erstellen
-game.initialize("Schach");
+// Bootstrapping-Funktion: Instanzen aller benötigten Controller generieren
+game.initialize("Schachvariante");
 
-game.setDescription("Ziel eines jeden Spieles ist es, den gegnerischen König so anzugreifen, " +
-"dass er nicht mehr verteidigt werden kann und somit im nächsten Zug geschlagen werden könnte. " +
-"Diese Stellung heißt Matt. Das Ziel ist es also, den Gegner mattzusetzen, " +
-"bevor er es tut. (vgl. <a href=\"http://wiki-schacharena.de/index.php/Schachregeln_f%C3%BCr_Einsteiger\">wiki-schacharena.de</a>)");
+// Beschreibung der Schachvariante
+game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
+    "mit 5x8 Spielfeldern und einer reduzierten Anzahl von Spielfiguren. " +
+    "Gespielt wird nach den klassischen Zug- und Spielregeln des Schachspieles - " +
+    "ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren und das Schlagen " +
+    "gegnerischer Spielfiguren en passant.");
 
 // Menschlichen Spieler erstellen
 var player1 = game.createPlayer({
