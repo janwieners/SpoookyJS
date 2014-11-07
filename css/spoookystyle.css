@@ -217,11 +217,12 @@ position: fixed;
 /* Set the fixed height of the footer here */
 #footer {
     padding: 10px 0 0 0;
-    height: 42px;
+    height: 44px;
     background-color: #f4f4f4;
 
     margin-top: 7px;
     text-align: center;
+    border-top: 2px solid #ccc;
 }
 
 #footer .text-muted, #footer a {
