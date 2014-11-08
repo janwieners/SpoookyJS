@@ -201,6 +201,10 @@ Spoooky.AngularWrapper = function(arguments) {
             }
         };
 
+<span id='Spoooky-AngularWrapper-method-changePlayerType'>        /**
+</span>         * Change the type of the player (HUMAN / ARTIFICIAL)
+         * @param playerID
+         */
         $scope.changePlayerType = function(playerID) {
 
             switch(playerID) {
@@ -243,10 +247,12 @@ Spoooky.AngularWrapper = function(arguments) {
             &quot;MOVES NEAR OPPONENT OR OWN FIELDS&quot;
         ];
 
-        $scope.changeAgentFocus = function(agent) {
-            console.log(agent)
-        };
-
+<span id='Spoooky-AngularWrapper-method-deleteAgent'>        /**
+</span>         * Deletes an agent with agenteID from the ensemble of meta agent metaID
+         * @param metaID
+         * @param agentID
+         * @returns {boolean}
+         */
         $scope.deleteAgent = function(metaID, agentID) {
 
             var metaAgents = $scope.metaAgents,
@@ -260,11 +266,18 @@ Spoooky.AngularWrapper = function(arguments) {
             }
 
             var container = &quot;#&quot; + metaID + &quot;-&quot; + agentID;
-            $(container).fadeOut(1000);
 
             metaAgent.deleteAgentWithID(agentID);
 
             return true;
+        };
+
+<span id='Spoooky-AngularWrapper-method-addAgent'>        /**
+</span>         * Adds an agent to the agent ensemble of meta agent with metaID
+         * @param metaID
+         */
+        $scope.addAgent = function(metaID) {
+            self_AngularWrapper.game.getPlayerWithID(metaID).addStandardAgent();
         };
 
     });
@@ -334,7 +347,7 @@ Spoooky.AngularWrapper = function(arguments) {
                     if (graphData[i].mctsGraph.children.length === 0) {
 
                         $(&quot;#graphs&quot;).append(&quot;Spielbaumdarstellung konnte leider aufgrund &quot; +
-                        &quot;zu hoher Komplexität des Graphen nicht generiert werden.&lt;br /&gt;&quot;);
+                        &quot;zu hoher Komplexität des Graphen nicht generiert werden.&lt;br&gt;&quot;);
 
                         continue;
                     }

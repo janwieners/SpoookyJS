@@ -1395,6 +1395,9 @@ Spoooky = {};
             return false;
         };
 
+        /**
+         * Game rule atoms
+         */
         self_Game.gameRuleAtoms = {
 
             "Last Move Was Capture Move" : function() {
@@ -3537,6 +3540,11 @@ Spoooky = {};
             return returnValues;
         };
 
+        /**
+         * Get associated move id for a dice identifier
+         * @param diceID
+         * @returns {*}
+         */
         self_DiceBox.getMoveIDForDiceID = function(diceID) {
 
             var db = myGame.models.DiceBox;
@@ -3549,6 +3557,12 @@ Spoooky = {};
             return false;
         };
 
+        /**
+         * Connect move identifier with dice value
+         * @param setMoveID
+         * @param setDiceValueID
+         * @param setTarget
+         */
         self_DiceBox.connectMoveIDWithDiceValue = function(setMoveID, setDiceValueID, setTarget) {
 
             myGame.models.DiceBox.attachedMoveIDs.push({
@@ -3557,6 +3571,11 @@ Spoooky = {};
                 target : setTarget });
         };
 
+        /**
+         * Get dice value connected with move identifier
+         * @param moveID
+         * @returns {*}
+         */
         self_DiceBox.getConnectedDiceValue = function(moveID) {
 
             var db = myGame.models.DiceBox;
@@ -3569,6 +3588,9 @@ Spoooky = {};
             return false;
         };
 
+        /**
+         * Reset all attached move identifiers
+         */
         self_DiceBox.flushAttachedMoveIDs = function() {
             myGame.models.DiceBox.attachedMoveIDs.length = 0;
         };
@@ -3581,13 +3603,16 @@ Spoooky = {};
             return myGame.models.DiceBox.diceValues;
         };
 
+        /**
+         * Check for empty dice box
+         * @returns {boolean}
+         */
         self_DiceBox.gotNoDiceValues = function() {
             return (!myGame.models.DiceBox.diceValues[0]);
         };
 
         /**
          * Deletes a dice value from array diceValues
-         *
          * @param {Number} indexOfValue Index of dice value which will be deleted
          */
         self_DiceBox.deleteDiceValue = function(indexOfValue) {
@@ -4316,6 +4341,9 @@ Spoooky = {};
      */
     Spoooky.GameEvents = {
 
+        /**
+         * List of executable game events
+         */
         events : {
             "Roll Dices" : function(gameEvent, game) {
                 game.getDiceBox().rollAllDices();
@@ -4801,6 +4829,11 @@ Spoooky = {};
             }
         },
 
+        /**
+         * Fire / execute a game event
+         * @param gameEvent
+         * @param game
+         */
         fireEvent : function(gameEvent, game) {
             this.events[gameEvent.job](gameEvent, game);
         }
@@ -5077,8 +5110,6 @@ Spoooky = {};
         self_Agent.createBrain = function() {
 
             // Create a web worker for this agent
-            // ToDo
-            //var agentWorker = new Worker("../../js/spoooky.Worker.min.js"),
             var agentWorker = new Worker("../../js/spoooky.Worker.min.js"),
                 player = Spoooky.AI.game.getPlayerWithID(self_Agent.metaAgentID);
 
@@ -6045,7 +6076,7 @@ Spoooky = {};
             }
 
             lastID += 1;
-console.log(lastID)
+
             // Assemble a new agent and put it into the ensemble
             self_MetaAgent.assembleAgent(lastID, "ANALYZE POSSIBLE MOVES",
                 "ALL MOVES", 10000, 10000, 1, 0.9);

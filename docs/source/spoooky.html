@@ -19,12 +19,12 @@
 </span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
  *
  * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
- * Version 0.3.15 &quot;The Erlenmeyer Flask&quot; (October 2014)
+ * Version 0.3.15 &quot;The Erlenmeyer Flask&quot; (November 2014)
  *
  * Dependencies:
  *  - jQuery 2.1.1
- *  - Bootstrap 3.2.0
- *  - AngularJS 1.3.0
+ *  - Bootstrap 3.3.0
+ *  - AngularJS 1.3.2
  *  - Angular UI Bootstrap 0.11.2
  *  - Underscore.js 1.7.0
  *  - D3.js 3.4.13
@@ -1412,6 +1412,9 @@ Spoooky = {};
             return false;
         };
 
+<span id='Spoooky-Game-property-gameRuleAtoms'>        /**
+</span>         * Game rule atoms
+         */
         self_Game.gameRuleAtoms = {
 
             &quot;Last Move Was Capture Move&quot; : function() {
@@ -3554,6 +3557,11 @@ Spoooky = {};
             return returnValues;
         };
 
+<span id='Spoooky-DiceBox-method-getMoveIDForDiceID'>        /**
+</span>         * Get associated move id for a dice identifier
+         * @param diceID
+         * @returns {*}
+         */
         self_DiceBox.getMoveIDForDiceID = function(diceID) {
 
             var db = myGame.models.DiceBox;
@@ -3566,6 +3574,12 @@ Spoooky = {};
             return false;
         };
 
+<span id='Spoooky-DiceBox-method-connectMoveIDWithDiceValue'>        /**
+</span>         * Connect move identifier with dice value
+         * @param setMoveID
+         * @param setDiceValueID
+         * @param setTarget
+         */
         self_DiceBox.connectMoveIDWithDiceValue = function(setMoveID, setDiceValueID, setTarget) {
 
             myGame.models.DiceBox.attachedMoveIDs.push({
@@ -3574,6 +3588,11 @@ Spoooky = {};
                 target : setTarget });
         };
 
+<span id='Spoooky-DiceBox-method-getConnectedDiceValue'>        /**
+</span>         * Get dice value connected with move identifier
+         * @param moveID
+         * @returns {*}
+         */
         self_DiceBox.getConnectedDiceValue = function(moveID) {
 
             var db = myGame.models.DiceBox;
@@ -3586,6 +3605,9 @@ Spoooky = {};
             return false;
         };
 
+<span id='Spoooky-DiceBox-method-flushAttachedMoveIDs'>        /**
+</span>         * Reset all attached move identifiers
+         */
         self_DiceBox.flushAttachedMoveIDs = function() {
             myGame.models.DiceBox.attachedMoveIDs.length = 0;
         };
@@ -3598,13 +3620,16 @@ Spoooky = {};
             return myGame.models.DiceBox.diceValues;
         };
 
+<span id='Spoooky-DiceBox-method-gotNoDiceValues'>        /**
+</span>         * Check for empty dice box
+         * @returns {boolean}
+         */
         self_DiceBox.gotNoDiceValues = function() {
             return (!myGame.models.DiceBox.diceValues[0]);
         };
 
 <span id='Spoooky-DiceBox-method-deleteDiceValue'>        /**
 </span>         * Deletes a dice value from array diceValues
-         *
          * @param {Number} indexOfValue Index of dice value which will be deleted
          */
         self_DiceBox.deleteDiceValue = function(indexOfValue) {
@@ -4333,8 +4358,11 @@ Spoooky = {};
      */
     Spoooky.GameEvents = {
 
-<span id='Spoooky-GameEvents-property-events'>        events : {
-</span>            &quot;Roll Dices&quot; : function(gameEvent, game) {
+<span id='Spoooky-GameEvents-property-events'>        /**
+</span>         * List of executable game events
+         */
+        events : {
+            &quot;Roll Dices&quot; : function(gameEvent, game) {
                 game.getDiceBox().rollAllDices();
             },
 
@@ -4818,8 +4846,13 @@ Spoooky = {};
             }
         },
 
-<span id='Spoooky-GameEvents-method-fireEvent'>        fireEvent : function(gameEvent, game) {
-</span>            this.events[gameEvent.job](gameEvent, game);
+<span id='Spoooky-GameEvents-method-fireEvent'>        /**
+</span>         * Fire / execute a game event
+         * @param gameEvent
+         * @param game
+         */
+        fireEvent : function(gameEvent, game) {
+            this.events[gameEvent.job](gameEvent, game);
         }
     };
 
@@ -5094,8 +5127,6 @@ Spoooky = {};
         self_Agent.createBrain = function() {
 
             // Create a web worker for this agent
-            // ToDo
-            //var agentWorker = new Worker(&quot;../../js/spoooky.Worker.min.js&quot;),
             var agentWorker = new Worker(&quot;../../js/spoooky.Worker.min.js&quot;),
                 player = Spoooky.AI.game.getPlayerWithID(self_Agent.metaAgentID);
 
@@ -6042,6 +6073,32 @@ Spoooky = {};
             self_MetaAgent.agents.push(subAgent);
         };
 
+<span id='Spoooky-MetaAgent-method-addStandardAgent'>        /**
+</span>         * Adds a default / standard agent to the agent ensemble
+         */
+        self_MetaAgent.addStandardAgent = function() {
+
+            var agentID, agents, lastID = 0;
+
+            // Find free / last agent ID
+            agents = self_MetaAgent.getAgents();
+
+            for (var i = agents.length; i--;) {
+
+                agentID = agents[i].ID;
+
+                if (agentID &gt; lastID) {
+                    lastID = agentID;
+                }
+            }
+
+            lastID += 1;
+
+            // Assemble a new agent and put it into the ensemble
+            self_MetaAgent.assembleAgent(lastID, &quot;ANALYZE POSSIBLE MOVES&quot;,
+                &quot;ALL MOVES&quot;, 10000, 10000, 1, 0.9);
+        };
+
 <span id='Spoooky-MetaAgent-method-deleteAgentWithID'>        /**
 </span>         * Delete an agent from the ensemble with a specific identifier
          * @param agentID
@@ -6056,6 +6113,11 @@ Spoooky = {};
             }
         };
 
+<span id='Spoooky-MetaAgent-property-expertKnowledge'>        /**
+</span>         * External knowledge embedded into the meta agent
+         * ToDo implement later
+         * @type {boolean}
+         */
         self_MetaAgent.expertKnowledge = false;
 
 <span id='Spoooky-MetaAgent-method-assembleAgents'>        /**
@@ -6689,7 +6751,7 @@ Spoooky = {};
          */
         self_MetaAgent.artificialMove = function() {
 
-            Spoooky.GameProcess.pushMessage(self_MetaAgent.getName() + &quot; denkt nach...&lt;br /&gt;&quot; +
+            Spoooky.GameProcess.pushMessage(self_MetaAgent.getName() + &quot; denkt nach...&lt;br&gt;&quot; +
             '&lt;div class=&quot;progress progress-striped active&quot;&gt;' +
             '&lt;div class=&quot;progress-bar&quot;  role=&quot;progressbar&quot; style=&quot;width: 100%&quot;&gt;'+
             '&lt;span class=&quot;sr-only&quot;&gt;Ich denke nach...&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;', &quot;thinking&quot;);
