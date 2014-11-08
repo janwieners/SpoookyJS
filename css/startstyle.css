@@ -416,7 +416,8 @@ section {
 }
 
 #tutorial {
-    font-size: 19px;
+    margin-top: 155px;
+    font-size: 17px;
     text-align: justify;
     line-height: 1.7em;
 }
@@ -448,10 +449,6 @@ section {
 #tutorial .centered {
     margin-left: auto;
     margin-right: auto;
-}
-
-#tutorial #overview {
-    margin-top: 205px;
 }
 
 #tutorial ul {

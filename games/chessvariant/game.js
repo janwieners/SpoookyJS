@@ -23,11 +23,12 @@ var player2 = game.createPlayer({
     type: "ARTIFICIAL"
 });
 
-// CSS-Klassennamen (vordefiniert in css/spoookystyle.css) zur späteren Verwendung in Variablen speichern
+// CSS-Klassennamen (vordefiniert in css/spoookystyle.css)
+// zur vereinfachten Verwendung in Variablen speichern
 var b = "gridCellBlack",
     w = "gridCellWhite";
 
-// Spielbrett mit 8x8 Spielfeldzellen erstellen
+// Spielbrett mit 5x6 Spielfeldzellen erstellen
 game.setupGridWorld(5, 6, [
     w, b, w, b, w,
     b, w, b, w, b,
@@ -48,10 +49,9 @@ var black_bishop = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_pawn),
     black_queen = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_queen),
-    black_rook_left = game.addBlueprint(player2,
+    black_rook = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_rook),
-    black_rook_right = game.addBlueprint(player2,
-        Spoooky.Blueprints.CHESS.entities.black_rook),
+
     white_bishop = game.addBlueprint(player1,
         Spoooky.Blueprints.CHESS.entities.white_bishop),
     white_king = game.addBlueprint(player1,
@@ -62,20 +62,8 @@ var black_bishop = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.white_pawn),
     white_queen = game.addBlueprint(player1,
         Spoooky.Blueprints.CHESS.entities.white_queen),
-    white_rook_left = game.addBlueprint(player1,
-        Spoooky.Blueprints.CHESS.entities.white_rook),
-    white_rook_right = game.addBlueprint(player1,
+    white_rook = game.addBlueprint(player1,
         Spoooky.Blueprints.CHESS.entities.white_rook);
-
-// Erweiterung der Entitätenblaupause, um Rochaden zu ermöglichen
-game.extendBlueprint(black_rook_left,
-    { entityName : "Black Rook Left" });
-game.extendBlueprint(black_rook_right,
-    { entityName : "Black Rook Right" });
-game.extendBlueprint(white_rook_left,
-    { entityName : "White Rook Left" });
-game.extendBlueprint(white_rook_right,
-    { entityName : "White Rook Right" });
 
 // Entitätenziele mit Folgen für das Spiel und die Spielwelt verknüpfen
 game.connectConsequences(Spoooky.Blueprints.CHESS.consequences.blackPlayer);
@@ -83,38 +71,13 @@ game.connectConsequences(Spoooky.Blueprints.CHESS.consequences.whitePlayer);
 
 // Spielfiguren auf dem Spielbrett ablegen
 game.addEntitiesToGameBoard([
-    black_rook_left, black_queen, black_king, black_knight, black_bishop,
+    black_rook, black_queen, black_king, black_knight, black_bishop,
     black_pawn, black_pawn, black_pawn, black_pawn, black_pawn,
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
     white_pawn, white_pawn, white_pawn, white_pawn, white_pawn,
-    white_rook_left, white_queen, white_king, white_knight, white_bishop
+    white_rook, white_queen, white_king, white_knight, white_bishop
 ]);
-
-/*
- game.addEntitiesToGameBoard([
- 0, 0, 0, white_queen, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, black_king, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 0, white_queen, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, white_queen, 0, 0, white_queen, 0, 0, 0,
- white_rook_left, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight, white_rook_right
- ]);
- */
-/*
- game.addEntitiesToGameBoard([
- black_rook_left, black_knight, black_bishop, black_queen, black_king, black_bishop, black_knight, black_rook_right,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, white_queen, 0, 0, 0, 0, 0,
- 0, 0, 0, 0, 0, 0, 0, 0,
- white_rook_left, white_queen, white_queen, white_queen, white_king, 0, 0, white_rook_right
- ]);
- */
 
 // Spieler 1 (weiß) startet das Spiel
 game.setPlayer(player1);
