@@ -418,7 +418,7 @@ section {
 #tutorial {
     font-size: 19px;
     text-align: justify;
-    line-height: 2em;
+    line-height: 1.7em;
 }
 
 #tutorial .prettyprint {
@@ -431,8 +431,13 @@ section {
 }
 
 #tutorial h2 {
+     padding: 65px 0 0px 0;
+     font-size: 30px;
+ }
+
+#tutorial h3 {
     padding: 65px 0 0px 0;
-    font-size: 30px;
+    font-size: 26px;
 }
 
 #tutorial img {

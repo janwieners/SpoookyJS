@@ -23,8 +23,6 @@ var player2 = game.createPlayer({
     type: "ARTIFICIAL"
 });
 
-player2.enableLearning();
-
 // CSS-Klassennamen (vordefiniert in css/spoookystyle.css) zur späteren Verwendung in Variablen speichern
 var b = "gridCellBlack",
     w = "gridCellWhite";

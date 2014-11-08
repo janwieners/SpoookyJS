@@ -13,8 +13,9 @@
 
     <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="../css/prettify.css" rel="stylesheet" type="text/css">
-    <script src="../js/libs/jquery.min.js"></script>
 
+    <script src="../js/libs/jquery.min.js"></script>
+    <script src="../js/libs/bootstrap.min.js"></script>
     <script src="../js/libs/prettify.js"></script>
 
     <script type="text/javascript">
@@ -54,11 +55,6 @@
 
                 <ul class="nav navbar-nav">
 
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Spiele<b class="caret"></b>
@@ -71,7 +67,6 @@
                             <li><a href="../games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
                             <li><a href="../games/chess/index.htm">Schach</a></li>
                             <li><a href="../games/tictactoe/index.htm">Tic Tac Toe</a></li>
-                            <li><a href="#games"></a></li>
                         </ul>
                     </li>
 
@@ -113,7 +108,7 @@
                     <h1>Tutorial - Spielerstellung mit SpoookyJS</h1>
                     <div class="description">
                         In diesem Tutorial wird erläutert, wie sich eigene Spiele mit dem JavaScript-Framework SpoookyJS entwickeln lassen.
-                        Umgesetzt wird eine Schachvariante, die auf einem Spielbrett mit 5x8 Spielfeldern gespielt wird.
+                        Umgesetzt wird eine Schachvariante, die auf einem Spielbrett mit 5x6 Spielfeldern gespielt wird.
                     </div>
                     <div class="content">
                         Überblick:
@@ -122,7 +117,10 @@
                             <li><a href="#chessvariant">Schachvariante und Spielvorbereitung</a></li>
                             <li>
                                 <a href="#gamejs">game.js - Das zentrale Spielskript</a>
-
+                                <ul>
+                                    <li><a href="#gamejs_init">Initialisierung</a></li>
+                                    <li><a href="#gamejs_players">Spielerobjekte</a></li>
+                                </ul>
                             </li>
                         </ol>
                     </div>
@@ -141,7 +139,7 @@
                 <div class="linedivider"></div>
                 <h2 id="chessvariant">2. Schachvariante und Spielvorbereitung</h2>
 
-                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x8 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
+                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x6 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
                 über zehn Spielfiguren, die zu Beginn des Spieles wie folgend auf dem Spielbrett abgelegt werden:
 
                 <img width="250px" src="img/chessvariant-startconfig.jpg" alt="Startkonfiguration der Schachvariante" class="centered">
@@ -163,7 +161,8 @@
 
                 Zentral für die Erstellung eigener Spiele ist die JavaScript-Datei <i>game.js</i> im neu erstellten Ordner <i>chessvariant</i>.
                 Hier werden Spielerinnen und Spieler dem Spiel hinzugefügt, wird die Spielwelt generiert, Spielfiguren erstellt und Spielregeln definiert.
-                <br>
+
+                <h3 id="gamejs_init">Initialisierung</h3>
                 Um die Schachvariante umzusetzen, wird die leere Skriptdatei <i>game.js</i> zuerst um die folgenden Anweisungen ergänzt:
 
                 <pre class="prettyprint">
@@ -180,6 +179,25 @@ game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
     "ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren und das Schlagen " +
     "gegnerischer Spielfiguren en passant.");
                 </pre>
+
+                <h3 id="gamejs_players">Spielerobjekte</h3>
+                Nach der grundlegenden Initialisierung des neuen Spieles mit den Memberfunktionen <i><a href="../docs/index.html#!/api/Spoooky.Game-method-initialize">initialize</a></i>
+                und <i><a href="../docs/index.html#!/api/Spoooky.Game-method-setDescription">setdescription</a></i> werden dem Spiel
+                anhand der Memberfunktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-createPlayer">createPlayer</a></i>
+                zwei Spieler hinzugefügt: ein menschlicher Spieler und eine artifizielle Spielerin.
+<pre class="prettyprint">
+// Menschlichen Spieler erstellen
+var player1 = game.createPlayer({
+    name: "Jan",
+    type: "HUMAN"
+});
+
+// Artifiziellen Gegner erstellen
+var player2 = game.createPlayer({
+    name: "Scully",
+    type: "ARTIFICIAL"
+});
+</pre>
 
 
             </div>
