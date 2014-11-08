@@ -6083,7 +6083,7 @@ Spoooky = {};
         };
 
         /**
-         * Delete an agent from the ensemble with a specific identifier
+         * Delete an agent from the ensemble with a specific ID
          * @param agentID
          */
         self_MetaAgent.deleteAgentWithID = function(agentID) {
@@ -6169,15 +6169,15 @@ Spoooky = {};
                         // Create a standard ensemble of three agents
                         //Agent I: The first agent tries to analyze all executable moves
                         self_MetaAgent.assembleAgent(1, "ANALYZE POSSIBLE MOVES",
-                            "ALL MOVES", maximumSteps, thinkingTime, 1, 0.9);
+                            "ALL MOVES", maximumSteps, thinkingTime, 1, 0.5);
 
                         // Agent II: The first agent analyzes the first half of all possible moves by using monte carlo tree search (MCTS)
                         self_MetaAgent.assembleAgent(2, "ANALYZE POSSIBLE MOVES",
-                            "FIRST HALF OF POSSIBLE MOVES", maximumSteps, thinkingTime, 1, 0.9);
+                            "FIRST HALF OF POSSIBLE MOVES", maximumSteps, thinkingTime, 1, 0.5);
 
                         // Agent III: The second agent analyzes the second half of all possible moves by using MCTS
                         self_MetaAgent.assembleAgent(3, "ANALYZE POSSIBLE MOVES",
-                            "SECOND HALF OF POSSIBLE MOVES", maximumSteps, thinkingTime, 1, 0.9);
+                            "SECOND HALF OF POSSIBLE MOVES", maximumSteps, thinkingTime, 1, 0.5);
 
                         /*
 
@@ -8006,7 +8006,7 @@ Spoooky = {};
         };
 
         /**
-         * entity goal atoms
+         * Array of entity goal atoms
          * @type {Array}
          */
         self_Entity.goalAtoms = [];
