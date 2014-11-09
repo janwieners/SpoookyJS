@@ -112,7 +112,7 @@
                     </div>
                     <div class="content">
                         Überblick:
-                        <ol class="page-scroll">
+                        <ol>
                             <li><a href="#downloadspoookyjs">Download des Frameworks und _template-Ordner</a></li>
                             <li><a href="#chessvariant">Schachvariante und Spielvorbereitung</a></li>
                             <li>
@@ -122,6 +122,7 @@
                                     <li><a href="#gamejs_players">Spielerobjekte</a></li>
                                     <li><a href="#gamejs_boardsetup">Spielweltsetup</a></li>
                                     <li><a href="#gamejs_addblueprints">Spielfiguren hinzufügen</a></li>
+                                    <li><a href="#gamejs_blueprints">Aufbau von Spielfigurenblaupausen</a></li>
                                 </ul>
                             </li>
                         </ol>
@@ -178,8 +179,7 @@ game.initialize("Schachvariante");
 game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
     "mit 5x8 Spielfeldern und einer reduzierten Anzahl von Spielfiguren. " +
     "Gespielt wird nach den klassischen Zug- und Spielregeln des Schachspieles - " +
-    "ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren und das Schlagen " +
-    "gegnerischer Spielfiguren en passant.");
+    "ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren.");
                 </pre>
 
                 <h3 id="gamejs_players">Spielerobjekte</h3>
@@ -274,9 +274,295 @@ game.addEntitiesToGameBoard([
     white_rook, white_queen, white_king, white_knight, white_bishop
 ]);
 </pre>
-                <!-- ToDo
                 <h3 id="gamejs_blueprints">Aufbau von Spielfigurenblaupausen</h3>
-                -->
+                Die Eigenschaften der einzelnen Spielfiguren werden anhand von Spielfigurenblaupausen definiert, die mit
+                der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addBlueprint">addBlueprint</a></i> verarbeitet
+                und dem Spiel hinzugefügt werden. Wie der folgende Quelltextausschnit aus dem Skript
+                <i><a href="../js/spoooky.Blueprints.js">js/spoooky.Blueprints.js</a></i> veranschaulicht,
+                wird in jeder Blaupause zunächst der Typ der Spielfigur zur späteren Verwendung angegeben und wird die Darstellung bestimmt:
+<pre class="prettyprint">
+black_pawn : {
+
+    typeID : "AA",
+    entityType : "Black Pawn",
+    associatedWithMetaAgent : null,
+    representation : { type : "image",
+        texture : "assets/black_pawn.png" },
+</pre>
+                Die Zugmöglichkeiten des schwarzen Bauern werden im <i>moves</i>-Bereich vorgesehen - für den Bauern
+                sind die Bewegungsmöglichkeiten schnell umgesetzt. So kann sich der Bauer auf ein leeres Feld bewegen,
+                das sich südlich von ihm befindet:
+<pre class="prettyprint">
+    // Zugmöglichkeiten der Spielfigur
+    moves : [{
+        name : "Zug in Richtung des unteren Spielfeldrandes",
+        type : "Default",
+        direction : "south",
+        frequency : 1,
+        // Zugbedingungen: Das Zielfeld ist nicht besetzt
+        // und befindet sich nicht am unteren Rand des Spielbrettes
+        // (hier wird der Bauer eingetauscht in eine andere Spielfigur)
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+            { condition : "Is Not The Last Row",
+                state : true }]
+    },
+</pre>
+                Zu Beginn des Spieles ist's dem schwarzen Bauern möglich, sich um zwei Felder nach unten zu bewegen:
+<pre class="prettyprint">
+    {
+        name : "Startzug: Zwei Felder nach unten",
+        type : "Default",
+        direction : [ 0, +2 ],
+        frequency : 1,
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+
+            // Andere Spielfiguren dürfen nicht übersprungen werden.
+            // Bedingung: Leeres Feld südlich des Bauern
+            { condition : "Is Empty At",
+                relativeCoordinate : [ 0, +1 ],
+                state : true },
+            { condition : "yPosition",
+                value : 1, state : true }
+        ]
+    }],
+</pre>
+                Um festzulegen, dass sich der schwarze Bauer nicht bewegen darf, wenn der eigene König nach
+                dem Zug des Bauern von einer gegnerischen Spielfigur bedroht wird, werden die Zugmöglichkeiten
+                des schwarzen Bauern an die entsprechende Bedingung geknüpft:
+<pre class="prettyprint">
+    // Zugbedingung: Prüfen, ob der eigene König nach ausgeführter
+    // Zugmöglichkeit des Bauern angreifbar ist
+    postMoveCheck : [{
+        condition : "Entity Is Attackable After Move",
+        state : false, entity : "Black King" }],
+</pre>
+                Nachdem die Zugmöglichkeiten des Bauern formuliert wurden, werden die Ziele der Spielfigur angegeben: Der
+                Bauer verfolgt das Ziel, gegnerische Sielfiguren zu schlagen und die unterste Reihe des Spielbrettes zu erreichen.
+                Spielfigurenziele setzen sich aus Zielatomen (<i>goalAtoms</i>) und zusammengesetzten Zielen (<i>goals</i>) zusammen.
+                Mit dem folgenden Quelltext werden zuerst die einzelnen Bestandteile der Spielfigurenziele definiert -
+                Bestandteile wie die Abfrage nach gegnerischen Spielfiguren oder das Erreichen der untersten Reihe des Spielbrettes:
+<pre class="prettyprint">
+    // Definition von Unterzielen, die anschließend
+    // zu Zielen der Spielfigur zusammengesetzt werden
+    goalAtoms : [{
+        atomName : "Gegner auf suedoestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southeast"
+    },{
+        atomName : "Gegner auf suedwestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southwest"
+    }, {
+        atomName : "Leeres Feld Suedlich",
+        atomFunction : "Is Empty Cell",
+        atomArguments : "south"
+    }, {
+        atomName : "Figur steht auf einem Spielfeld in Zeile vier",
+        atomFunction : "Current Y Position Is",
+        atomArguments : 4
+    },{
+        atomName : "Weißer Bauer westlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ -1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer oestlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ +1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer westlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ -1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ +1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer westlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ -1, 0 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ +1, 0 ]
+    }, {
+        atomName : "Spielfigur kann die unterste Reihe erreichen",
+        atomFunction : "Entity Is Able To Reach A Specific Row",
+        atomArguments : [ "last", "south" ]
+    }],
+</pre>
+                Abschließend werden die Zielatome zu Spielfigurenzielen zusammengesetzt:
+<pre class="prettyprint">
+    // Zielatome zu Spielsteinzielen zusammensetzen
+    goals : [{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedost",
+        atoms    : ["Gegner auf suedoestlich angrenzendem Feld"],
+        move     : "southeast"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedwest",
+        atoms    : ["Gegner auf suedwestlich angrenzendem Feld"],
+        move     : [ -1, +1 ]
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedwestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer westlich",
+            "Weißer Bauer westlich wurde nur einmal bewegt",
+            "Weißer Bauer westlich wurde zuletzt bewegt"],
+        move     : "southwest"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedoestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer oestlich",
+            "Weißer Bauer oestlich wurde nur einmal bewegt",
+            "Weißer Bauer oestlich wurde zuletzt bewegt"],
+        move     : "southeast"
+    }, {
+        type     : "GOALMOVE",
+        name     : "Erreiche die letzte Reihe des Spielbrettes",
+        atoms    : ["Leeres Feld Suedlich",
+            "Spielfigur kann die unterste Reihe erreichen"],
+        move     : "south"
+    }]
+}
+</pre>
+            Im <i>consequences</i>-Bereich der Spielfigurenblaupausen werden die Folgen ausgeführter Spielfigurenziele
+            bestimmt, um anhand der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-connectConsequences">connectConsequences</a></i>
+            mit dem Spiel verknüpft zu werden. Folgen, die sich mit  Erreichen der letzten Reihe des Spielbrettes verbinden:
+<pre class="prettyprint">
+black_pawn_reach_last_row_south : {
+    goalName     : "Erreiche die letzte Reihe des Spielbrettes",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ 0, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        }, {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ 0, +1, "Black Pawn", "captureMove" ]
+        }, {
+            jobName: "Transformiere Bauer in Koenigin",
+            jobFunction: "Transform Entity",
+            jobArguments: "Black Queen"
+        }]
+},
+</pre>
+            Was geschieht, wenn der schwarze Bauer eine gegnerische Spielfigur schlägt, ist mit den folgenden Anweisungen
+            definiert:
+<pre class="prettyprint">
+black_pawn_capture_opponent_southwest : {
+    goalName     : "Schlage Spielfigur auf Feld suedwest",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ -1, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ -1, +1, "RELATIVE",
+                "Black Pawn" ]
+        },
+        {
+            jobName: "Bewege Spielfigur",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ -1, +1, "Black Pawn",
+                "captureMove" ]
+        }, {
+            jobName: "Transformiere Spielfigur, wenn letzte Reihe erreicht",
+            jobFunction: "Transform Entity If Row Reached",
+            jobArguments: { row : "last",
+                entityType : "Black Queen" }
+        }]
+},
+
+black_pawn_capture_opponent_southwest_enpassant : {
+    goalName     : "Schlage Gegner en passant suedwestlich",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ -1, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ -1, 0, "RELATIVE",
+                "Black Pawn" ]
+        },
+        {
+            jobName: "Bewege Spielfigur",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ -1, +1, "Black Pawn",
+                "captureMove" ]
+        }]
+},
+
+black_pawn_capture_opponent_southeast : {
+    goalName     : "Schlage Spielfigur auf Feld suedost",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Highlight Target Cell",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ +1, +1, "move_goal", "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Delete Opponent Entity",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ +1, +1, "RELATIVE", "Black Pawn" ]
+        },
+        {
+            jobName: "Move Game Entity",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ +1, +1, "Black Pawn", "captureMove" ]
+        }, {
+            jobName: "Transform Entity If It Has Reached The First Row",
+            jobFunction: "Transform Entity If Row Reached",
+            jobArguments: { row : "last", entityType : "Black Queen" }
+        }]
+},
+
+black_pawn_capture_opponent_southeast_enpassant : {
+    goalName     : "Schlage Gegner en passant suedoestlich",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Highlight Target Cell",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ +1, +1, "move_goal", "RELATIVE", "White Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Delete Opponent Entity",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ +1, 0, "RELATIVE", "White Pawn" ]
+        },
+        {
+            jobName: "Move Game Entity",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ +1, +1, "White Pawn", "captureMove" ]
+        }]
+},
+</pre>
 
 
             </div>
