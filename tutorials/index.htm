@@ -123,6 +123,7 @@
                                     <li><a href="#gamejs_boardsetup">Spielweltsetup</a></li>
                                     <li><a href="#gamejs_addblueprints">Spielfiguren hinzufügen</a></li>
                                     <li><a href="#gamejs_blueprints">Aufbau von Spielfigurenblaupausen</a></li>
+                                    <li><a href="#gamejs_gamerules">Spielregeldefinition</a></li>
                                 </ul>
                             </li>
                         </ol>
@@ -199,6 +200,9 @@ var player2 = game.createPlayer({
     name: "Scully",
     type: "ARTIFICIAL"
 });
+
+// Startspieler festlegen: Spieler 1 (weiß) startet das Spiel
+game.setPlayer(player1);
 </pre>
 
                 <h3 id="gamejs_boardsetup">Spielweltsetup</h3>
@@ -563,7 +567,25 @@ black_pawn_capture_opponent_southeast_enpassant : {
         }]
 },
 </pre>
+            <h3 id="gamejs_gamerules">Spielregeldefinition</h3>
+            Die Definition von Spielregeln verläuft dreischrittig: Mit der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addGameRuleAtom">addGameRuleAtom</a></i>
+            werden zunächst Spielregelatome definiert, mit denen sich bestimmte Zustände des Spieles abfragen lassen, wie sie in
+                <i><a href="../docs/index.html#!/api/Spoooky.Game-method-gameRuleAtoms">Spoooky.Game.gameRuleAtoms</a> definiert sind:
+<pre class="prettyprint">
+// ***** Spielregeln des Schachspieles *****
+// *** Unentschieden: König gegen König ***
+game.addGameRuleAtom({
+    atomName : "Spieler 1 hat nur noch eine Spielfigur",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [ player1.getID(), 1 ]
+});
 
+game.addGameRuleAtom({
+    atomName : "Spielerin 2 hat nur noch eine Spielfigur",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [ player2.getID(), 1 ]
+});
+</pre>
 
             </div>
 

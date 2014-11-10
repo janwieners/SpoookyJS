@@ -23,6 +23,9 @@ var player2 = game.createPlayer({
     type: "ARTIFICIAL"
 });
 
+// Spieler 1 (weiß) startet das Spiel
+game.setPlayer(player1);
+
 // CSS-Klassennamen (vordefiniert in css/spoookystyle.css)
 // zur vereinfachten Verwendung in Variablen speichern
 var b = "gridCellBlack",
@@ -78,9 +81,6 @@ game.addEntitiesToGameBoard([
     white_pawn, white_pawn, white_pawn, white_pawn, white_pawn,
     white_rook, white_queen, white_king, white_knight, white_bishop
 ]);
-
-// Spieler 1 (weiß) startet das Spiel
-game.setPlayer(player1);
 
 // ***** Spielregeln des Schachspieles *****
 // *** Unentschieden: König gegen König ***
