@@ -134,7 +134,7 @@ game.connectGameRuleConsequences({
 // ***************************** //
 // *** Interface / AngularJS *** //
 // ***************************** //
-var SpoookyGame = new Spoooky.AngularWrapper({
+Spoooky.AngularWrapper({
     game : game,
     cellWidth : 48,
     cellHeight : 48 });

@@ -41,6 +41,15 @@ game.setupGridWorld(5, 6, [
     b, w, b, w, b
 ]);
 
+// ***************************** //
+// *** Interface / AngularJS *** //
+// ***************************** //
+Spoooky.AngularWrapper({
+    game : game,
+    cellWidth : 100,
+    cellHeight : 100 });
+
+
 // Entitätenblaupausen dem Spiel hinzufügen
 var black_bishop = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_bishop),
@@ -305,11 +314,3 @@ game.connectGameRuleConsequences({
         jobFunction: "Set Winner",
         jobArguments: player1.getID()
     }]});
-
-// ***************************** //
-// *** Interface / AngularJS *** //
-// ***************************** //
-var SpoookyGame = new Spoooky.AngularWrapper({
-    game : game,
-    cellWidth : 100,
-    cellHeight : 100 });
