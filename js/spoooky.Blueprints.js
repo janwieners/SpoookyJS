@@ -2227,7 +2227,7 @@ Spoooky.Blueprints = {
                         frequency : 1,
                         conditions : [
                             { condition : "Is Empty", state : true },
-                            // Don"t overjump entities
+                            // Do not overjump entities
                             { condition : "Is Empty At", relativeCoordinate : [ 0, -1 ], state : true },
                             { condition : "yPosition", value : 6, state : true }
                         ]

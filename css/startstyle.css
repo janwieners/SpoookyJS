@@ -429,16 +429,22 @@ section {
 
 #tutorial h1 {
     font-size: 40px;
+    text-align: left;
+    line-height: 1.5em;
 }
 
 #tutorial h2 {
-     padding: 65px 0 0px 0;
-     font-size: 30px;
- }
+    padding: 45px 0 0px 0;
+    font-size: 30px;
+    text-align: left;
+    line-height: 1.5em;
+}
 
 #tutorial h3 {
-    padding: 65px 0 0px 0;
+    padding: 45px 0 0px 0;
     font-size: 26px;
+    text-align: left;
+    line-height: 1.5em;
 }
 
 #tutorial img {
@@ -499,4 +505,21 @@ section {
 
 #footer a {
     color: #004b86;
+}
+
+#tutorial #sidenav {
+    text-align: left;
+    font-size: 15px;
+}
+
+#tutorial #sidenav a {
+    color: #555;
+}
+
+#tutorial #sidenav a:hover {
+    color: #006ec4;
+}
+
+body {
+    position: relative;
 }

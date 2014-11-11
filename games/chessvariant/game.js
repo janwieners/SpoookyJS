@@ -2,7 +2,7 @@
 var game = new Spoooky.Game;
 
 // Bootstrapping-Funktion: Instanzen aller benötigten Controller generieren
-game.initialize("Schachvariante");
+game.initialize("Schachvariante 5x6 (Tutorial)");
 
 // Beschreibung der Schachvariante
 game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
@@ -49,6 +49,251 @@ Spoooky.AngularWrapper({
     cellWidth : 100,
     cellHeight : 100 });
 
+// Spielfigurenblaupause für den weißen Bauern
+var white_pawn = {
+
+    entityType : "White Pawn",
+
+        typeID : "BA",
+
+        associatedWithMetaAgent : null,
+
+        // Visualization of the entity
+        representation : { type : "image", texture : "assets/white_pawn.png" },
+
+    // After a virtual move to the move destination: test for capturable own king
+    postMoveCheck : [{ condition : "Entity Is Attackable After Move",
+        state : false, entity : "White King" }],
+
+        // Moves of the entity
+        moves : [{
+        name : "north",
+        type : "Default",
+        direction : "north",
+        frequency : 1,
+        conditions : [{ condition : "Is Empty", state : true },
+            { condition : "Is Not The First Row", state : true }]
+    },
+        {
+            name : "entry move: two fields north",
+            type : "Default",
+            direction : [ 0, -2 ],
+            frequency : 1,
+            conditions : [
+                { condition : "Is Empty", state : true },
+                // Do not overjump entities
+                { condition : "Is Empty At", relativeCoordinate : [ 0, -1 ], state : true },
+                { condition : "yPosition", value : 4, state : true }
+            ]
+        }],
+
+        // Sub Goals
+        goalAtoms : [{
+        atomName : "opponent northeast",
+        atomFunction : "Is Opponent",
+        atomArguments : "northeast"
+    },{
+        atomName : "opponent northwest",
+        atomFunction : "Is Opponent",
+        atomArguments : "northwest"
+    }, {
+        atomName : "empty field north",
+        atomFunction : "Is Empty Cell",
+        atomArguments : "north"
+    }, {
+        atomName : "current entity is at y position 3",
+        atomFunction : "Current Y Position Is",
+        atomArguments : 3
+    },{
+        atomName : "black pawn entity at cell west",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ -1, 0, "Black Pawn" ]
+    },{
+        atomName : "black pawn entity at cell east",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ +1, 0, "Black Pawn" ]
+    },{
+        atomName : "black pawn entity west has been moved only one time",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ -1, 0, 1 ]
+    },{
+        atomName : "black pawn entity east has been moved only one time",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ +1, 0, 1 ]
+    },{
+        atomName : "black pawn entity west was the last moved entity",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ -1, 0 ]
+    },{
+        atomName : "black pawn entity east was the last moved entity",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ +1, 0 ]
+    }, {
+        atomName : "white pawn can reach the first row with north move",
+        atomFunction : "Entity Is Able To Reach A Specific Row",
+        atomArguments : [ "first", "north" ]
+    }],
+
+        // Assemble sub goals / goal atoms to game goals of the entity
+        goals : [{
+        type     : "CAPTURE",
+        name     : "capture opponent northeast",
+        atoms    : ["opponent northeast"],
+        move     : "northeast"
+    },{
+        type     : "CAPTURE",
+        name     : "capture opponent northwest",
+        atoms    : ["opponent northwest"],
+        move     : "northwest"
+    },{
+        type     : "CAPTURE",
+        name     : "capture opponent northwest en passant",
+        atoms    : ["current entity is at y position 3",
+            "black pawn entity at cell west",
+            "black pawn entity west has been moved only one time",
+            "black pawn entity west was the last moved entity"],
+        move     : "northwest"
+    },{
+        type     : "CAPTURE",
+        name     : "capture opponent northeast en passant",
+        atoms    : ["current entity is at y position 3",
+            "black pawn entity at cell east",
+            "black pawn entity east has been moved only one time",
+            "black pawn entity east was the last moved entity"],
+        move     : "northeast"
+    }, {
+        type     : "GOALMOVE",
+        name     : "reach the first row with north move",
+        atoms    : ["empty field north",
+            "white pawn can reach the first row with north move"],
+        move     : "north"
+    }]
+};
+
+// Spielfigurenblaupause für den schwarzen Bauern
+var black_pawn = {
+
+    typeID : "AA",
+        entityType : "Black Pawn",
+        associatedWithMetaAgent : null,
+        representation : { type : "image",
+        texture : "assets/black_pawn.png" },
+    // Zugbedingung: Prüfen, ob der eigene König nach
+    // ausgeführter Zugmöglichkeit des Bauern angreifbar ist
+    postMoveCheck : [{
+        condition : "Entity Is Attackable After Move",
+        state : false, entity : "Black King" }],
+        // Zugmöglichkeiten der Spielfigur
+        moves : [{
+        name : "Zug in Richtung des unteren Spielfeldrandes",
+        type : "Default",
+        direction : "south",
+        frequency : 1,
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+            { condition : "Is Not The Last Row",
+                state : true }]
+    }, {
+        name : "Startzug: Zwei Felder nach unten",
+        type : "Default",
+        direction : [ 0, +2 ],
+        frequency : 1,
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+            // Andere Spielfiguren dürfen nicht
+            // übersprungen werden
+            { condition : "Is Empty At",
+                relativeCoordinate : [ 0, +1 ],
+                state : true },
+            { condition : "yPosition",
+                value : 1, state : true }
+        ]
+    }],
+        // Definition von Unterzielen, die anschließend
+        // zu Zielen der Spielfigur zusammengesetzt werden
+        goalAtoms : [{
+        atomName : "Gegner auf suedoestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southeast"
+    },{
+        atomName : "Gegner auf suedwestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southwest"
+    }, {
+        atomName : "Leeres Feld Suedlich",
+        atomFunction : "Is Empty Cell",
+        atomArguments : "south"
+    }, {
+        atomName : "Figur steht auf einem Spielfeld in Zeile vier",
+        atomFunction : "Current Y Position Is",
+        atomArguments : 4
+    },{
+        atomName : "Weißer Bauer westlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ -1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer oestlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ +1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer westlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ -1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ +1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer westlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ -1, 0 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ +1, 0 ]
+    }, {
+        atomName : "Spielfigur kann die unterste Reihe erreichen",
+        atomFunction : "Entity Is Able To Reach A Specific Row",
+        atomArguments : [ "last", "south" ]
+    }],
+        // Zielatome zu Spielsteinzielen zusammensetzen
+        goals : [{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedost",
+        atoms    : ["Gegner auf suedoestlich angrenzendem Feld"],
+        move     : "southeast"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedwest",
+        atoms    : ["Gegner auf suedwestlich angrenzendem Feld"],
+        move     : [ -1, +1 ]
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedwestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer westlich",
+            "Weißer Bauer westlich wurde nur einmal bewegt",
+            "Weißer Bauer westlich wurde zuletzt bewegt"],
+        move     : "southwest"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedoestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer oestlich",
+            "Weißer Bauer oestlich wurde nur einmal bewegt",
+            "Weißer Bauer oestlich wurde zuletzt bewegt"],
+        move     : "southeast"
+    }, {
+        type     : "GOALMOVE",
+        name     : "Erreiche die letzte Reihe des Spielbrettes",
+        atoms    : ["Leeres Feld Suedlich",
+            "Spielfigur kann die unterste Reihe erreichen"],
+        move     : "south"
+    }]
+};
+
 
 // Entitätenblaupausen dem Spiel hinzufügen
 var black_bishop = game.addBlueprint(player2,
@@ -57,8 +302,7 @@ var black_bishop = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_king),
     black_knight = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_knight),
-    black_pawn = game.addBlueprint(player2,
-        Spoooky.Blueprints.CHESS.entities.black_pawn),
+    black_pawn = game.addBlueprint(player2, black_pawn),
     black_queen = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.black_queen),
     black_rook = game.addBlueprint(player2,
@@ -70,8 +314,7 @@ var black_bishop = game.addBlueprint(player2,
         Spoooky.Blueprints.CHESS.entities.white_king),
     white_knight = game.addBlueprint(player1,
         Spoooky.Blueprints.CHESS.entities.white_knight),
-    white_pawn = game.addBlueprint(player1,
-        Spoooky.Blueprints.CHESS.entities.white_pawn),
+    white_pawn = game.addBlueprint(player1, white_pawn),
     white_queen = game.addBlueprint(player1,
         Spoooky.Blueprints.CHESS.entities.white_queen),
     white_rook = game.addBlueprint(player1,
@@ -203,7 +446,8 @@ game.connectGameRuleConsequences({
         jobName: "Spiel beenden",
         jobFunction: "Stop Game"
     }, {
-        jobName: "Ausgabe im Spielverlaufsdialog, dass Spieler 1 das Spiel verloren hat.",
+        jobName: "Ausgabe im Spielverlaufsdialog, dass Spieler 1 " +
+            "das Spiel verloren hat.",
         jobFunction: "Print Game Process",
         jobArguments: "Spieler 1 ist schachmatt."
     },{
