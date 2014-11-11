@@ -416,7 +416,7 @@ section {
 }
 
 #tutorial {
-    margin-top: 155px;
+    margin-top: 65px;
     font-size: 17px;
     text-align: justify;
     line-height: 1.7em;
@@ -503,23 +503,41 @@ section {
     color: #424951;
 }
 
-#footer a {
-    color: #004b86;
-}
-
 #tutorial #sidenav {
     text-align: left;
     font-size: 15px;
 }
 
-#tutorial #sidenav a {
-    color: #555;
+#tutorial #sidenav .divider {
+     margin: 16px 0;
+     border-top: 1px solid #e6e6e6;
+ }
+
+#tutorial #sidenav .heading {
+    color: #424951;
+    font-weight: bold;
+}
+
+#tutorial #sidenav .nav > li > a {
+    padding: 5px 0 0 0;
 }
 
 #tutorial #sidenav a:hover {
     color: #006ec4;
 }
 
+#sidenav {
+    margin-left: 70px;
+    background: none repeat scroll 0 0 #fafafa;
+}
+#sidenav ul {
+    padding: 15px;
+}
+
 body {
     position: relative;
+}
+
+#tutorial img {
+        max-width: 550px;
 }

@@ -370,6 +370,7 @@ black_pawn : {
         condition : "Entity Is Attackable After Move",
         state : false, entity : "Black King" }],
 </pre>
+                <h2 id="gamejs_blueprintsgoals">Spielfigurenziele</h2>
                 Nachdem die Zugmöglichkeiten des Bauern formuliert wurden, werden die Ziele der Spielfigur angegeben: Der
                 Bauer verfolgt das Ziel, gegnerische Sielfiguren zu schlagen und die unterste Reihe des Spielbrettes zu erreichen.
                 Spielfigurenziele setzen sich aus Zielatomen (<i>goalAtoms</i>) und zusammengesetzten Zielen (<i>goals</i>) zusammen.
@@ -593,7 +594,7 @@ black_pawn_capture_opponent_southeast_enpassant : {
         }]
 },
 </pre>
-            <h2 id="gamejs_gamerules">Spielregeldefinition</h2>
+            <h2 id="gamejs_gamerules">Spielregeln definieren</h2>
             Die Definition von Spielregeln verläuft dreischrittig: Mit der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addGameRuleAtom">addGameRuleAtom</a></i>
             werden zunächst Spielregelatome definiert, mit denen sich bestimmte Zustände des Spieles abfragen lassen, wie sie in
                 <i><a href="../docs/index.html#!/api/Spoooky.Game-method-gameRuleAtoms">Spoooky.Game.gameRuleAtoms</a></i> definiert sind:
@@ -750,32 +751,37 @@ game.connectGameRuleConsequences({
 
                     <ul class="nav bs-docs-sidenav">
 
+                        <li class="heading">I. Setup und Initialisierung</li>
                         <li class="page-scroll"><a href="#downloadspoookyjs">Download und _template-Ordner</a></li>
                         <li class="page-scroll"><a href="#chessvariant">Vorbereitung einer Schachvariante</a></li>
                         <li class="page-scroll"><a href="#gamejs">Das zentrale Spielskript game.js</a></li>
                         <li class="page-scroll"><a href="#gamejs_init">Spielinitialisierung</a></li>
                         <li class="page-scroll"><a href="#gamejs_players">Spieler erstellen mit game.createPlayer</a></li>
                         <li class="page-scroll"><a href="#gamejs_boardsetup">Spielweltsetup</a></li>
+                        <li class="divider"></li>
+                        <li class="heading">II. Spielfigurenblaupausen</li>
                         <li class="page-scroll"><a href="#gamejs_addblueprints">Spielfiguren hinzufügen</a></li>
                         <li class="page-scroll"><a href="#gamejs_blueprints">Aufbau von Spielfigurenblaupausen</a></li>
-                        <li class="page-scroll"><a href="#gamejs_gamerules">Spielregeldefinition</a></li>
-                        <ul>
-                            <li class="page-scroll">
-                                <a href="#chessrule_check">
-                                    Spielregel "Der König von Spieler 1 steht im Schach"
-                                </a>
-                            </li>
-                            <li class="page-scroll">
-                                <a href="#chessrule_checkmate">
-                                    Spielregel "Spieler 1 ist Schachmatt gesetzt"
-                                </a>
-                            </li>
-                            <li class="page-scroll">
-                                <a href="#chessrule_stalemate">
-                                    Spielregel "Unentschieden (Stalemate)"
-                                </a>
-                            </li>
-                        </ul>
+                        <li class="page-scroll"><a href="#gamejs_blueprintsgoals">Spielfigurenziele</a></li>
+                        <li class="divider"></li>
+                        <li class="heading">III. Umsetzung von Spielregeln</li>
+                        <li class="page-scroll"><a href="#gamejs_gamerules">Spielregeln definieren</a></li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_check">
+                                Spielregel "Der König von Spieler 1 steht im Schach"
+                            </a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_checkmate">
+                                Spielregel "Spieler 1 ist Schachmatt gesetzt"
+                            </a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_stalemate">
+                                Spielregel "Unentschieden (Stalemate)"
+                            </a>
+                        </li>
+                        <li class="divider"></li>
 
                     </ul>
 
