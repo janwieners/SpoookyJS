@@ -269,7 +269,6 @@ game.connectGameRuleConsequences({
 // ***************************** //
 // *** Interface / AngularJS *** //
 // ***************************** //
-x
 Spoooky.AngularWrapper({
     game : game,
     cellWidth : 165,
