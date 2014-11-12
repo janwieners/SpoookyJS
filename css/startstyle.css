@@ -541,3 +541,8 @@ body {
 #tutorial img {
         max-width: 550px;
 }
+
+#tutorial #downloadbutton {
+    text-align: center;
+    margin: 25px auto;
+}
