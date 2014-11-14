@@ -60,7 +60,7 @@
                             <span class="glyphicon glyphicon-user"></span><br>I
                         </span>
                         <input class="form-control" type="text" id="player1name" value="{{player1.name}}" ng-change="changePlayerName(0)" ng-model="player1.name">
-                        <select disabled class="form-control" ng-model="playerTypes1.value" ng-change="changePlayerType(0)" ng-options="v for v in playerTypes1.values">
+                        <select class="form-control" ng-model="playerTypes1.value" ng-change="changePlayerType(0)" ng-options="v for v in playerTypes1.values">
                         </select>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                             <span class="glyphicon glyphicon-user"></span><br>II
                         </span>
                         <input class="form-control" type="text" id="player2name" value="{{player2.name}}" ng-change="changePlayerName(1)" ng-model="player2.name">
-                        <select disabled class="form-control" ng-model="playerTypes2.value" ng-change="changePlayerType(1)" ng-options="v for v in playerTypes2.values">
+                        <select class="form-control" ng-model="playerTypes2.value" ng-change="changePlayerType(1)" ng-options="v for v in playerTypes2.values">
                         </select>
 
                     </div>
@@ -99,9 +99,8 @@
         die Anzahl der Simulationsschritte, die von den Agenten ausgeführt wurden, um die simulierten Spiele zu terminalen Zuständen
         zu führen, ist als Balkendiagramm dargestellt.
 
-
         <div class="statsContent" create-charts-if-finished
-             ng-repeat="agent in metaAgents track by agent.ID">
+             ng-repeat="agent in metaAgents">
 
             <h5>Meta Agent ID {{agent.ID}}</h5>
             <div id="chart-{{agent.ID}}"></div>

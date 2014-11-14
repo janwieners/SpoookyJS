@@ -55,6 +55,10 @@ body {
     font-size: 17px;
 }
 
+#reloadButton {
+    height: 58px;
+}
+
 #postGameReloadButton {
     margin: 5px 0 7px 0;
 }

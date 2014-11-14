@@ -11,6 +11,7 @@ Spoooky.AngularWrapper = function(arguments) {
 
     self_AngularWrapper.game = arguments.game;
     self_AngularWrapper.players = self_AngularWrapper.game.getPlayers();
+    self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
     self_AngularWrapper.cellWidth = arguments.cellWidth;
     self_AngularWrapper.cellHeight = arguments.cellHeight;
 
@@ -19,6 +20,13 @@ Spoooky.AngularWrapper = function(arguments) {
     // Catch errors
     window.onerror = catchError;
 
+    /**
+     * Catch JavaScript error messages
+     * @param errorMessage
+     * @param errorFile
+     * @param errorLine
+     * @returns {boolean}
+     */
     function catchError(errorMessage, errorFile, errorLine) {
 
         //console.log(errorMessage, errorFile, errorLine)
@@ -65,7 +73,7 @@ Spoooky.AngularWrapper = function(arguments) {
      * Controller for the game settings element
      * :O Uuuh, I'm ugly, please refactor me!
      */
-    self_AngularWrapper.module.controller("GameSettingsCtrl", function($scope, $modal) {
+    self_AngularWrapper.module.controller("GameSettingsCtrl", function($scope, $modal, $rootScope) {
 
         // Prepare player types
         $scope.playerTypes1 = {
@@ -165,6 +173,7 @@ Spoooky.AngularWrapper = function(arguments) {
          */
         $scope.changePlayerName = function(playerID) {
 
+            // ToDo - Refactor me!
             switch(playerID) {
 
                 case 0:
@@ -190,28 +199,52 @@ Spoooky.AngularWrapper = function(arguments) {
          */
         $scope.changePlayerType = function(playerID) {
 
-            switch(playerID) {
+            var metaAgent = self_AngularWrapper.players[playerID];
 
+            // ToDo Refactor me!
+            switch (playerID) {
                 case 0:
                     if ($scope.playerTypes1.value === "Menschlicher Spieler/in") {
-                        self_AngularWrapper.players[0].setType("HUMAN");
+                        metaAgent.setType("HUMAN");
                     } else {
-                        self_AngularWrapper.players[0].setType("ARTIFICIAL");
+                        metaAgent.setType("ARTIFICIAL");
                     }
                     break;
 
                 case 1:
                     if ($scope.playerTypes2.value === "Menschlicher Spieler/in") {
-                        self_AngularWrapper.players[1].setType("HUMAN");
+                        metaAgent.setType("HUMAN");
                     } else {
-                        self_AngularWrapper.players[1].setType("ARTIFICIAL");
-                    }
-                    break;
 
-                default:
-                    console.log("Invalid player ID");
+
+                        metaAgent.setType("ARTIFICIAL");
+
+                        if (metaAgent.countAgents() === 0) {
+                            metaAgent.assembleAgents();
+                        }
+                    }
             }
 
+            // Do some extra work for artificial players / meta agents
+            if (metaAgent.type === "ARTIFICIAL") {
+
+                self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
+
+                // Create agent ensemble if necessary
+                if (metaAgent.countAgents() === 0) {
+                    metaAgent.assembleAgents();
+                }
+
+                // Execute an artificial move if its current meta agent's turn
+                if (self_AngularWrapper.game.models.currentPlayerID === metaAgent.ID) {
+                    self_AngularWrapper.game.playArtificial();
+                }
+            } else {
+                self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
+            }
+
+            // Notify other controllers about changed meta agents
+            $rootScope.$broadcast("metaAgentChange");
         };
     });
 
@@ -229,6 +262,12 @@ Spoooky.AngularWrapper = function(arguments) {
             "MOVES NEAR OPPONENT FIELDS",
             "MOVES NEAR OPPONENT OR OWN FIELDS"
         ];
+
+        // Listen for changes in settings controller
+        $scope.$on("metaAgentChange", function() {
+            // Update array of meta agents
+            $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+        });
 
         /**
          * Deletes an agent with agenteID from the ensemble of meta agent metaID
@@ -565,7 +604,7 @@ Spoooky.AngularWrapper = function(arguments) {
             if (scope.$last) {
                 $timeout(function () {
                     $timeout(function () {
-                        scope.$emit('onRepeatLast', element, attrs);
+                        scope.$emit("createCharts", element, attrs);
                     }, 0);
                 }, 0);
             }
@@ -583,7 +622,22 @@ Spoooky.AngularWrapper = function(arguments) {
 
         self_AngularWrapper.game.connectStatsView($scope);
 
-        $scope.$on("onRepeatLast", function() {
+        // Listen for changes in settings controller
+        $scope.$on("metaAgentChange", function() {
+
+            // Update array of meta agents
+            $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+
+            // Create new chart for meta agent if necessary
+            for (var i = 0; i < $scope.metaAgents.length; i++) {
+
+                if (_.isUndefined($scope.charts[$scope.metaAgents[i].ID])) {
+                    $scope.createChart($scope.metaAgents[i].ID);
+                }
+            }
+        });
+
+        $scope.$on("createCharts", function() {
 
             for (var i = 0; i < $scope.metaAgents.length; i++) {
                 $scope.createChart($scope.metaAgents[i].ID);
@@ -667,8 +721,8 @@ Spoooky.AngularWrapper = function(arguments) {
                 axis: {
                     y: {
                         label: {
-                            text: 'Simulationsschritte (simulierte Spielrunden)',
-                            position: 'outer-middle'
+                            text: "Simulationsschritte (simulierte Spielrunden)",
+                            position: "outer-middle"
                         },
                         tick: {
                             format: d3.format("d")
@@ -677,8 +731,8 @@ Spoooky.AngularWrapper = function(arguments) {
                     y2: {
                         show: true,
                         label: {
-                            text: 'Simulierte Spiele',
-                            position: 'outer-middle'
+                            text: "Simulierte Spiele",
+                            position: "outer-middle"
                         },
                         tick: {
                             format: d3.format("d")
@@ -687,9 +741,9 @@ Spoooky.AngularWrapper = function(arguments) {
                 },
                 tooltip: {
                     format: {
-                        title: function (d) { return 'Spielrunde ' + d; },
+                        title: function (d) { return "Spielrunde " + d; },
                         value: function (value, ratio, id) {
-                            var format = id === 'data1' ? d3.format('d') : d3.format('d');
+                            var format = id === "data1" ? d3.format("d") : d3.format("d");
                             return format(value);
                         }
                     }
