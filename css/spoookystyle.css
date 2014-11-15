@@ -509,6 +509,42 @@ position: fixed;
     background-color: #6b7279;
 }
 
+.horizontalLine, .verticalLine {
+    position: relative;
+    z-index: 1;
+}
+
+.dot {
+    text-align: center;
+}
+
+.dot:before {
+    content: ' \25CF';
+    color: #333;
+    font-size: 25px;
+}
+
+.horizontalLine:before {
+
+    border-top: 2px solid #333;
+    content:"";
+    margin: 0 auto; /* this centers the line to the full width specified */
+    position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+    top: 50%; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    z-index: -1;
+}
+
+.verticalLine:before {
+    border-right: 2px solid #333;
+    content:"";
+    margin: 0 auto; /* this centers the line to the full width specified */
+    position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+    top: 0; left: 0; right: 50%; bottom: 0;
+    height: 100%;
+    z-index: -1;
+}
+
 .entityAtCell {
     background-size: cover;
     background-repeat: no-repeat;
