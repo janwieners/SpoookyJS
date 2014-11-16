@@ -19,8 +19,9 @@ var player2 = game.createPlayer({
     type: "HUMAN"
 });
 
-// Spieler 1 (weiß) startet das Spiel
 game.setPlayer(player1);
+
+game.setGameMode("PLACING");
 
 var vline = "verticalLine",
     hline = "horizontalLine",
@@ -28,24 +29,29 @@ var vline = "verticalLine",
     w = "gridCellWhite";
     b = "gridCellBlack";
 
-game.setupGridWorld(11, 11, [
-    dot, hline, hline, hline, hline, dot, hline, hline, hline, hline, dot,
-    vline, w, w, w, w, vline, w, w, w, w, vline,
-    vline, w, dot, hline, hline, dot, hline, hline, dot, w, vline,
-    vline, w, vline, w, w, vline, w, w, vline, w, vline,
-    vline, w, vline, w, dot, dot, dot, w, vline, w, vline,
-    dot, hline, dot, hline, dot, w, dot, hline, dot, hline ,dot,
-    vline, w, vline, w, dot, dot, dot, w, vline, w, vline,
-    vline, w, vline, w, w, vline, w, w, vline, w, vline,
-    vline, w, dot, hline, hline, dot, hline, hline, dot, w, vline,
-    vline, w, w, w, w, vline, w, w, w, w, vline,
-    dot, hline, hline, hline, hline, dot, hline, hline, hline, hline, dot
+game.setupGridWorld(13, 13, [
+    dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot,
+    vline, w, w, w, w, w, vline, w, w, w, w, w, vline,
+    vline, w, dot, hline, hline, hline, dot, hline, hline, hline, dot, w, vline,
+    vline, w, vline, w, w, w, vline, w, w, w, vline, w, vline,
+    vline, w, vline, w, dot, hline, dot, hline, dot, w, vline, w, vline,
+    vline, w, vline, w, vline, w, w, w, vline, w, vline, w, vline,
+    dot, hline, dot, hline, dot, w, w, w, dot, hline, dot, hline, dot,
+    vline, w, vline, w, vline, w, w, w, vline, w, vline, w, vline,
+    vline, w, vline, w, dot, hline, dot, hline, dot, w, vline, w, vline,
+    vline, w, vline, w, w, w, vline, w, w, w, vline, w, vline,
+    vline, w, dot, hline, hline, hline, dot, hline, hline, hline, dot, w, vline,
+    vline, w, w, w, w, w, vline, w, w, w, w, w, vline,
+    dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot
 ]);
+
+var black = game.addBlueprint(player2, Spoooky.Blueprints.TICTACTOE.entities.black),
+    white = game.addBlueprint(player1, Spoooky.Blueprints.TICTACTOE.entities.white);
 
 // ***************************** //
 // *** Interface / AngularJS *** //
 // ***************************** //
 Spoooky.AngularWrapper({
     game : game,
-    cellWidth : 45,
-    cellHeight : 45 });
+    cellWidth : 37,
+    cellHeight : 37 });
