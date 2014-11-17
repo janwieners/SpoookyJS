@@ -130,6 +130,15 @@ body {
     color: #333;
 }
 
+.nav > li > a:hover {
+    background-color: #e7e7e7;
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus,
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #e7e7e7;
+}
+
 /* Add navbar-margins for high resolutions */
 @media (min-width: 1000px) {
 
@@ -313,6 +322,10 @@ position: fixed;
     width: 55px;
     height: 55px;
     /* border: 1px solid #555; */
+}
+
+.gridCell.disabled {
+    cursor: default;
 }
 
 .move_standard, .move_goal, .move_place {
