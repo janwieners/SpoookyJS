@@ -23,11 +23,10 @@ game.setPlayer(player1);
 
 game.setGameMode("PLACING");
 
-var vline = "verticalLine",
-    hline = "horizontalLine",
-    dot = "dot",
-    w = "gridCellWhite";
-    b = "gridCellBlack";
+var vline = "verticalLine disabled",
+    hline = "horizontalLine disabled",
+    w = "gridCellWhite disabled",
+    dot = "dot";
 
 game.setupGridWorld(13, 13, [
     dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot,
@@ -44,6 +43,8 @@ game.setupGridWorld(13, 13, [
     vline, w, w, w, w, w, vline, w, w, w, w, w, vline,
     dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot
 ]);
+
+//game.addEntityToGame(bluePrint, quantity);
 
 var black = game.addBlueprint(player2, Spoooky.Blueprints.TICTACTOE.entities.black),
     white = game.addBlueprint(player1, Spoooky.Blueprints.TICTACTOE.entities.white);
