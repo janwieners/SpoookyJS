@@ -705,10 +705,11 @@ Spoooky.AngularWrapper = function(arguments) {
                     types: {
                         Rollouts: "line",
                         Simulationsschritte : "bar"
+                    },
+                    colors : {
+                        Rollouts : "#004b86",
+                        Simulationsschritte : "#88C356"
                     }
-                },
-                color: {
-                    pattern: ["#004b86", "#88C356"]
                 },
                 grid: {
                     x: {
@@ -737,6 +738,9 @@ Spoooky.AngularWrapper = function(arguments) {
                         tick: {
                             format: d3.format("d")
                         }
+                    },
+                    x: {
+                        type: "category"
                     }
                 },
                 tooltip: {
