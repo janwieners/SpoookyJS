@@ -7,11 +7,11 @@
  * Dependencies:
  *  - jQuery 2.1.1
  *  - Bootstrap 3.3.1
- *  - AngularJS 1.3.4
+ *  - AngularJS 1.3.5
  *  - Angular UI Bootstrap 0.12.0
  *  - Underscore.js 1.7.0
  *  - D3.js 3.4.13
- *  - C3.js 0.4.6
+ *  - C3.js 0.4.7
  **/
 
 Spoooky = {};
