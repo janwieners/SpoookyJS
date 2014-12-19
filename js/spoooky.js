@@ -5,7 +5,7 @@
  * Version 0.3.15 "The Erlenmeyer Flask" (November 2014)
  *
  * Dependencies:
- *  - jQuery 2.1.1
+ *  - jQuery 2.1.3
  *  - Bootstrap 3.3.1
  *  - AngularJS 1.3.7
  *  - Angular UI Bootstrap 0.12.0
