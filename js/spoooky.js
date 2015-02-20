@@ -12,7 +12,6 @@
  *  - Underscore.js 1.8.1
  *  - D3.js 3.5.5
  *  - C3.js 0.4.9
- *
  **/
 
 Spoooky = {};
