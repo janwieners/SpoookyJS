@@ -836,9 +836,14 @@ Spoooky.AngularWrapper = function(arguments) {
          * @param xPos
          * @param yPos
          */
-        $scope.cellClicked = function(xPos, yPos) {
-            if ($scope.game.getCurrentPlayerType() === "HUMAN") {
-                $scope.game.loop(false, xPos, yPos);
+        $scope.cellClicked = function(xPos, yPos, cellIsEnabled) {
+
+            if (cellIsEnabled) {
+
+                if ($scope.game.getCurrentPlayerType() === "HUMAN") {
+
+                    $scope.game.loop(false, xPos, yPos);
+                }
             }
         };
 

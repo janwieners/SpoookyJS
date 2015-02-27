@@ -16,7 +16,7 @@
 
             <td ng-repeat="cell in row" id="cell_{{$index}}-{{$parent.$index}}"
                 class="gridCell {{cell.view.baseClass}} {{cell.view.cellClass}}"
-                ng-click="cellClicked($index, $parent.$index)"
+                ng-click="cellClicked($index, $parent.$index, cell.enabled)"
                 ng-style="styleCell()" ng-cloak>
 
                 <div ng-if="entityAtCell(cell)"

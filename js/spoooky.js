@@ -114,6 +114,7 @@ Spoooky = {};
          *      }
          *      position : { x : {number}, y : {number} },
          *      view : { baseClass : {string}, cellClass : {string}
+         *      enabled : {boolean}
          * }
          */
         self_Models.GameGrid = [];
@@ -3661,6 +3662,7 @@ Spoooky = {};
          * @returns {*|AbstractView}
          */
         self_GridWelt.getView = function(cellX, cellY) {
+
             if (self_GridWelt.isValidCoordinate(cellX, cellY)) {
                 return myGame.models.GameGrid[cellY][cellX].view;
             }
@@ -3706,12 +3708,20 @@ Spoooky = {};
             var counter = 0,
                 maxX = self_GridWelt.getRows(),
                 maxY = self_GridWelt.getColumns(),
-                x;
+                x, curCSS;
 
             for (var y = 0; y < maxX; y += 1) {
                 for (x = 0; x < maxY; x += 1) {
 
-                    self_GridWelt.setCellBaseClass(x, y, gameBoardArray[counter]);
+                    curCSS = gameBoardArray[counter];
+
+                    self_GridWelt.setCellBaseClass(x, y, curCSS);
+
+                    // If necessary: disable fields
+                    if (curCSS.indexOf("disabled") !== -1) {
+                        // disable this cell
+                        myGame.models.GameGrid[x][y].enabled = false;
+                    }
                     counter += 1;
                 }
             }
@@ -3758,7 +3768,6 @@ Spoooky = {};
                 for (curColumn = 0 ; curColumn < columnCount; curColumn += 1) {
 
                     // Create a new grid cell
-                    // (previously realized through class Spoooky.GridCell)
                     gridRow.push({
                         // ID of the cell, used i.e. in backgammon
                         cellID : null,
@@ -3771,7 +3780,8 @@ Spoooky = {};
                         position : {
                             x : curColumn,
                             y : curRow
-                        }
+                        },
+                        enabled : true
                     });
                 }
                 myGame.models.GameGrid.push(gridRow);
@@ -4055,9 +4065,18 @@ Spoooky = {};
                 for (curRow = maxRow; curRow--;) {
 
                     currentCell = grid[curRow][curColumn];
-                    if (currentCell.contains.length === 0) {
-                        // Found free field
-                        freeFields.push({ x : curColumn, y : curRow });
+
+                    // Check if cell is disabled
+                    if (currentCell.enabled) {
+
+                        // Check if cell contains an entity
+                        if (currentCell.contains.length === 0) {
+
+                            //
+
+                            // Found free field
+                            freeFields.push({x: curColumn, y: curRow});
+                        }
                     }
                 }
             }

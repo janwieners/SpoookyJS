@@ -528,16 +528,17 @@ position: fixed;
 }
 
 .dot {
-    background: #bbb;
+    background: #ddd;
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
+    border: 1px solid #aaa;
     margin: 25px;
 }
 
 .horizontalLine:before {
     border-top: 2px solid #333;
-    content:"";
+    content: "";
     margin: 0 auto; /* this centers the line to the full width specified */
     position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
     top: 50%; left: 0; right: 0; bottom: 0;
@@ -547,7 +548,7 @@ position: fixed;
 
 .verticalLine:before {
     border-right: 2px solid #333;
-    content:"";
+    content: "";
     margin: 0 auto; /* this centers the line to the full width specified */
     position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
     top: 0; left: 0; right: 50%; bottom: 0;

@@ -44,10 +44,29 @@ game.setupGridWorld(13, 13, [
     dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot
 ]);
 
+// Blueprints of the starting pieces
+var blackStone = {
+    entityType : "Black",
+    typeID : "B",
+    associatedWithMetaAgent : null,
+    representation : { type : "image", texture : "assets/black.png" },
+    mode : "PLACE",
+    placeTo : "ANY"
+};
+
+var whiteStone = {
+    entityType : "White",
+    typeID : "W",
+    associatedWithMetaAgent : null,
+    representation : { type : "image", texture : "assets/white.png" },
+    mode : "PLACE",
+    placeTo : "ANY"
+};
+
 //game.addEntityToGame(bluePrint, quantity);
 
-var black = game.addBlueprint(player2, Spoooky.Blueprints.TICTACTOE.entities.black),
-    white = game.addBlueprint(player1, Spoooky.Blueprints.TICTACTOE.entities.white);
+var black = game.addBlueprint(player2, blackStone),
+    white = game.addBlueprint(player1, whiteStone);
 
 // ***************************** //
 // *** Interface / AngularJS *** //
