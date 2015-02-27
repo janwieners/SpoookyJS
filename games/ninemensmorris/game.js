@@ -63,10 +63,9 @@ var whiteStone = {
     placeTo : "ANY"
 };
 
-//game.addEntityToGame(bluePrint, quantity);
-
-var black = game.addBlueprint(player2, blackStone),
-    white = game.addBlueprint(player1, whiteStone);
+var quantity = 3;
+var black = game.addBlueprint(player2, blackStone, quantity),
+    white = game.addBlueprint(player1, whiteStone, quantity);
 
 // ***************************** //
 // *** Interface / AngularJS *** //

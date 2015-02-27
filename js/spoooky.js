@@ -567,8 +567,9 @@ Spoooky = {};
          * Add an entity blueprint to the games list of blueprints
          * @param player
          * @param blueprint
+         * @param quantity {number}
          */
-        self_Game.addBlueprint = function(player, blueprint) {
+        self_Game.addBlueprint = function(player, blueprint, quantity) {
 
             // Add the blueprint to the game model
             self_Game.models.Blueprints[blueprint.entityType] = _.clone(blueprint);
@@ -576,7 +577,7 @@ Spoooky = {};
             if (player) {
 
                 // Associate the blueprint / entity with a meta agent / player
-                player.associateEntity(self_Game.models.Blueprints[blueprint.entityType]);
+                player.associateEntity(self_Game.models.Blueprints[blueprint.entityType], quantity);
             }
 
             return self_Game.models.Blueprints[blueprint.entityType];
@@ -3393,14 +3394,19 @@ Spoooky = {};
          */
         self_Game.addEntityToGame = function(bluePrint, quantity) {
 
-            //  Create Entities for players
+            // Create Entities for players
             var metaAgent = self_Game.getPlayerWithID(bluePrint.associatedWithMetaAgent);
 
+            // Use a finite number of entites...
             if (quantity) {
-                for (var counter = 0; counter < quantity; counter++) {
+
+                bluePrint.unlimitedQuantity = false;
+                //for (var counter = 0; counter < quantity; counter++) {
+                //    console.log('here')
                     metaAgent.entityFactory(bluePrint);
-                }
+                //}
             } else {
+                // Or give the player an undefined number of entities
                 bluePrint.unlimitedQuantity = true;
                 metaAgent.entityFactory(bluePrint);
             }
@@ -4503,7 +4509,12 @@ Spoooky = {};
                         getEntityWithID(tmp.ID), jobArgs = gameEvent.jobArguments;
 
                 // ToDo implement later
-                // if (entity.unlimitedQuantity) {}
+                // Count down the number of placeable entities of the current player
+                if (!entity.unlimitedQuantity) {
+
+                    console.log('ERE')
+
+                }
 
                 game.pushEntityToCell(entity,
                     jobArgs.xPosition, jobArgs.yPosition);
@@ -5297,14 +5308,14 @@ Spoooky = {};
          * Associate an entity with the meta agent
          * @param entity
          */
-        self_MetaAgent.associateEntity = function(entity) {
+        self_MetaAgent.associateEntity = function(entity, quantity) {
 
             // Associate the entity with the meta agent
             entity.associatedWithMetaAgent = self_MetaAgent.ID;
 
             // Add placeable entity to the game
             if (entity.mode === "PLACE") {
-                self_MetaAgent.getGame().addEntityToGame(entity);
+                self_MetaAgent.getGame().addEntityToGame(entity, quantity);
             }
         };
 

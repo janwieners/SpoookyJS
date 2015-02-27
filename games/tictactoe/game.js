@@ -40,12 +40,6 @@ game.setupGridWorld(3, 3, [
 var black = game.addBlueprint(player2, Spoooky.Blueprints.TICTACTOE.entities.black),
     white = game.addBlueprint(player1, Spoooky.Blueprints.TICTACTOE.entities.white);
 
-game.addEntitiesToGameBoard([
-    0, 0, 0,
-    0, 0, 0,
-    0, 0, 0
-]);
-
 // Set the player who will start the game
 game.setPlayer(player1);
 
