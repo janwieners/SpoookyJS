@@ -95,31 +95,6 @@ game.addEntitiesToGameBoard([
     white_rook_left, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight, white_rook_right
 ]);
 
-/*
-game.addEntitiesToGameBoard([
-    0, 0, 0, white_queen, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, black_king, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, white_queen, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, white_queen, 0, 0, white_queen, 0, 0, 0,
-    white_rook_left, white_knight, white_bishop, white_queen, white_king, white_bishop, white_knight, white_rook_right
-]);
-*/
-/*
-game.addEntitiesToGameBoard([
-    black_rook_left, black_knight, black_bishop, black_queen, black_king, black_bishop, black_knight, black_rook_right,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, white_queen, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    white_rook_left, white_queen, white_queen, white_queen, white_king, 0, 0, white_rook_right
-]);
-*/
-
 // Spieler 1 (weiß) startet das Spiel
 game.setPlayer(player1);
 

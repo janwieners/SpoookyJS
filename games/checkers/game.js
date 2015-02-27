@@ -59,31 +59,6 @@ game.connectConsequences(Spoooky.Blueprints.CHECKERS.consequences.topPlayer);
 game.connectConsequences(Spoooky.Blueprints.CHECKERS.consequences.bottomPlayer);
 
 // Default setup
-
-/*
-game.addEntitiesToGameBoard([
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, p1std, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, p2std, 0, 0, 0, 0, 0,
-    0, p1std, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-]);
-*/
-/*
-game.addEntitiesToGameBoard([
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, p1std, 0,
-    0, p1std, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, p1std, 0, p1std, 0, p2std, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-]);
-*/
 game.addEntitiesToGameBoard([
     0, p2std, 0, p2std, 0, p2std, 0, p2std,
     p2std, 0, p2std, 0, p2std, 0, p2std, 0,
