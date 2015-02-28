@@ -63,9 +63,32 @@ var whiteStone = {
     placeTo : "ANY"
 };
 
-var quantity = 3;
+var quantity = 1;
 var black = game.addBlueprint(player2, blackStone, quantity),
     white = game.addBlueprint(player1, whiteStone, quantity);
+
+// Game Rules
+
+// Change game mode to "MOVING" if every entity of the players has been placed
+// on the game board
+game.addGameRuleAtom({
+    atomName : "Every entity has been placed on the game board",
+    atomFunction : "All players have placed their entities on the game board"
+});
+
+// Assemble goal atoms to game goals
+game.assembleGameRule({
+    name     : "Change game mode to moving",
+    atoms    : ["Every entity has been placed on the game board"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Change game mode to moving",
+    consequences : [{
+        jobName: "Let the players move their entities",
+        jobFunction: "Change Game Mode",
+        jobArguments: { mode: "MOVING" }
+    }]});
 
 // ***************************** //
 // *** Interface / AngularJS *** //

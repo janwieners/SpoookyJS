@@ -1499,6 +1499,27 @@ Spoooky = {};
                 return (self_Game.getPlayerWithID(currentRuleAtom.atomArguments).countEntities() !== 0);
             },
 
+            "All players have placed their entities on the game board": function() {
+
+                var players = self_Game.getPlayers(),
+                    entities, cnt;
+
+                for (var i = players.length; i--;) {
+
+                    entities = players[i].getEntities();
+
+                    for (cnt = entities.length; cnt--;) {
+
+                        if (!entities[cnt].onBoard) {
+
+                            return false;
+                        }
+                    }
+                }
+                return true;
+
+            },
+
             "Player Has No Movable Entities": function(currentRuleAtom) {
                 // returns true if no entity, owned by meta agent, can move
                 var currentPlayer = self_Game.getPlayerWithID(currentRuleAtom.atomArguments),
@@ -3401,10 +3422,9 @@ Spoooky = {};
             if (quantity) {
 
                 bluePrint.unlimitedQuantity = false;
-                //for (var counter = 0; counter < quantity; counter++) {
-                //    console.log('here')
+                for (var counter = quantity; counter--;) {
                     metaAgent.entityFactory(bluePrint);
-                //}
+                }
             } else {
                 // Or give the player an undefined number of entities
                 bluePrint.unlimitedQuantity = true;
@@ -4508,12 +4528,11 @@ Spoooky = {};
                     entity = game.getPlayerWithID(tmp.associatedWithPlayerID).
                         getEntityWithID(tmp.ID), jobArgs = gameEvent.jobArguments;
 
-                // ToDo implement later
                 // Count down the number of placeable entities of the current player
                 if (!entity.unlimitedQuantity) {
 
-                    console.log('ERE')
-
+                    // Add a flag to signalize that this entity has been placed on the game board
+                    entity.onBoard = true;
                 }
 
                 game.pushEntityToCell(entity,
@@ -5496,12 +5515,28 @@ Spoooky = {};
          */
         self_MetaAgent.getPlaceableEntities = function() {
 
-            var returnEntities = [], cur;
+            var returnEntities = [], cur,
+                index = self_MetaAgent.countEntities(),
+                metaID = self_MetaAgent.ID;
 
-            for (var index = self_MetaAgent.countEntities(); index--;) {
+            for (; index--;) {
 
-                cur = myGame.models.Entities[self_MetaAgent.ID][index];
-                if (cur.mode === "PLACE") { returnEntities.push(cur); }
+                cur = myGame.models.Entities[metaID][index];
+
+                if (cur.mode === "PLACE") {
+
+                    // If there's an unlimited number of agent's entities...
+                    if (cur.unlimitedQuantity) {
+                        // ...then add this entity to the game board
+                        returnEntities.push(cur);
+                    } else {
+                        // Otherwise check if current entity is already on the game board
+                        if (!cur.onBoard) {
+                            returnEntities.push(cur);
+                        }
+                    }
+
+                }
             }
             return returnEntities;
         };
