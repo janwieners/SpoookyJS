@@ -64,7 +64,7 @@ var whiteStone = {
 };
 
 var quantity = 1;
-var black = game.addBlueprint(player2, blackStone, quantity),
+var black = game.addBlueprint(player2, blackStone, 1),
     white = game.addBlueprint(player1, whiteStone, quantity);
 
 // Game Rules
@@ -88,7 +88,12 @@ game.connectGameRuleConsequences({
         jobName: "Let the players move their entities",
         jobFunction: "Change Game Mode",
         jobArguments: { mode: "MOVING" }
-    }]});
+    }, {
+        jobName: "Delete this game rule",
+        jobFunction: "Delete Game Rule",
+        jobArguments: { ruleName: "Change game mode to moving" }
+    }
+    ]});
 
 // ***************************** //
 // *** Interface / AngularJS *** //

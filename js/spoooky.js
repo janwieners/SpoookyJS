@@ -4651,12 +4651,7 @@ Spoooky = {};
                     parseInt(srcY + gameEvent.jobArguments[1], 10));
             },
 
-            /**
-             * Move an entity with a specific name
-             * @param gameEvent
-             * @param game
-             * @returns {boolean}
-             */
+            // Move an entity with a specific name
             "Move Entity With Name" : function(gameEvent, game) {
 
                 // Search for an entity with entityName
@@ -4708,6 +4703,27 @@ Spoooky = {};
                 } else {
                     console.log("Error: Wrong Game Mode", mode);
                 }
+            },
+
+            "Delete Game Rule" : function(gameEvent, game) {
+
+                // Delete a game rule but maintain associated game rule atoms
+                var rules = game.models.GameRules,
+                    i = rules.length, ruleName = gameEvent.jobArguments.ruleName;
+
+                for (; i--;) {
+
+                    // Assume that a game rule is unique
+                    if (ruleName === rules[i].name) {
+
+                        game.models.GameRules.splice(i, 1);
+                        return true;
+                    }
+                }
+
+                // No game rule with ruleName has been found
+                return false;
+
             },
 
             "Capture Opponent At" : function(gameEvent, game) {
