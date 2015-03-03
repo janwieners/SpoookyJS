@@ -147,7 +147,7 @@ Spoooky = {};
         /**
          * Holds dices, current dice values and
          * move identifier attached to dice values
-         * @type {Array}
+         * @type {{isEnabled: boolean, dices: Array, diceValues: Array, attachedMoveIDs: Array}}
          */
         self_Models.DiceBox = {
 
@@ -249,7 +249,7 @@ Spoooky = {};
 
         /**
          * Size of the game world
-         * @type {{fieldsX: number, fieldsY: number}}
+         * @type {{rows: number, columns: number}}
          */
         self_Models.worldDimensions = {
             rows : 0,
@@ -500,9 +500,8 @@ Spoooky = {};
 
         /**
          * Connection to the game model
-         * @type {{}}
          */
-        self_Game.models = {};
+        self_Game.models;
 
         /**
          * Helper function: Reset an array"s content
@@ -4181,9 +4180,10 @@ Spoooky = {};
         /**
          * Get all fields with a specific field identifier
          * @param fieldID
+         * @param getOnlyOne
          * @returns {Array}
          */
-        self_GridWelt.getFieldsWithFieldID = function(fieldID) {
+        self_GridWelt.getFieldsWithFieldID = function(fieldID, getOnlyOne) {
 
             var listOfFields = [],
                 maxCol = self_GridWelt.getColumns(),
@@ -4195,7 +4195,13 @@ Spoooky = {};
                 for (curRow = maxRow; curRow--;) {
 
                     currentCell = grid[curRow][curColumn];
+
                     if (currentCell.cellID === fieldID) {
+
+                        if (getOnlyOne) {
+                            return currentCell;
+                        }
+
                         listOfFields.push(currentCell);
                     }
                 }
@@ -7512,6 +7518,7 @@ Spoooky = {};
 
         /**
          * Get all executable moves of the entity
+         * !Performance critical!
          * @returns {*}
          */
         self_Entity.getMoves = function() {
@@ -7520,183 +7527,70 @@ Spoooky = {};
 
             if (moveCount <= 0) { return false; }
 
-            var moveID, currentMove, frequency, currentX, currentY,
+            var moveID, currentMove, frequency, currentX, currentY, freqCnt,
                 destX, destY, possibleMoves = [], game = self_Entity.getGame();
 
             for (var moveCounter = moveCount; moveCounter--;) {
 
                 currentMove = self_Entity.getMove(moveCounter);
 
-                // 2D Move
-                if (currentMove.frequency > 0 || currentMove.frequency === "ANY") {
+                switch (currentMove.type) {
 
-                    frequency = currentMove.frequency;
-                    currentX = self_Entity.position.x;
-                    currentY = self_Entity.position.y;
+                    // Default 2D move
+                    case "Default":
 
-                    if (frequency === "ANY") {
-                        frequency = 23;
-                    }
+                        if (currentMove.frequency > 0 || currentMove.frequency === "ANY") {
 
-                    // Check every possible move of the entity
-                    for (var freqCnt = 1; freqCnt <= frequency; freqCnt += 1) {
+                            frequency = currentMove.frequency;
+                            currentX = self_Entity.position.x;
+                            currentY = self_Entity.position.y;
 
-                        destX = currentX + currentMove.xDirection * freqCnt;
-                        destY = currentY + currentMove.yDirection * freqCnt;
-
-                        if (self_Entity.getWorld().isEmpty(destX, destY) === false) { break; }
-
-                        // Check every move condition
-                        if (game.isLegalMove(self_Entity, currentMove.conditions,
-                                currentX, currentY,destX, destY)) {
-
-                            moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
-                                destX, destY);
-
-                            possibleMoves.push({
-                                type : "MOVE",
-                                name : currentMove.name,
-                                entity: self_Entity,
-                                targetX : destX,
-                                targetY : destY,
-                                moveClass : "move_standard",
-                                freq : frequency,
-                                ID : moveID,
-                                postMove : currentMove.postMove
-                            });
-
-                            game.addJobForMoveID({
-                                jobID : moveID,
-                                jobName : "move game entity",
-                                job : "Move Entity",
-                                jobArguments : {
-                                    "entity" : self_Entity,
-                                    "destX" : destX,
-                                    "destY" : destY
-                                }
-                            });
-
-                            if (currentMove.postMove) {
-
-                                _.each(currentMove.postMove, function(postMove) {
-
-                                    game.addJobForMoveID({
-                                        jobID : moveID,
-                                        jobName : postMove.jobName,
-                                        job : postMove.jobFunction,
-                                        jobArguments : postMove.jobArguments
-                                    });
-                                });
+                            if (frequency === "ANY") {
+                                frequency = 23;
                             }
-                        }
-                    }
-                } else if (currentMove.frequency === "DICE") {
 
-                    // *** CHECK DICE MOVES - Currently: Check Backgammon Moves ***
-                    var diceValues = game.getDiceBox().getDiceValues(),
-                        diceValueCount = diceValues.length,
-                        destArray = [],
-                        destFieldID = 0,
-                        curFieldID = -1,
-                        tmpFieldExists = false;
+                            // Check every possible move of the entity
+                            for (freqCnt = 1; freqCnt <= frequency; freqCnt += 1) {
 
-                    currentX = self_Entity.position.x;
-                    currentY = self_Entity.position.y;
+                                destX = currentX + currentMove.xDirection * freqCnt;
+                                destY = currentY + currentMove.yDirection * freqCnt;
 
-                    // Backgammon specific: If an entity has got a fieldID then the entity is in the bear off area
-                    // and must re-enter the game
-                    if (_.isUndefined(self_Entity.tmp.fieldID) === false) {
-                        curFieldID = self_Entity.tmp.fieldID;
-                        tmpFieldExists = true;
-                    } else {
-                        curFieldID = self_Entity.getWorld().getFieldID(currentX, currentY);
-                    }
+                                if (self_Entity.getWorld().isEmpty(destX, destY) === false) { break; }
 
-                    // Show moves for every dice value
-                    for (var curCounter = diceValueCount; curCounter--;) {
+                                // Check every move condition
+                                if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                        currentX, currentY,destX, destY)) {
 
-                        if (currentMove.direction[1] === "POSITIVE") {
-                            destFieldID = parseInt(curFieldID + diceValues[curCounter], 10);
-                        } else if (currentMove.direction[1] === "NEGATIVE") {
-                            destFieldID = parseInt(curFieldID - diceValues[curCounter], 10);
-                        } else {
-                            // ToDo Implement both directions
-                        }
-
-                        if (currentMove.type === "By Field ID") {
-
-                            // Legal move to an empty field - Backgammon specific
-                            if (self_Entity.countOpponentsOnFieldsWithID(destFieldID, self_Entity) === 0) {
-
-                                destArray = self_Entity.getWorld().getFreeFieldsWithFieldID(destFieldID);
-
-                                if (destArray[0]) {
-                                    destX = destArray[0][0];
-                                    // For Backgammon: put game entity on top or on bottom
-                                    if (destFieldID <= 12) {
-                                        destY = destArray[parseInt(destArray.length-1, 10)][1];
-                                    } else {
-                                        destY = destArray[0][1];
-                                    }
-
-                                    // Legal Move Found
-                                    moveID = game.getUniqueMoveID(self_Entity.name,
-                                        currentMove.name, destX, destY);
+                                    moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                        destX, destY);
 
                                     possibleMoves.push({
-                                        type : "DICE",
-                                        diceID : curCounter,
-                                        diceValue : diceValues[curCounter],
+                                        type : "MOVE",
                                         name : currentMove.name,
                                         entity: self_Entity,
                                         targetX : destX,
                                         targetY : destY,
                                         moveClass : "move_standard",
-                                        freq : "DICE",
+                                        freq : frequency,
                                         ID : moveID,
-                                        postmove : currentMove.postMove
+                                        postMove : currentMove.postMove
                                     });
-
-                                    if (tmpFieldExists === true) {
-
-                                        game.addJobForMoveID({
-                                            jobID : moveID,
-                                            jobName : "Put the entity to the destination field",
-                                            job : "Place Entity",
-                                            jobArguments : { entity : self_Entity,
-                                                xPosition : destX, yPosition : destY }
-                                        });
-
-                                        game.addJobForMoveID({
-                                            jobID : moveID,
-                                            jobName : "Remove the current entity from off board area",
-                                            job : "Delete Entity from OffBoard",
-                                            jobArguments : { entity : self_Entity }
-                                        });
-
-                                    } else {
-
-                                        game.addJobForMoveID({
-                                            jobID : moveID,
-                                            jobName : "move game entity",
-                                            job : "Move Entity",
-                                            jobArguments : {
-                                                "entity" : self_Entity,
-                                                "destX" : destX,
-                                                "destY" : destY
-                                            }
-                                        });
-                                    }
 
                                     game.addJobForMoveID({
                                         jobID : moveID,
-                                        jobName : "Delete Dice Value",
-                                        job : "Delete Dice Value",
-                                        jobArguments : curCounter
+                                        jobName : "move game entity",
+                                        job : "Move Entity",
+                                        jobArguments : {
+                                            "entity" : self_Entity,
+                                            "destX" : destX,
+                                            "destY" : destY
+                                        }
                                     });
 
                                     if (currentMove.postMove) {
+
                                         _.each(currentMove.postMove, function(postMove) {
+
                                             game.addJobForMoveID({
                                                 jobID : moveID,
                                                 jobName : postMove.jobName,
@@ -7705,73 +7599,273 @@ Spoooky = {};
                                             });
                                         });
                                     }
-                                } else if (self_Entity.countOwnOnFieldsWithID(destFieldID, self_Entity) ===
-                                    self_Entity.countFieldsWithID(destFieldID)) {
+                                }
+                            }
+                        }
 
-                                    // *** Destination Field Full - Put the entity on top of own entitys ***
-                                    var fields = self_Entity.getWorld().getFieldsWithFieldID(destFieldID);
+                        break;
+                    // End case "Default"
 
-                                    if (fields[0]) {
-                                        destX = fields[0].position.x;
-                                        if (destFieldID <= 12) {
-                                            destY = fields[0].position.y;
-                                        } else {
-                                            destY = fields[parseInt(fields.length-1, 10)].position.y;
-                                        }
+                    // Move to connected field(s)
+                    case "By Connected Field IDs":
 
-                                        // Prepare Legal Move
-                                        moveID = game.getUniqueMoveID(self_Entity.name,
-                                            currentMove.name, destX, destY);
+                        // All cell connections
+                        var connections = game.models.CellConnections;
 
-                                        possibleMoves.push({
-                                            type : "DICE",
-                                            diceValue : diceValues[curCounter],
-                                            name : currentMove.name,
-                                            entity: self_Entity,
-                                            targetX : destX,
-                                            targetY : destY,
-                                            moveClass : "move_standard",
-                                            freq : "DICE",
-                                            ID : moveID,
-                                            postmove : currentMove.postMove
-                                        });
+                        currentX = self_Entity.position.x;
+                        currentY = self_Entity.position.y;
+
+                        // Identify the ID of the current cell and get the target cells
+                        var cellID = game.models.GameGrid[currentY][currentX].cellID,
+                            targetCells = connections[cellID], targetCell;
+
+                        for (var i = targetCells.length; i--;) {
+
+                            // Use only the first retrieved cell
+                            targetCell = self_Entity.getWorld().getFieldsWithFieldID(targetCells[i], true);
+
+                            destX = targetCell.position.x;
+                            destY = targetCell.position.y;
+
+                            if (self_Entity.getWorld().isEmpty(destX, destY) === false) { break; }
+
+                            // Check every move condition
+                            if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                    currentX, currentY,destX, destY)) {
+
+                                moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                    destX, destY);
+
+                                possibleMoves.push({
+                                    type : "MOVE",
+                                    name : currentMove.name,
+                                    entity: self_Entity,
+                                    targetX : destX,
+                                    targetY : destY,
+                                    moveClass : "move_standard",
+                                    freq : frequency,
+                                    ID : moveID,
+                                    postMove : currentMove.postMove
+                                });
+
+                                game.addJobForMoveID({
+                                    jobID : moveID,
+                                    jobName : "move game entity",
+                                    job : "Move Entity",
+                                    jobArguments : {
+                                        "entity" : self_Entity,
+                                        "destX" : destX,
+                                        "destY" : destY
+                                    }
+                                });
+
+                                if (currentMove.postMove) {
+
+                                    _.each(currentMove.postMove, function(postMove) {
 
                                         game.addJobForMoveID({
                                             jobID : moveID,
-                                            jobName : "move game entity",
-                                            job : "Move Entity",
-                                            jobArguments : {
-                                                "entity" : self_Entity,
-                                                "destX" : destX,
-                                                "destY" : destY
+                                            jobName : postMove.jobName,
+                                            job : postMove.jobFunction,
+                                            jobArguments : postMove.jobArguments
+                                        });
+                                    });
+                                }
+                            }
+                        }
+
+                        break;
+                    // End case "By Connected Field IDs"
+
+                    // Check dice moves - Currently: Check Backgammon Moves
+                    case "By Field ID":
+
+                        if (currentMove.frequency === "DICE") {
+
+                            // *** CHECK DICE MOVES - Currently: Check Backgammon Moves ***
+                            var diceValues = game.getDiceBox().getDiceValues(),
+                                diceValueCount = diceValues.length,
+                                destArray = [],
+                                destFieldID = 0,
+                                curFieldID = -1,
+                                tmpFieldExists = false;
+
+                            currentX = self_Entity.position.x;
+                            currentY = self_Entity.position.y;
+
+                            // Backgammon specific: If an entity has got a fieldID then the entity is in the bear off area
+                            // and must re-enter the game
+                            if (_.isUndefined(self_Entity.tmp.fieldID) === false) {
+
+                                curFieldID = self_Entity.tmp.fieldID;
+                                tmpFieldExists = true;
+                            } else {
+                                curFieldID = self_Entity.getWorld().getFieldID(currentX, currentY);
+                            }
+
+                            // Show moves for every dice value
+                            for (var curCounter = diceValueCount; curCounter--;) {
+
+                                if (currentMove.direction[1] === "POSITIVE") {
+                                    destFieldID = parseInt(curFieldID + diceValues[curCounter], 10);
+                                } else if (currentMove.direction[1] === "NEGATIVE") {
+                                    destFieldID = parseInt(curFieldID - diceValues[curCounter], 10);
+                                } else {
+                                    // ToDo Implement both directions
+                                }
+
+                                if (currentMove.type === "By Field ID") {
+
+                                    // Legal move to an empty field - Backgammon specific
+                                    if (self_Entity.countOpponentsOnFieldsWithID(destFieldID, self_Entity) === 0) {
+
+                                        destArray = self_Entity.getWorld().getFreeFieldsWithFieldID(destFieldID);
+
+                                        if (destArray[0]) {
+                                            destX = destArray[0][0];
+                                            // For Backgammon: put game entity on top or on bottom
+                                            if (destFieldID <= 12) {
+                                                destY = destArray[parseInt(destArray.length-1, 10)][1];
+                                            } else {
+                                                destY = destArray[0][1];
                                             }
-                                        });
 
-                                        game.addJobForMoveID({
-                                            jobID : moveID,
-                                            jobName : "Delete Dice Value",
-                                            job : "Delete Dice Value",
-                                            jobArguments : curCounter
-                                        });
+                                            // Legal Move Found
+                                            moveID = game.getUniqueMoveID(self_Entity.name,
+                                                currentMove.name, destX, destY);
 
-                                        if (currentMove.postMove) {
-                                            _.each(currentMove.postMove, function(postMove) {
+                                            possibleMoves.push({
+                                                type : "DICE",
+                                                diceID : curCounter,
+                                                diceValue : diceValues[curCounter],
+                                                name : currentMove.name,
+                                                entity: self_Entity,
+                                                targetX : destX,
+                                                targetY : destY,
+                                                moveClass : "move_standard",
+                                                freq : "DICE",
+                                                ID : moveID,
+                                                postmove : currentMove.postMove
+                                            });
+
+                                            if (tmpFieldExists === true) {
 
                                                 game.addJobForMoveID({
                                                     jobID : moveID,
-                                                    jobName : postMove.jobName,
-                                                    job : postMove.jobFunction,
-                                                    jobArguments : postMove.jobArguments
+                                                    jobName : "Put the entity to the destination field",
+                                                    job : "Place Entity",
+                                                    jobArguments : { entity : self_Entity,
+                                                        xPosition : destX, yPosition : destY }
                                                 });
+
+                                                game.addJobForMoveID({
+                                                    jobID : moveID,
+                                                    jobName : "Remove the current entity from off board area",
+                                                    job : "Delete Entity from OffBoard",
+                                                    jobArguments : { entity : self_Entity }
+                                                });
+
+                                            } else {
+
+                                                game.addJobForMoveID({
+                                                    jobID : moveID,
+                                                    jobName : "move game entity",
+                                                    job : "Move Entity",
+                                                    jobArguments : {
+                                                        "entity" : self_Entity,
+                                                        "destX" : destX,
+                                                        "destY" : destY
+                                                    }
+                                                });
+                                            }
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : "Delete Dice Value",
+                                                job : "Delete Dice Value",
+                                                jobArguments : curCounter
                                             });
+
+                                            if (currentMove.postMove) {
+                                                _.each(currentMove.postMove, function(postMove) {
+                                                    game.addJobForMoveID({
+                                                        jobID : moveID,
+                                                        jobName : postMove.jobName,
+                                                        job : postMove.jobFunction,
+                                                        jobArguments : postMove.jobArguments
+                                                    });
+                                                });
+                                            }
+                                        } else if (self_Entity.countOwnOnFieldsWithID(destFieldID, self_Entity) ===
+                                            self_Entity.countFieldsWithID(destFieldID)) {
+
+                                            // *** Destination Field Full - Put the entity on top of own entitys ***
+                                            var fields = self_Entity.getWorld().getFieldsWithFieldID(destFieldID);
+
+                                            if (fields[0]) {
+                                                destX = fields[0].position.x;
+                                                if (destFieldID <= 12) {
+                                                    destY = fields[0].position.y;
+                                                } else {
+                                                    destY = fields[parseInt(fields.length-1, 10)].position.y;
+                                                }
+
+                                                // Prepare Legal Move
+                                                moveID = game.getUniqueMoveID(self_Entity.name,
+                                                    currentMove.name, destX, destY);
+
+                                                possibleMoves.push({
+                                                    type : "DICE",
+                                                    diceValue : diceValues[curCounter],
+                                                    name : currentMove.name,
+                                                    entity: self_Entity,
+                                                    targetX : destX,
+                                                    targetY : destY,
+                                                    moveClass : "move_standard",
+                                                    freq : "DICE",
+                                                    ID : moveID,
+                                                    postmove : currentMove.postMove
+                                                });
+
+                                                game.addJobForMoveID({
+                                                    jobID : moveID,
+                                                    jobName : "move game entity",
+                                                    job : "Move Entity",
+                                                    jobArguments : {
+                                                        "entity" : self_Entity,
+                                                        "destX" : destX,
+                                                        "destY" : destY
+                                                    }
+                                                });
+
+                                                game.addJobForMoveID({
+                                                    jobID : moveID,
+                                                    jobName : "Delete Dice Value",
+                                                    job : "Delete Dice Value",
+                                                    jobArguments : curCounter
+                                                });
+
+                                                if (currentMove.postMove) {
+                                                    _.each(currentMove.postMove, function(postMove) {
+
+                                                        game.addJobForMoveID({
+                                                            jobID : moveID,
+                                                            jobName : postMove.jobName,
+                                                            job : postMove.jobFunction,
+                                                            jobArguments : postMove.jobArguments
+                                                        });
+                                                    });
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
+                        break;
+                    // End of case "By Field ID"
+
                 }
-                // *** / CHECK DICE MOVES - Currently: Check Backgammon Moves ***
             }
             return possibleMoves;
         };

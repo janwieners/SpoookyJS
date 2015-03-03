@@ -78,7 +78,7 @@ game.getGameWorld().connectCells({
     23: [20, 22, 24],
     24: [15, 23] });
 
-
+/*
 // Blueprints of the starting pieces
 var blackStone = {
     entityType : "Black",
@@ -100,42 +100,22 @@ var whiteStone = {
 var quantity = 1;
 var black = game.addBlueprint(player2, blackStone, 1),
     white = game.addBlueprint(player1, whiteStone, quantity);
+*/
 
-/*
+game.setGameMode("MOVING");
+
 var whiteMove = {
 
+    associatedWithMetaAgent : player1.getID(),
     entityType : "White",
     typeID : "W",
     representation : { type : "image", texture : "assets/white.png" },
 
-    moves : [
-        {
-            name : "north",
-            type : "Default",
-            direction : "north",
-            frequency : 1,
-            conditions : [{ condition : "Is Empty", state : true }]
-        }, {
-            name : "east",
-            type : "Default",
-            direction : "east",
-            frequency : 1,
-            conditions : [{ condition : "Is Empty", state : true }]
-        },
-        {
-            name : "south",
-            type : "Default",
-            direction : "south",
-            frequency : 1,
-            conditions : [{ condition : "Is Empty", state : true }]
-        },
-        {
-            name : "west",
-            type : "Default",
-            direction : "west",
-            frequency : 1,
-            conditions : [{ condition : "Is Empty", state : true }]
-        }]
+    moves : [{
+        name : "Move to connected cield",
+        type : "By Connected Field IDs",
+        conditions : [{ condition : "Is Empty", state : true }]
+    }]
 };
 
 game.addBlueprint(player1, whiteMove);
@@ -153,7 +133,6 @@ game.addEntitiesToGameBoard([whiteMove,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0]);
-*/
 
 // Game Rules
 
