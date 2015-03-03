@@ -120,6 +120,11 @@ Spoooky = {};
         self_Models.GameGrid = [];
 
         /**
+         * Represents the connections of game grid cells
+         */
+        self_Models.CellConnections;
+
+        /**
          * Restricts to movable and selectable entities
          * @type {{entities: string, moves: string}}
          */
@@ -3876,6 +3881,17 @@ Spoooky = {};
                 return myGame.models.GameGrid[yPosition][xPosition].cellID;
             }
             return false;
+        };
+
+        /**
+         * Connect a cell with another cell / cells by using their IDs
+         * @param connections
+         */
+        self_GridWelt.connectCells = function(connections) {
+
+            // Suppose that the JSON-representation of cell connections is correct
+            myGame.models.CellConnections = connections;
+
         };
 
         /**
