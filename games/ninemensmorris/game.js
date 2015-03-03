@@ -5,7 +5,24 @@ var game = new Spoooky.Game;
 game.initialize("Mühle / Nine Men's Morris");
 
 // Beschreibung der Schachvariante
-game.setDescription("");
+game.setDescription("Mühle, in der Schweiz auch Nünistei („neun Steine“) genannt, " +
+"ist ein Brettspiel für zwei Spieler. Das Spielbrett besteht aus drei ineinander " +
+"liegenden Quadraten mit Verbindungslinien in den Seitenmitten. Als Spielfiguren " +
+"werden gewöhnlich neun schwarze und neun weiße runde, flache Spielsteine verwendet, " +
+"die meist aus Holz oder Kunststoff sind. Andere Farben sind auch möglich." +
+"<br>Ziel des Spiels ist es, entweder durch das Bilden sogenannter Mühlen " +
+"(jeweils drei eigene Steine in einer Reihe) so viele gegnerische Steine zu " +
+"schlagen, dass der Gegner nur noch zwei Steine übrig behält, oder die auf dem " +
+"Spielbrett verbliebenen gegnerischen Steine so zu blockieren, dass der Gegner " +
+"nicht mehr ziehen kann.<br>" +
+"<h5>Spielregeln</h5>" +
+"Das Spiel läuft in drei Phasen ab:" +
+"<ul>" +
+"<li>Setzphase: Die Spieler setzen abwechselnd je einen Stein, insgesamt je neun, auf Kreuzungs- oder Eckpunkte des Brettes</li>" +
+"<li>Zugphase: Die Spielsteine werden gezogen, das heißt, pro Runde darf jeder Spieler einen Stein auf einen angrenzenden, freien Punkt bewegen. Kann ein Spieler keinen Stein bewegen, so hat er verloren.</li>" +
+"<li>Endphase: Sobald ein Spieler nur noch drei Steine hat, darf er mit seinen Steinen springen, das heißt, er darf nun pro Runde mit einem Stein an einen beliebigen freien Punkt springen. Sobald ihm ein weiterer Stein abgenommen wird, hat er das Spiel verloren.</li>" +
+"<li>Drei Steine einer Farbe, die in einer Geraden auf Feldern nebeneinander liegen, nennt man eine \"Mühle\". Wenn ein Spieler eine Mühle schließt, darf er einen beliebigen Stein des Gegners aus dem Spiel nehmen, sofern dieser Stein nicht ebenfalls Bestandteil einer Mühle ist.</li>" +
+"</ul>(<a href=\"http://de.wikipedia.org/wiki/M%C3%BChle_%28Spiel%29\">http://de.wikipedia.org/wiki/M%C3%BChle_%28Spiel%29</a>)");
 
 // Menschlichen Spieler erstellen
 var player1 = game.createPlayer({
@@ -78,15 +95,20 @@ game.getGameWorld().connectCells({
     23: [20, 22, 24],
     24: [15, 23] });
 
-/*
-// Blueprints of the starting pieces
+// Blueprints of the game entities
 var blackStone = {
     entityType : "Black",
     typeID : "B",
     associatedWithMetaAgent : null,
     representation : { type : "image", texture : "assets/black.png" },
     mode : "PLACE",
-    placeTo : "ANY"
+    placeTo : "ANY",
+
+    moves : [{
+        name : "Move to connected field",
+        type : "By Connected Field IDs",
+        conditions : [{ condition : "Is Empty", state : true }]
+    }]
 };
 
 var whiteStone = {
@@ -94,33 +116,22 @@ var whiteStone = {
     typeID : "W",
     representation : { type : "image", texture : "assets/white.png" },
     mode : "PLACE",
-    placeTo : "ANY"
-};
-
-var quantity = 1;
-var black = game.addBlueprint(player2, blackStone, 1),
-    white = game.addBlueprint(player1, whiteStone, quantity);
-*/
-
-game.setGameMode("MOVING");
-
-var whiteMove = {
-
-    associatedWithMetaAgent : player1.getID(),
-    entityType : "White",
-    typeID : "W",
-    representation : { type : "image", texture : "assets/white.png" },
+    placeTo : "ANY",
 
     moves : [{
-        name : "Move to connected cield",
+        name : "Move to connected field",
         type : "By Connected Field IDs",
         conditions : [{ condition : "Is Empty", state : true }]
     }]
 };
 
-game.addBlueprint(player1, whiteMove);
+var quantity = 3;
+var black = game.addBlueprint(player2, blackStone, quantity),
+    white = game.addBlueprint(player1, whiteStone, quantity);
 
-game.addEntitiesToGameBoard([whiteMove,0,0,0,0,0,0,0,0,0,0,0,0,
+// Testing
+game.addEntitiesToGameBoard([
+    white,0,0,0,0,0,0,0,0,0,0,0,white,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -135,6 +146,29 @@ game.addEntitiesToGameBoard([whiteMove,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0]);
 
 // Game Rules
+// Take an opponent entity from the game board if the last move
+// of the current player
+game.addGameRuleAtom({
+    atomName : "Three entities on a line with last move",
+    atomFunction : "Player Has Entities On Nearby Connected Fields After Last Move",
+    // Field IDs, clusters are OR-connected
+    atomArguments : [
+        [1, 2, 3],
+        [4, 5, 6]
+    ]
+});
+
+// Assemble goal atoms to game goals
+game.assembleGameRule({
+    name     : "Delete opponent entity",
+    atoms    : ["Three entities on a line with last move"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Delete opponent entity",
+    consequences : []});
+
+
 
 // Change game mode to "MOVING" if every entity of the players has been placed
 // on the game board
@@ -155,6 +189,9 @@ game.connectGameRuleConsequences({
         jobName: "Let the players move their entities",
         jobFunction: "Change Game Mode",
         jobArguments: { mode: "MOVING" }
+    }, {
+        jobName: "Change current player",
+        jobFunction: "Next Player"
     }, {
         jobName: "Delete this game rule",
         jobFunction: "Delete Game Rule",

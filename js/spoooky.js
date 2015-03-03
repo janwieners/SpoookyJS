@@ -1524,7 +1524,40 @@ Spoooky = {};
 
             },
 
+            // Game rule atom for the game of nine men's morris
+            "Player Has Entities On Nearby Connected Fields After Last Move": function(currentRuleAtom) {
+
+                var cellCluster = currentRuleAtom.atomArguments,
+                    cells, j, playerID = self_Game.models.recentlyMovedEntity.playerID,
+                    world = self_Game.gameWorld, cell, content, complete = true;
+
+                // ToDo I: Get field ID of last move's destination
+
+                // ToDo II: Compare this ID with list of lines in cellCluster
+                for (var i = cellCluster.length; i--;) {
+
+                    cells = cellCluster[i];
+
+                    complete = true;
+
+                    for (j = cells.length; j--;) {
+
+                        cell = cells[j];
+                        content = world.getFieldsWithFieldID(cell, true);
+
+                        if (content.contains.length > 0) {
+
+                            // Check only the first element on the stack
+                            if (content.contains[0].playerID !== playerID) {
+                                complete = false;
+                            }
+                        }
+                    }
+                }
+            },
+
             "Player Has No Movable Entities": function(currentRuleAtom) {
+
                 // returns true if no entity, owned by meta agent, can move
                 var currentPlayer = self_Game.getPlayerWithID(currentRuleAtom.atomArguments),
                     entityCount = currentPlayer.countEntities(), counter;
@@ -1899,12 +1932,7 @@ Spoooky = {};
          */
         self_Game.getUniqueMoveID = function(entityName, moveName, xPos, yPos) {
 
-            //return self_Game.models.gameRounds + "_" + entityName + "_" + moveName + "_" + xPos + "|" + yPos;
             return entityName + "_" + moveName + "_" + xPos + "|" + yPos;
-
-            // First method: Create unique move identifier by using time plus random numbers
-            // Problem in this method: MCTS needs unique identifiers independently from time
-            //return (Date.now() + _.random(0, 99999));
         };
 
         /**
@@ -7559,7 +7587,7 @@ Spoooky = {};
 
                                 // Check every move condition
                                 if (game.isLegalMove(self_Entity, currentMove.conditions,
-                                        currentX, currentY,destX, destY)) {
+                                        currentX, currentY, destX, destY)) {
 
                                     moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
                                         destX, destY);
@@ -7627,7 +7655,7 @@ Spoooky = {};
                             destX = targetCell.position.x;
                             destY = targetCell.position.y;
 
-                            if (self_Entity.getWorld().isEmpty(destX, destY) === false) { break; }
+                            if (self_Entity.getWorld().isEmpty(destX, destY) === false) { continue; }
 
                             // Check every move condition
                             if (game.isLegalMove(self_Entity, currentMove.conditions,
