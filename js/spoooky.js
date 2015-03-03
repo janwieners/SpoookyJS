@@ -3816,22 +3816,49 @@ Spoooky = {};
         };
 
         /**
+         * Enumerates the IDs of fields with a specific CSS class
+         * @param CSSclass
+         */
+        self_GridWelt.enumerateFieldIDsByClass = function(CSSclass) {
+
+            var curX, curY, cell, cellID = 1,
+                maxColumn = self_GridWelt.getColumns(),
+                maxRow = self_GridWelt.getRows(),
+                grid = myGame.models.GameGrid;
+
+            for (curY = 0; curY < maxRow; curY += 1) {
+
+                for (curX = 0; curX < maxColumn; curX += 1) {
+
+                    cell = grid[curY][curX];
+
+                    if (cell.view.baseClass === CSSclass) {
+
+                        cell.cellID = cellID;
+                        cellID++;
+                    }
+                }
+            }
+
+        };
+
+        /**
          * Sets the IDs of fields. Allows grouping of fields
          * @param fieldIDArray
          * @returns {boolean}
          */
         self_GridWelt.setFieldIDs = function(fieldIDArray) {
 
-            var curX,
-                curY,
-                counter = 0,
+            var curX, curY, counter = 0,
                 maxColumn = self_GridWelt.getColumns(),
-                maxRow = self_GridWelt.getRows();
+                maxRow = self_GridWelt.getRows(),
+                grid = myGame.models.GameGrid;
 
             for (curY = 0; curY < maxRow; curY += 1) {
 
                 for (curX = 0; curX < maxColumn; curX += 1) {
-                    myGame.models.GameGrid[curY][curX].cellID = fieldIDArray[counter];
+
+                    grid[curY][curX].cellID = fieldIDArray[counter];
                     counter += 1;
                 }
             }
@@ -4927,8 +4954,6 @@ Spoooky = {};
             }
 
             queue[job.jobID][job.jobName] = job;
-
-            //myGame.models.JobQueue.push(job);
         };
 
         /**

@@ -44,6 +44,10 @@ game.setupGridWorld(13, 13, [
     dot, hline, hline, hline, hline, hline, dot, hline, hline, hline, hline, hline, dot
 ]);
 
+// Automatically create field IDs for fields with CSS class "dot"
+// To do this manually use gameWorld.setFieldIDs
+game.getGameWorld().enumerateFieldIDsByClass("dot");
+
 // Blueprints of the starting pieces
 var blackStone = {
     entityType : "Black",
@@ -57,7 +61,6 @@ var blackStone = {
 var whiteStone = {
     entityType : "White",
     typeID : "W",
-    associatedWithMetaAgent : null,
     representation : { type : "image", texture : "assets/white.png" },
     mode : "PLACE",
     placeTo : "ANY"
@@ -66,6 +69,60 @@ var whiteStone = {
 var quantity = 1;
 var black = game.addBlueprint(player2, blackStone, 1),
     white = game.addBlueprint(player1, whiteStone, quantity);
+
+/*
+var whiteMove = {
+
+    entityType : "White",
+    typeID : "W",
+    representation : { type : "image", texture : "assets/white.png" },
+
+    moves : [
+        {
+            name : "north",
+            type : "Default",
+            direction : "north",
+            frequency : 1,
+            conditions : [{ condition : "Is Empty", state : true }]
+        }, {
+            name : "east",
+            type : "Default",
+            direction : "east",
+            frequency : 1,
+            conditions : [{ condition : "Is Empty", state : true }]
+        },
+        {
+            name : "south",
+            type : "Default",
+            direction : "south",
+            frequency : 1,
+            conditions : [{ condition : "Is Empty", state : true }]
+        },
+        {
+            name : "west",
+            type : "Default",
+            direction : "west",
+            frequency : 1,
+            conditions : [{ condition : "Is Empty", state : true }]
+        }]
+};
+
+game.addBlueprint(player1, whiteMove);
+
+game.addEntitiesToGameBoard([whiteMove,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0]);
+*/
 
 // Game Rules
 
