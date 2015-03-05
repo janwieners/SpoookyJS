@@ -1528,32 +1528,56 @@ Spoooky = {};
             "Player Has Entities On Nearby Connected Fields After Last Move": function(currentRuleAtom) {
 
                 var cellCluster = currentRuleAtom.atomArguments,
-                    cells, j, playerID = self_Game.models.recentlyMovedEntity.playerID,
-                    world = self_Game.gameWorld, cell, content, complete = true;
+                    world = self_Game.gameWorld, cell, content,
+                    rcntPosition = self_Game.getrecentlyMovedEntity().position, success,
+                    cells, j, k, playerID = self_Game.models.recentlyMovedEntity.playerID,
+                    rcntCellID = self_Game.models.GameGrid[rcntPosition.y][rcntPosition.x].cellID;
 
-                // ToDo I: Get field ID of last move's destination
-
-                // ToDo II: Compare this ID with list of lines in cellCluster
+                // Process all fields in atomArguments
+                // e.g. atomArguments : [[1, 2, 3], [4, 5, 6]]
                 for (var i = cellCluster.length; i--;) {
 
                     cells = cellCluster[i];
 
-                    complete = true;
-
+                    // cells = [1, 2, 3];
                     for (j = cells.length; j--;) {
 
+                        // cellID, e.g. 1, 2, 3
                         cell = cells[j];
-                        content = world.getFieldsWithFieldID(cell, true);
 
-                        if (content.contains.length > 0) {
+                        success = true;
 
-                            // Check only the first element on the stack
-                            if (content.contains[0].playerID !== playerID) {
-                                complete = false;
+                        // Is the recently placed entity on a field with ID cell?
+                        if (rcntCellID === cell) {
+
+                            // Check for players entities on other fields ([1, 2, 3])
+                            for (k = cells.length; k--;) {
+
+                                content = world.getFieldsWithFieldID(cells[k], true);
+
+                                if (content.contains.length > 0) {
+
+                                    // Check only the first element on the stack
+                                    if (content.contains[0].playerID !== playerID) {
+                                        success = false;
+                                        break;
+                                    }
+                                } else {
+                                    // Empty field
+                                    success = false;
+                                    break;
+                                }
+                            }
+
+                            // All entities are on specific fields
+                            if (success) {
+                                return true;
                             }
                         }
+
                     }
                 }
+                return false;
             },
 
             "Player Has No Movable Entities": function(currentRuleAtom) {
@@ -4214,9 +4238,10 @@ Spoooky = {};
         self_GridWelt.getFieldsWithFieldID = function(fieldID, getOnlyOne) {
 
             var listOfFields = [],
-                maxCol = self_GridWelt.getColumns(),
-                maxRow = self_GridWelt.getRows(),
-                grid = myGame.models.GameGrid,
+                models = myGame.models,
+                maxCol = models.worldDimensions.columns,
+                maxRow = models.worldDimensions.rows,
+                grid = models.GameGrid,
                 currentCell, curColumn, curRow;
 
             for (curColumn = maxCol; curColumn--;) {
