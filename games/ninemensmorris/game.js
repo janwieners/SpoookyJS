@@ -99,7 +99,6 @@ game.getGameWorld().connectCells({
 var blackStone = {
     entityType : "Black",
     typeID : "B",
-    associatedWithMetaAgent : null,
     representation : { type : "image", texture : "assets/black.png" },
     mode : "PLACE",
     placeTo : "ANY",
@@ -125,7 +124,7 @@ var whiteStone = {
     }]
 };
 
-var quantity = 12;
+var quantity = 1;
 var black = game.addBlueprint(player2, blackStone, quantity),
     white = game.addBlueprint(player1, whiteStone, quantity);
 
@@ -143,7 +142,7 @@ game.addEntitiesToGameBoard([
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    black,0,0,0,0,0,0,0,0,0,0,0,0]);
+    black,0,0,0,0,0,0,0,0,0,0,0,black]);
 
 // Game Rules
 // Take an opponent entity from the game board if the last move

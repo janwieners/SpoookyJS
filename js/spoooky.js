@@ -1154,7 +1154,7 @@ Spoooky = {};
 
             var count = self_Game.models.GameRules.length,
                 returnValue = false,
-                ruleAtoms = 0,
+                ruleAtoms = 0, atomCounter,
                 ruleAtomCount = 0;
 
             for (var goalCounter = 0; goalCounter < count; goalCounter += 1) {
@@ -1165,7 +1165,7 @@ Spoooky = {};
                     ruleAtoms = self_Game.models.GameRules[goalCounter].atoms;
                     ruleAtomCount = ruleAtoms.length;
 
-                    for (var atomCounter = 0; atomCounter < ruleAtomCount; atomCounter += 1) {
+                    for (atomCounter = 0; atomCounter < ruleAtomCount; atomCounter += 1) {
 
                         returnValue = self_Game.executeGameRuleAtomByName(ruleAtoms[atomCounter]);
 
@@ -1185,18 +1185,12 @@ Spoooky = {};
          */
         self_Game.addGameRuleAtom = function(newRuleAtom) {
 
-            var ruleAtomName = newRuleAtom.atomName,
-                ruleAtomFunctionName = newRuleAtom.atomFunction,
-                ruleAtomArguments = newRuleAtom.atomArguments,
-                condition = newRuleAtom.atomCondition,
-                connector = newRuleAtom.atomConnector;
-
             self_Game.models.GameRuleAtoms.push({
-                atomName: ruleAtomName,
-                atomFunction: ruleAtomFunctionName,
-                atomArguments: ruleAtomArguments,
-                atomCondition: condition,
-                atomConnector: connector
+                atomName: newRuleAtom.atomName,
+                atomFunction: newRuleAtom.atomFunction,
+                atomArguments: newRuleAtom.atomArguments,
+                atomCondition: newRuleAtom.atomCondition,
+                atomConnector: newRuleAtom.atomConnector
             });
         };
 
@@ -1356,16 +1350,17 @@ Spoooky = {};
             },
 
             "Destination Field ID Is Less Than" : function(entity, atom, addArgument) {
-                var destFieldID = 0,
-                    currentX = entity.position.x,
-                    currentY = entity.position.y,
-                    moveDirection = atom.atomArguments[0],
-                    curFieldID = entity.getGame().gameWorld.getFieldID(currentX, currentY);
 
                 // Ignore off board entitys
                 if (_.isUndefined(entity.tmp.fieldID) === false) {
                     return false;
                 }
+
+                var destFieldID = 0,
+                    currentX = entity.position.x,
+                    currentY = entity.position.y,
+                    moveDirection = atom.atomArguments[0],
+                    curFieldID = entity.getGame().gameWorld.getFieldID(currentX, currentY);
 
                 if (moveDirection === "MOVE POSITIVE") {
                     destFieldID = parseInt(curFieldID + addArgument, 10);
@@ -3444,19 +3439,26 @@ Spoooky = {};
 
             //  Create Entities for players and put them on the game board
             var counter = 0,
-                metaAgent,
+                metaAgent, x,
                 newEntity = null, gbConfig,
                 gridRows = self_Game.gameWorld.getRows(),
                 gridColumns = self_Game.gameWorld.getColumns();
 
             for (var y = 0; y < gridRows; y += 1) {
-                for (var x = 0; x < gridColumns; x += 1) {
+                for (x = 0; x < gridColumns; x += 1) {
 
                     gbConfig = gameBoardConfiguration[counter];
                     if (gbConfig !== 0) {
 
                         metaAgent = self_Game.getPlayerWithID(gbConfig.associatedWithMetaAgent);
                         newEntity = metaAgent.entityFactory(gbConfig);
+
+                        if (!newEntity.unlimitedQuantity) {
+
+                            // Add a flag to signalize that this entity has been placed on the game board
+                            newEntity.onBoard = true;
+                        }
+
                         self_Game.pushEntityToCell(newEntity, x, y);
                     }
                     counter += 1;
@@ -5831,6 +5833,7 @@ Spoooky = {};
                         // ...then add this entity to the game board
                         returnEntities.push(cur);
                     } else {
+
                         // Otherwise check if current entity is already on the game board
                         if (!cur.onBoard) {
                             returnEntities.push(cur);
