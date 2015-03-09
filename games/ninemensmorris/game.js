@@ -143,7 +143,7 @@ game.addEntitiesToGameBoard([
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    black,0,0,0,0,0,0,0,0,0,0,0,0]);
 
 // Game Rules
 // Take an opponent entity from the game board if the last move
@@ -190,8 +190,6 @@ game.connectGameRuleConsequences({
         jobName: "Change current player",
         jobFunction: "Next Player"
     }]});
-
-
 
 // Change game mode to "MOVING" if every entity of the players has been placed
 // on the game board

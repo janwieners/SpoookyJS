@@ -4492,10 +4492,22 @@ Spoooky = {};
          * List of executable game events
          */
         events : {
+
+            /**
+             * Roll all dices
+             * @param gameEvent
+             * @param game
+             */
             "Roll Dices" : function(gameEvent, game) {
                 game.getDiceBox().rollAllDices();
             },
 
+            /**
+             * Roll Backgammon Dices
+             * Check doublets and double dice values
+             * @param gameEvent
+             * @param game
+             */
             "Roll Backgammon Dices" : function(gameEvent, game) {
 
                 var previousValue = -1, diceValues,
@@ -4535,11 +4547,21 @@ Spoooky = {};
                 game.executeGameRules();
             },
 
+            /**
+             * Delete a dice value
+             * @param gameEvent
+             * @param game
+             */
             "Delete Dice Value" : function(gameEvent, game) {
                 game.getDiceBox().deleteDiceValue(gameEvent.jobArguments);
             },
 
-            // Deletes the dice value of the specific move
+            /**
+             * Deletes the dice value of the specific move
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Delete Assigned Dice Value" : function(gameEvent, game) {
 
                 if (game.getDiceBox().getConnectedDiceValue(gameEvent.jobID) === false) {
@@ -4549,6 +4571,12 @@ Spoooky = {};
                 return true;
             },
 
+            /**
+             * Bear of a game entity at a dice target cell
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Bear Off Entity At Dice Target Cell" : function(gameEvent, game) {
 
                 // Move Destination Entity to Off Board Area
@@ -4585,6 +4613,12 @@ Spoooky = {};
                 return true;
             },
 
+            /**
+             * Show Backgammon Re-entering moves
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Show Backgammon Re-entering Moves" : function(gameEvent, game) {
 
                 var playerID = gameEvent.jobArguments.playerID;
@@ -4617,6 +4651,11 @@ Spoooky = {};
                 return false;
             },
 
+            /**
+             * Delete a game entity from the off board area
+             * @param gameEvent
+             * @param game
+             */
             "Delete Entity from OffBoard" : function(gameEvent, game) {
 
                 // Reset temporary field id
@@ -4624,6 +4663,11 @@ Spoooky = {};
                 game.offBoard.deleteEntityFromOffBoard(gameEvent.jobArguments.entity.name);
             },
 
+            /**
+             * Place an entity
+             * @param gameEvent
+             * @param game
+             */
             "Place Entity" : function(gameEvent, game) {
 
                 var tmp = gameEvent.jobArguments.entity,
@@ -4650,6 +4694,12 @@ Spoooky = {};
                 }
             },
 
+            /**
+             * Move an entity to the dice destination cell
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Move Entity To Dice Destination Cell" : function(gameEvent, game) {
 
                 // Move Destination Entity to Off Board Area
@@ -4686,6 +4736,11 @@ Spoooky = {};
                 return true;
             },
 
+            /**
+             * Prearrange an entity
+             * @param gameEvent
+             * @param game
+             */
             "Prearrange Entity" : function(gameEvent, game) {
 
                 var jobArgs = gameEvent.jobArguments,
@@ -4697,6 +4752,11 @@ Spoooky = {};
                     jobArgs.destX, jobArgs.destY);
             },
 
+            /**
+             * Move a game entity
+             * @param gameEvent
+             * @param game
+             */
             "Move Entity" : function(gameEvent, game) {
 
                 var models = game.models,
@@ -4719,6 +4779,11 @@ Spoooky = {};
                     jobArgs.destX, jobArgs.destY);
             },
 
+            /**
+             * Move a game entity by a dice value
+             * @param gameEvent
+             * @param game
+             */
             "Move Entity By Dice Value" : function(gameEvent, game) {
 
                 var models = game.models,
@@ -4741,6 +4806,11 @@ Spoooky = {};
                     jobArgs.destX, jobArgs.destY);
             },
 
+            /**
+             * Move a game entity relative to another entity
+             * @param gameEvent
+             * @param game
+             */
             "Move Entity Relative To" : function(gameEvent, game) {
 
                 // Get the current position of the entity
@@ -4753,7 +4823,12 @@ Spoooky = {};
                     parseInt(srcY + gameEvent.jobArguments[1], 10));
             },
 
-            // Move an entity with a specific name
+            /**
+             * Move an entity with a specific name
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Move Entity With Name" : function(gameEvent, game) {
 
                 // Search for an entity with entityName
@@ -4782,19 +4857,40 @@ Spoooky = {};
                 return true;
             },
 
+            /**
+             * Prevent player change
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Prevent Player Change" : function(gameEvent, game) {
                 game.models.playerChange = false;
                 return true;
             },
 
+            /**
+             * Enable changing of players
+             * @param gameEvent
+             * @param game
+             */
             "Enable Player Change" : function(gameEvent, game) {
                 game.models.playerChange = true;
             },
 
+            /**
+             * Proceed the game
+             * @param gameEvent
+             * @param game
+             */
             "Proceed Game" : function(gameEvent, game) {
                 game.proceed();
             },
 
+            /**
+             * Change the game mode
+             * @param gameEvent
+             * @param game
+             */
             "Change Game Mode" : function(gameEvent, game) {
 
                 var mode = gameEvent.jobArguments.mode;
@@ -4807,6 +4903,12 @@ Spoooky = {};
                 }
             },
 
+            /**
+             * Delete a game rule
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Delete Game Rule" : function(gameEvent, game) {
 
                 // Delete a game rule but maintain associated game rule atoms
@@ -4828,6 +4930,11 @@ Spoooky = {};
 
             },
 
+            /**
+             * Capture an opponent game entity at a specific position
+             * @param gameEvent
+             * @param game
+             */
             "Capture Opponent At" : function(gameEvent, game) {
 
                 var entityX, entityY,
@@ -4857,16 +4964,31 @@ Spoooky = {};
                 game.deleteEntityAt(entityX, entityY);
             },
 
+            /**
+             * Highlight the target cell of a dice move
+             * @param gameEvent
+             * @param game
+             */
             "Highlight Dice Target Cell" : function(gameEvent, game) {
 
                 game.highlightCell(gameEvent.entityLink.targeting.x, gameEvent.entityLink.targeting.y,
                     gameEvent.jobArguments, gameEvent.jobID);
             },
 
+            /**
+             * Highlight an area
+             * @param gameEvent
+             * @param game
+             */
             "Highlight Area" : function(gameEvent, game) {
                 game.getArea(gameEvent.jobArguments.areaName).display = gameEvent.jobArguments.highlightClass;
             },
 
+            /**
+             * Highligh a cell
+             * @param gameEvent
+             * @param game
+             */
             "Highlight Cell" : function(gameEvent, game) {
 
                 var jobArgs = gameEvent.jobArguments,
@@ -4886,29 +5008,57 @@ Spoooky = {};
                 game.highlightCell(markX, markY, markClass, gameEvent.jobID);
             },
 
+            /**
+             * Set the game state
+             * @param gameEvent
+             * @param game
+             */
             "Set Game State" : function(gameEvent, game) {
                 game.setGameState(gameEvent.jobArguments);
             },
 
-            // Restrict selectable entities
+            /**
+             * Restrict the selectable game entities
+             * @param gameEvent
+             * @param game
+             */
             "Restrict Selectable Entities" : function(gameEvent, game) {
                 game.models.SelectRestrictions.entities = gameEvent.jobArguments;
             },
 
-            // Restrict to specific entity moves
+            /**
+             * Restrict to specific entity moves
+             * @param gameEvent
+             * @param game
+             */
             "Restrict Selectable Entity Moves" : function(gameEvent, game) {
                 game.models.SelectRestrictions.moves = gameEvent.jobArguments;
             },
 
+            /**
+             * Delete a game entity a specific coordinates
+             * @param gameEvent
+             * @param game
+             */
             "Delete This Entity" : function(gameEvent, game) {
                 game.deleteEntityAt(gameEvent.entityLink.position.x,
                     gameEvent.entityLink.position.y);
             },
 
+            /**
+             * Increment the number of entities in the off board area
+             * @param gameEvent
+             * @param game
+             */
             "Increment Off Board Counter" : function(gameEvent, game) {
                 game.areas.incrementElements(gameEvent.jobArguments);
             },
 
+            /**
+             * Transform a game entity
+             * @param gameEvent
+             * @param game
+             */
             "Transform Entity" : function(gameEvent, game) {
 
                 var currentEntity = gameEvent.entityLink,
@@ -4936,6 +5086,12 @@ Spoooky = {};
                 game.pushEntityToCell(newEntity, xPosition, yPosition);
             },
 
+            /**
+             * Traansform a game entity if a specific row on the game board has been reached
+             * @param gameEvent
+             * @param game
+             * @returns {boolean}
+             */
             "Transform Entity If Row Reached" : function(gameEvent, game) {
 
                 var currentEntity = gameEvent.entityLink,
@@ -4958,18 +5114,37 @@ Spoooky = {};
                 return true;
             },
 
+            /**
+             * Set the next player as active player
+             * @param gameEvent
+             * @param game
+             */
             "Next Player" : function(gameEvent, game) {
                 game.setNextPlayer();
             },
 
+            /**
+             * Delete all dice values
+             * @param gameEvent
+             * @param game
+             */
             "Delete All Dice Values" : function(gameEvent, game) {
                 game.getDiceBox().deleteAllDiceValues();
             },
 
+            /**
+             * Display a message in an alert popup
+             * @param gameEvent
+             */
             "alert" : function(gameEvent) {
                 alert(gameEvent.jobArguments);
             },
 
+            /**
+             * Print a message in the game process interface
+             * @param gameEvent
+             * @param game
+             */
             "Print Game Process" : function(gameEvent, game) {
 
                 if (game.models.playVirtual === false) {
@@ -4977,6 +5152,11 @@ Spoooky = {};
                 }
             },
 
+            /**
+             * Stop the game
+             * @param gameEvent
+             * @param game
+             */
             "Stop Game" : function(gameEvent, game) {
 
                 game.setGameState("END");
@@ -4985,6 +5165,11 @@ Spoooky = {};
                 }
             },
 
+            /**
+             * Set the winner of the game
+             * @param gameEvent
+             * @param game
+             */
             "Set Winner" : function(gameEvent, game) {
                 game.setWinnerID(gameEvent.jobArguments);
 
