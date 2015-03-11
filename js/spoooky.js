@@ -4,6 +4,10 @@
  * @author Jan Gerrit Wieners <jan@jan-wieners.de>
  * Version 0.3.15 "The Erlenmeyer Flask" (November 2014)
  *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ *
  * Dependencies:
  *  - jQuery 2.1.3
  *  - Bootstrap 3.3.2
@@ -3720,15 +3724,15 @@ Spoooky = {};
      */
     Spoooky.GridWelt = function(game) {
 
-        var self_GridWelt = this;
-        var myGame = game;
+        var self_GridWelt = this,
+            myGame = game;
 
         /**
          * Get the number of rows of the game world
          * @returns {number|SQLResultSetRowList|Number|HTMLCollection|string|*}
          */
         self_GridWelt.getRows = function() {
-            return game.models.worldDimensions.rows;
+            return myGame.models.worldDimensions.rows;
         };
 
         /**
@@ -3736,7 +3740,7 @@ Spoooky = {};
          * @returns {number|*}
          */
         self_GridWelt.getColumns = function() {
-            return game.models.worldDimensions.columns;
+            return myGame.models.worldDimensions.columns;
         };
 
         /**
@@ -3759,8 +3763,8 @@ Spoooky = {};
          */
         self_GridWelt.setup = function() {
 
-            if (game.models.worldDimensions.fieldsX > 0 &&
-                game.models.worldDimensions.fieldsY > 0) {
+            if (myGame.models.worldDimensions.fieldsX > 0 &&
+                myGame.models.worldDimensions.fieldsY > 0) {
                 self_GridWelt.init2DGrid();
                 return true;
             } else {
@@ -3777,8 +3781,8 @@ Spoooky = {};
          */
         self_GridWelt.setup2D = function(gridColumns, gridRows) {
 
-            game.models.worldDimensions.rows = gridRows;
-            game.models.worldDimensions.columns = gridColumns;
+            myGame.models.worldDimensions.rows = gridRows;
+            myGame.models.worldDimensions.columns = gridColumns;
             self_GridWelt.init2DGrid();
             return true;
         };
@@ -4373,13 +4377,15 @@ Spoooky = {};
      */
     Spoooky.OffBoard = function(game) {
 
-        var self_OffBoard = this, myGame = game;
+        var self_OffBoard = this,
+            myGame = game;
 
         /**
          * Adds an entity to the off board area
          * @param entityToAdd
          */
         self_OffBoard.addEntity = function(entityToAdd) {
+
             myGame.models.OffBoardContent.push({
                 typeID : entityToAdd.typeID,
                 entityID : entityToAdd.ID,
