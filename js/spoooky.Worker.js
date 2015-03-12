@@ -1,5 +1,5 @@
 // Import necessary scripts to build virtual SpoookyJS games
-importScripts("libs/underscore-min.js", "spoooky.min.js", "spoooky.AI.min.js");
+importScripts("libs/underscore-min.js", "spoooky.min.js");
 //importScripts("libs/underscore-min.js", "spoooky.js", "spoooky.AI.js");
 
 self.addEventListener("message", function(e) {
