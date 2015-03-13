@@ -2963,7 +2963,9 @@ Spoooky.Game = function() {
                 self_Game.undoVirtualMove();
             }
 
-            for (cnt = captureMoves.length; cnt--;) {
+            var len = captureMoves.length;
+
+            for (cnt = len; cnt--;) {
 
                 currentMove = captureMoves[cnt];
 

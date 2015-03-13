@@ -38,6 +38,7 @@ var player2 = game.createPlayer({
 
 game.setPlayer(player1);
 
+// The game of nine men's morris starts with the placing of entities
 game.setGameMode("PLACING");
 
 var vline = "verticalLine disabled",
@@ -124,7 +125,7 @@ var whiteStone = {
     }]
 };
 
-var quantity = 1;
+var quantity = 2;
 var black = game.addBlueprint(player2, blackStone, quantity),
     white = game.addBlueprint(player1, whiteStone, quantity);
 
@@ -140,9 +141,9 @@ game.addEntitiesToGameBoard([
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,black,0,0,0,black,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    black,0,0,0,0,0,0,0,0,0,0,0,black]);
+    black,0,0,0,0,0,black,0,0,0,0,0,black]);
 
 // Game Rules
 // Take an opponent entity from the game board if the last move
@@ -182,12 +183,37 @@ game.assembleGameRule({
 game.connectGameRuleConsequences({
     ruleName     : "Delete opponent entity",
     consequences : [{
+        jobName: "Enable Second Move",
+        jobFunction: "Prevent Player Change"
+    }, {
         jobName: "Output Message",
         jobFunction: "Print Game Process",
         jobArguments: "Mühle"
     }, {
-        jobName: "Change current player",
-        jobFunction: "Next Player"
+        jobName: "Highlight opponent entities which can be captured",
+        jobFunction: "Highlight Unassociated Opponent Entities",
+        jobArguments : {
+            associations : [
+                // Horizontal
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                [10, 11, 12],
+                [13, 14, 15],
+                [16, 17, 18],
+                [19, 20, 21],
+                [22, 23, 24],
+                // Vertical
+                [1, 10, 22],
+                [4, 11, 19],
+                [7, 12, 16],
+                [2, 5, 8],
+                [17, 20, 23],
+                [9, 13, 18],
+                [6, 14, 21],
+                [3, 15, 24]
+            ]
+        }
     }]});
 
 // Change game mode to "MOVING" if every entity of the players has been placed

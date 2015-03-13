@@ -491,8 +491,6 @@ Spoooky.GridWelt = function(game) {
                     // Check if cell contains an entity
                     if (currentCell.contains.length === 0) {
 
-                        //
-
                         // Found free field
                         freeFields.push({x: curColumn, y: curRow});
                     }

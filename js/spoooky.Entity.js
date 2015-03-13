@@ -1159,7 +1159,6 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                 curFieldID = self_Entity.tmp.fieldID;
             }
 
-            // ToDo Reversed for-loops. Check.
             // Check goal moves for every dice value
             for (curCounter = diceValueCount; curCounter--;) {
 

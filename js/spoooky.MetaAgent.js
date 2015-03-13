@@ -313,6 +313,27 @@ Spoooky.MetaAgent = function(game) {
     };
 
     /**
+     * Find and return all entities already placed the game board
+     * @returns {*}
+     */
+    self_MetaAgent.getOnBoardEntities = function() {
+
+        var entities = myGame.models.Entities[self_MetaAgent.ID],
+            cnt = entities.length, cur, onBoard = [];
+
+        for (; cnt--;) {
+
+            cur = entities[cnt];
+
+            if (cur.onBoard) {
+                onBoard.push(cur);
+            }
+        }
+
+        return onBoard
+    };
+
+    /**
      * Find associated entities of a specific type
      * @param entityType
      * @returns {Array}
@@ -383,8 +404,9 @@ Spoooky.MetaAgent = function(game) {
      * @returns {*}
      */
     self_MetaAgent.getNextOpponentPlayer = function() {
-        if (self_MetaAgent.ID < self_MetaAgent.getGame().models.MetaAgents.length-1) {
-            return self_MetaAgent.getGame().getPlayerWithID(parseInt(self_MetaAgent.ID +1, 10));
+
+        if (self_MetaAgent.ID < self_MetaAgent.getGame().models.MetaAgents.length - 1) {
+            return self_MetaAgent.getGame().getPlayerWithID(parseInt(self_MetaAgent.ID + 1, 10));
         }
         return self_MetaAgent.getGame().getPlayerWithID(parseInt(0, 10));
     };

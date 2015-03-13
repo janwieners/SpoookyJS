@@ -21,6 +21,103 @@ Spoooky.GameEvents = {
     events : {
 
         /**
+         * Highlight opponent entities which are not connected to other opponent entities
+         * Used in the game of nine men's morris
+         * @param gameEvent
+         * @param game
+         */
+        "Highlight Unassociated Opponent Entities" : function(gameEvent, game) {
+
+            var associations = gameEvent.jobArguments.associations, op,
+                assoCnt = associations.length, cellCnt, opPositions = {},
+                highlightType = gameEvent.jobArguments.highlightType,
+                world = game.gameWorld, cell, cells, i;
+
+            // Get all opponent entities
+            // currently implemented for two player games
+            var opponents = game.getCurrentPlayer().getNextOpponentPlayer().getOnBoardEntities(),
+                opCount = opponents.length, position, fieldID, connected;
+
+            // Process all opponent entities; save the fieldIDs of opponent entities on the game board
+            for (; opCount--;) {
+
+                op = opponents[opCount];
+                position = op.position;
+
+                // Get the field identifier of the game board field the entity is placed on
+                fieldID = world.getFieldID(position.x, position.y);
+
+                // Save the field ID
+                opPositions[fieldID] = { ID : op.ID,
+                    x : position.x,
+                    y : position.y,
+                    associated : false };
+            }
+
+            // Process all associations
+            for (i = assoCnt; i--;) {
+
+                cells = associations[i];
+                cellCnt = cells.length;
+
+                // Number of opponent entities on associated cells
+                opCount = 0;
+
+                for (j = cellCnt; j--;) {
+
+                    cell = cells[j];
+
+                    if (opPositions[cell]) {
+                        opCount++;
+                    }
+                }
+
+                if (opCount === cellCnt) {
+
+                    // Mark all associated entities
+                    for (j = cellCnt; j--;) {
+
+                        cell = cells[j];
+                        opPositions[cell].associated = true;
+                    }
+                }
+            }
+
+            // Highlight non-associated entities
+            for (i in opPositions) {
+
+                op = opPositions[i];
+
+                if (!op.associated) {
+
+                    var moveID = game.getUniqueMoveID("none", "capture-free-opponent",
+                        op.x, op.y);
+
+                    //game.highlightCell(op.x, op.y, "move_goal", moveID);
+
+                    game.addJobForMoveID({
+                        jobID: moveID,
+                        jobName: "Highlight Cell",
+                        job: "Highlight Cell",
+                        jobArguments: [ op.x, op.y, "move_goal", "ABSOLUTE" ],
+                        execute: "immediately"
+                    });
+
+                    game.addJobForMoveID({
+                        jobID: moveID,
+                        jobName: "Delete Opponent Entity",
+                        job: "Capture At",
+                        jobArguments: {
+                            x : op.x,
+                            y : op.y }
+                    });
+
+                    console.log(op);
+                }
+            }
+        },
+
+        /**
          * Roll all dices
          * @param gameEvent
          * @param game
@@ -458,6 +555,29 @@ Spoooky.GameEvents = {
         },
 
         /**
+         * Capture an entity at x/y position
+         * @param gameEvent
+         * @param game
+         */
+        "Capture At" : function(gameEvent, game) {
+
+            var jobArgs = gameEvent.jobArguments,
+                entityX = jobArgs.x,
+                entityY = jobArgs.y;
+
+            if (game.models.playVirtual === false) {
+
+                var destination = game.translateCoordinates(entityX, entityY);
+                Spoooky.GameProcess.pushMessage("[" + game.models.moveCounter + "] " +
+                game.getCurrentPlayerName() + " schlaegt gegnerische Spielfigur auf Feld " +
+                destination + ".");
+            }
+
+            // Delete entity at the target destination
+            game.deleteEntityAt(entityX, entityY);
+        },
+
+        /**
          * Capture an opponent game entity at a specific position
          * @param gameEvent
          * @param game
@@ -466,7 +586,11 @@ Spoooky.GameEvents = {
 
             var entityX, entityY,
                 jobArgs = gameEvent.jobArguments,
+                entityPosition;
+
+            if (gameEvent.entityLink) {
                 entityPosition = gameEvent.entityLink.position;
+            }
 
             if (jobArgs[2] === "RELATIVE") {
 
@@ -479,7 +603,6 @@ Spoooky.GameEvents = {
             }
 
             //game.models.moveCounter += 1;
-
             if (game.models.playVirtual === false) {
 
                 var destination = game.translateCoordinates(entityX, entityY);
@@ -532,6 +655,7 @@ Spoooky.GameEvents = {
                 markX = jobArgs[0];
                 markY = jobArgs[1];
             }
+
             game.highlightCell(markX, markY, markClass, gameEvent.jobID);
         },
 
