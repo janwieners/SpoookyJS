@@ -15,7 +15,7 @@
  *  - Angular UI Bootstrap 0.12.1
  *  - Underscore.js 1.8.2
  *  - D3.js 3.5.5
- *  - C3.js 0.4.9
+ *  - C3.js 0.4.10
  **/
 
 "use strict";
