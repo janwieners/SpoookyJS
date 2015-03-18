@@ -147,7 +147,6 @@ Spoooky.Game = function() {
      * @returns {*}
      */
     self_Game.stringifyModels = function() {
-
         return JSON.stringify(self_Game.models);
     };
 
@@ -535,6 +534,7 @@ Spoooky.Game = function() {
                 // Games like tic tac toe or nine men's morris, in which
                 // entities are placed on empty fields of the game board
                 case "PLACING":
+                case "FREE CAPTURE":
 
                     // Initially show free fields
                     self_Game.showFieldsToPlaceEntity();
@@ -550,18 +550,23 @@ Spoooky.Game = function() {
 
                         // Execute global game rules
                         if (self_Game.executeGameRules()) {
+
                             // If global game rules are fulfilled
                             // then execute associated jobs
                             self_Game.executeJobsForRecentMove();
                         } else {
+
                             // Proceed the game: change players, etc.
                             self_Game.proceed();
-                            // Show free fields after player change
-                            self_Game.showFieldsToPlaceEntity();
                         }
                     }
+
                     break;
             }
+
+            // Perform dedicated jobs after executed move
+            self_Game.executePostMoveJobs();
+
         }
 
         // Artificial Player
@@ -598,7 +603,7 @@ Spoooky.Game = function() {
      */
     self_Game.proceed = function() {
 
-        if (self_Game.models.playerChange === true) {
+        if (self_Game.models.playerChange) {
 
             // Change players
             self_Game.setNextPlayer();
@@ -615,6 +620,8 @@ Spoooky.Game = function() {
      * @param gameMode
      */
     self_Game.setGameMode = function(gameMode) {
+
+        self_Game.models.tmpGameMode = self_Game.models.gameMode;
         self_Game.models.gameMode = gameMode;
     };
 
@@ -747,14 +754,17 @@ Spoooky.Game = function() {
      */
     self_Game.setNextPlayer = function() {
 
-        var playerID = self_Game.getCurrentPlayerID();
-        if (playerID < self_Game.models.MetaAgents.length-1) {
+        var playerID = self_Game.getCurrentPlayerID(),
+            models = self_Game.models;
+
+        if (playerID < models.MetaAgents.length-1) {
             self_Game.setCurrentPlayerID(playerID + 1);
         } else {
             self_Game.setCurrentPlayerID(0);
         }
+
         self_Game.resetMoves();
-        self_Game.models.gameRounds++;
+        models.gameRounds++;
     };
 
     /**
@@ -1241,6 +1251,12 @@ Spoooky.Game = function() {
 
         // Game rule atom for the game of nine men's morris
         "Player Has Entities On Nearby Connected Fields After Last Move": function(currentRuleAtom) {
+
+            var rcntPosition = self_Game.getrecentlyMovedEntity().position;
+
+            if (!rcntPosition) {
+                return false;
+            }
 
             var cellCluster = currentRuleAtom.atomArguments,
                 world = self_Game.gameWorld, cell, content,
@@ -1959,6 +1975,8 @@ Spoooky.Game = function() {
 
         if (self_Game.models.gameMode === "PLACING") {
             self_Game.highlightStandardMoves(self_Game.getCurrentPlayer().getAllEntityMoves());
+        } else if (self_Game.models.gameMode === "FREE CAPTURE") {
+            self_Game.highlightGoalMoves(self_Game.getCurrentPlayer().getAllEntityMoves());
         }
     };
 
@@ -1970,9 +1988,9 @@ Spoooky.Game = function() {
 
         if (!_.isUndefined(moves)) {
 
-            var move;
+            var move, i = moves.length;
 
-            for (var i = moves.length; i--;) {
+            for (; i--;) {
 
                 move = moves[i];
 
@@ -2001,9 +2019,9 @@ Spoooky.Game = function() {
 
         if (!_.isUndefined(moves)) {
 
-            var move, moveEntity;
+            var move, moveEntity, i = moves.length;
 
-            for (var i = moves.length; i--;) {
+            for (; i--;) {
 
                 move = moves[i];
 
@@ -2029,8 +2047,33 @@ Spoooky.Game = function() {
 
                         break;
 
-                    // Put entities on the game board
-                    case "PUT":
+                    // Free capture moves
+                    case "FREE CAPTURE":
+
+                        // Free capture move: delete an opponent entity on game board cell
+                        self_Game.addJobForMoveID({
+                            jobID: move.ID,
+                            jobName: "Highlight Cell",
+                            job: "Highlight Cell",
+                            jobArguments: [ move.targetX, move.targetY, "move_goal", "ABSOLUTE" ],
+                            execute: "immediately"
+                        });
+
+                        // Delete the entity
+                        self_Game.addJobForMoveID({
+                            jobID : move.ID,
+                            jobName: "Delete Opponent Entity",
+                            job: "Capture Opponent At",
+                            jobArguments: [ move.targetX, move.targetY, "ABSOLUTE" ]
+                        });
+
+                        // Reset game mode
+                        self_Game.addJobForMoveID({
+                            jobID : move.ID,
+                            jobName: "Reset Game Mode",
+                            job: "Reset Game Mode"
+                        });
+
                         break;
 
                     // Default moves
@@ -2103,8 +2146,9 @@ Spoooky.Game = function() {
     self_Game.resetMoves = function() {
 
         var gameWorld = self_Game.gameWorld, item, i,
-            entityMoves = self_Game.models.MoveTable,
-            highlightTable = self_Game.models.HighlightTable;
+            models = self_Game.models,
+            entityMoves = models.MoveTable,
+            highlightTable = models.HighlightTable;
 
         for (i = entityMoves.length; i--;) {
 
@@ -2112,9 +2156,9 @@ Spoooky.Game = function() {
             gameWorld.setCellClass(item.xPosition, item.yPosition, "");
         }
 
-        self_Game.models.MoveTable.length = 0;
-        self_Game.models.GoalMoves.length = 0;
-        self_Game.models.MovableEntities.length = 0;
+        models.MoveTable.length = 0;
+        models.GoalMoves.length = 0;
+        models.MovableEntities.length = 0;
 
         // Reset highlighted cells
         for (i = highlightTable.length; i--;) {
@@ -2123,7 +2167,7 @@ Spoooky.Game = function() {
             gameWorld.setCellClass(item.x, item.y, "");
         }
 
-        self_Game.flush(self_Game.models.HighlightTable);
+        self_Game.flush(models.HighlightTable);
 
         if (self_Game.areas !== null) {
             if (self_Game.areas.isEnabled()) { self_Game.areas.resetDisplays(); }
@@ -2733,8 +2777,11 @@ Spoooky.Game = function() {
                 entityLink : jobsToAdd.entityLink
             };
 
-            if (curJob.execute && curJob.execute === "immediately") {
-                Spoooky.GameEvents.fireEvent(currentJob, self_Game);
+            if (curJob.execute) {
+
+                if (curJob.execute === "immediately") {
+                    Spoooky.GameEvents.fireEvent(currentJob, self_Game);
+                }
             } else {
                 self_Game.addJobForMoveID(currentJob);
             }
@@ -2850,7 +2897,7 @@ Spoooky.Game = function() {
     self_Game.executeJobsForRecentMove = function() {
 
         self_Game.resetMoves();
-        self_Game.executeJobsForMoveID(self_Game.getLastMoveID());
+        self_Game.executeJobsForMoveID(self_Game.models.lastMoveID);
     };
 
     /**
@@ -2859,15 +2906,29 @@ Spoooky.Game = function() {
      */
     self_Game.executeJobsForMoveID = function(moveID) {
 
-        var jobs = self_Game.jobQueue.getJobsWithMoveID(moveID);
+        var jobs = self_Game.jobQueue.getJobsWithMoveID(moveID),
+            jobCnt = jobs.length;
 
-        for (var jobCounter = 0; jobCounter < jobs.length; jobCounter += 1) {
+        for (var jobCounter = 0; jobCounter < jobCnt; jobCounter++) {
             Spoooky.GameEvents.fireEvent(jobs[jobCounter], self_Game);
         }
 
         // Clean up
         self_Game.jobQueue.flush();
         self_Game.models.moveID = 0;
+    };
+
+    /**
+     * Execute dedicated jobs after move
+     */
+    self_Game.executePostMoveJobs = function() {
+
+        if (self_Game.models.gameMode === "PLACING" ||
+            self_Game.models.gameMode === "FREE CAPTURE") {
+
+            // Show free fields after player change / executed jobs
+            self_Game.showFieldsToPlaceEntity();
+        }
     };
 
     /**
@@ -3166,24 +3227,22 @@ Spoooky.Game = function() {
             gridRows = self_Game.gameWorld.getRows(),
             gridColumns = self_Game.gameWorld.getColumns();
 
-        for (var y = 0; y < gridRows; y += 1) {
-            for (x = 0; x < gridColumns; x += 1) {
+        for (var y = 0; y < gridRows; y++) {
+            for (x = 0; x < gridColumns; x++) {
 
                 gbConfig = gameBoardConfiguration[counter];
+
                 if (gbConfig !== 0) {
 
                     metaAgent = self_Game.getPlayerWithID(gbConfig.associatedWithMetaAgent);
                     newEntity = metaAgent.entityFactory(gbConfig);
 
-                    if (!newEntity.unlimitedQuantity) {
-
-                        // Add a flag to signalize that this entity has been placed on the game board
-                        newEntity.onBoard = true;
-                    }
+                    // Add a flag to signalize that this entity has been placed on the game board
+                    newEntity.onBoard = true;
 
                     self_Game.pushEntityToCell(newEntity, x, y);
                 }
-                counter += 1;
+                counter++;
             }
         }
     };

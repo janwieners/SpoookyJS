@@ -340,9 +340,9 @@ Spoooky.MetaAgent = function(game) {
      */
     self_MetaAgent.getEntitiesOfType = function(entityType) {
 
-        var returnEntities = [];
+        var returnEntities = [], cnt = self_MetaAgent.countEntities();
 
-        for (var index = self_MetaAgent.countEntities(); index--;) {
+        for (var index = cnt; index--;) {
 
             if (myGame.models.Entities[self_MetaAgent.ID][index].type === entityType) {
                 returnEntities.push(myGame.models.Entities[self_MetaAgent.ID][index]);
@@ -578,9 +578,9 @@ Spoooky.MetaAgent = function(game) {
             return [];
         }
 
-        var entities, entity;
+        var entities, entity, models = game.models;
 
-        switch (game.models.gameMode) {
+        switch (models.gameMode) {
 
             // Find a move where an associated entity
             // is moved in the game world
@@ -613,7 +613,7 @@ Spoooky.MetaAgent = function(game) {
                         goalMoves.length = 0;
 
                         // See if current entity is restricted to move in a specific way
-                        rstrct = game.models.SelectRestrictions.moves;
+                        rstrct = models.SelectRestrictions.moves;
 
                         switch (rstrct) {
 
@@ -772,11 +772,47 @@ Spoooky.MetaAgent = function(game) {
 
                 break;
 
+            case "FREE CAPTURE":
+
+                var captureMoves = [], cptStorage = self_MetaAgent.captureMoveStorage,
+                    i = cptStorage.length, moveID;
+
+                for (; i--;) {
+
+                    // Add a capture move
+                    moveID = game.getUniqueMoveID("free-capture", "opponent",
+                        cptStorage[i].x, cptStorage[i].y);
+
+                    captureMoves.push({
+                        ID : moveID,
+                        type : "FREE CAPTURE",
+                        entity : false,
+                        name : "Capture Opponent",
+                        targetX : cptStorage[i].x,
+                        targetY : cptStorage[i].y,
+                        moveClass : "move_goal"
+                    });
+
+                }
+
+                // Reset stored capture moves
+                self_MetaAgent.captureMoveStorage.length = 0;
+
+                return captureMoves;
+
+                break;
+
             default:
-                console.log("Wrong command in self_MetaAgent.getAllEntityMoves");
+                console.log("Wrong command in self_MetaAgent.getAllEntityMoves", models.gameMode);
                 break;
         }
     };
+
+    /**
+     * Temporary save capture moves
+     * @type {Array}
+     */
+    self_MetaAgent.captureMoveStorage = [];
 
     /**
      * Reduce the list of all executable moves by agent focus

@@ -273,6 +273,12 @@ Spoooky.Models = function() {
     self_Models.gameMode = "MOVING";
 
     /**
+     * Temporary save the game mode
+     * @type {string}
+     */
+    self_Models.tmpGameMode = "";
+
+    /**
      * Numbers of rounds played
      * @type {number}
      */

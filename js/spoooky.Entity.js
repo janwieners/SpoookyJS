@@ -293,7 +293,9 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
      * @returns {*}
      */
     self_Entity.getFieldID = function() {
-        return self_Entity.getWorld().getFieldID(self_Entity.position.x, self_Entity.position.y);
+
+        var position = self_Entity.position;
+        return self_Entity.getWorld().getFieldID(position.x, position.y);
     };
 
     /**
@@ -449,6 +451,7 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
      * @returns {*[]}
      */
     self_Entity.translateDirection = function (direction) {
+
         var xDir = 0,
             yDir = 0;
 
@@ -456,8 +459,8 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
             xDir = direction[0];
             yDir = direction[1];
         } else {
-            switch(direction)
-            {
+
+            switch(direction) {
                 case "n":
                 case "north":
                     xDir = 0;
@@ -614,6 +617,7 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
      * @returns {*}
      */
     self_Entity.getMove = function(moveID) {
+
         if (moveID >= 0 && moveID < self_Entity.countPossibleMoves()) {
             return self_Entity.moves[moveID];
         }
@@ -643,7 +647,7 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
 
         if (moveCount <= 0) { return false; }
 
-        var moveID, currentMove, frequency, currentX, currentY, freqCnt,
+        var moveID, currentMove, frequency, currentX, currentY, freqCnt, position,
             destX, destY, possibleMoves = [], game = self_Entity.getGame();
 
         for (var moveCounter = moveCount; moveCounter--;) {
@@ -658,8 +662,9 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                     if (currentMove.frequency > 0 || currentMove.frequency === "ANY") {
 
                         frequency = currentMove.frequency;
-                        currentX = self_Entity.position.x;
-                        currentY = self_Entity.position.y;
+                        position = self_Entity.position;
+                        currentX = position.x;
+                        currentY = position.y;
 
                         if (frequency === "ANY") {
                             frequency = 23;
@@ -728,8 +733,9 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                     // All cell connections
                     var connections = game.models.CellConnections;
 
-                    currentX = self_Entity.position.x;
-                    currentY = self_Entity.position.y;
+                    position = self_Entity.position;
+                    currentX = position.x;
+                    currentY = position.y;
 
                     // Identify the ID of the current cell and get the target cells
                     var cellID = game.models.GameGrid[currentY][currentX].cellID,
@@ -806,8 +812,9 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                             curFieldID = -1,
                             tmpFieldExists = false;
 
-                        currentX = self_Entity.position.x;
-                        currentY = self_Entity.position.y;
+                        position = self_Entity.position;
+                        currentX = position.x;
+                        currentY = position.y;
 
                         // Backgammon specific: If an entity has got a fieldID then the entity is in the bear off area
                         // and must re-enter the game
@@ -1061,7 +1068,7 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
         // *****
         // Identify goal moves for board games without dices
         // *****
-        if (game.models.DiceBox.isEnabled === false) {
+        if (!game.models.DiceBox.isEnabled) {
 
             // Check initial position of the entity
             for (curGoalID = goalCount; curGoalID--;) {
@@ -1258,10 +1265,12 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
         var opponentPlayer = self_Entity.getAssociatedPlayer().getNextOpponentPlayer(),
             opponentEntityCount = opponentPlayer.countEntities(),
             opEntities = opponentPlayer.getEntities(),
-            counter;
+            counter, position;
 
         for (counter = opponentEntityCount; counter--;) {
-            if (opEntities[counter].canCaptureAt(self_Entity.position.x, self_Entity.position.y) === true) {
+
+            position = self_Entity.position;
+            if (opEntities[counter].canCaptureAt(position.x, position.y) === true) {
                 return true;
             }
         }
@@ -1313,14 +1322,14 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
         if (self_Entity.enabled === false) { return false; }
 
         var count = self_Entity.goals.length,
-            goalCounter;
+            goalCounter, goals = self_Entity.goals;
 
         for (goalCounter = 0; goalCounter < count; goalCounter += 1) {
-            if (self_Entity.goals[goalCounter].name === goalName) {
+            if (goals[goalCounter].name === goalName) {
 
                 var returnValue = true,
                     atomCounter = 0,
-                    goalAtoms = self_Entity.goals[goalCounter].atoms,
+                    goalAtoms = goals[goalCounter].atoms,
                     goalAtomCount = goalAtoms.length;
 
                 for (atomCounter = 0; atomCounter < goalAtomCount; atomCounter += 1) {
@@ -1349,6 +1358,11 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
      * @param goalAtomArguments
      */
     self_Entity.addGoalAtom = function(goalAtomName, goalAtomFunctionName, goalAtomArguments) {
-        self_Entity.goalAtoms.push({ atomName: goalAtomName, atomFunction: goalAtomFunctionName, atomArguments: goalAtomArguments });
+
+        self_Entity.goalAtoms.push({
+            atomName: goalAtomName,
+            atomFunction: goalAtomFunctionName,
+            atomArguments: goalAtomArguments
+        });
     };
 };

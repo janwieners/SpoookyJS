@@ -26,7 +26,7 @@ Spoooky.GameEvents = {
          * @param gameEvent
          * @param game
          */
-        "Highlight Unassociated Opponent Entities" : function(gameEvent, game) {
+        "Capture Unassociated Opponent Entities" : function(gameEvent, game) {
 
             var associations = gameEvent.jobArguments.associations, op,
                 assoCnt = associations.length, cellCnt, opPositions = {},
@@ -90,31 +90,24 @@ Spoooky.GameEvents = {
 
                 if (!op.associated) {
 
-                    var moveID = game.getUniqueMoveID("none", "capture-free-opponent",
-                        op.x, op.y);
+                    // Create a capture move for the current meta agent / player
+                    game.getCurrentPlayer().captureMoveStorage.push({
+                        initialMode : game.models.gameMode,
+                        x : op.x,
+                        y : op.y }
+                    );
 
-                    //game.highlightCell(op.x, op.y, "move_goal", moveID);
-
-                    game.addJobForMoveID({
-                        jobID: moveID,
-                        jobName: "Highlight Cell",
-                        job: "Highlight Cell",
-                        jobArguments: [ op.x, op.y, "move_goal", "ABSOLUTE" ],
-                        execute: "immediately"
-                    });
-
-                    game.addJobForMoveID({
-                        jobID: moveID,
-                        jobName: "Delete Opponent Entity",
-                        job: "Capture At",
-                        jobArguments: {
-                            x : op.x,
-                            y : op.y }
-                    });
-
-                    console.log(op);
                 }
             }
+        },
+
+        /**
+         * Reset Highlighted Moves
+         * @param gameEvent
+         * @param game
+         */
+        "Reset Moves" : function(gameEvent, game) {
+            game.resetMoves();
         },
 
         /**
@@ -516,15 +509,12 @@ Spoooky.GameEvents = {
          * @param game
          */
         "Change Game Mode" : function(gameEvent, game) {
+            game.setGameMode(gameEvent.jobArguments.mode);
+        },
 
-            var mode = gameEvent.jobArguments.mode;
-
-            if (mode === "PLACING" ||
-                mode === "MOVING") {
-                game.setGameMode(mode);
-            } else {
-                console.log("Error: Wrong Game Mode", mode);
-            }
+        "Reset Game Mode" : function(gameEvent, game) {
+            game.models.gameMode = game.models.tmpGameMode;
+            game.models.tmpGameMode = "";
         },
 
         /**
@@ -564,7 +554,7 @@ Spoooky.GameEvents = {
             var jobArgs = gameEvent.jobArguments,
                 entityX = jobArgs.x,
                 entityY = jobArgs.y;
-
+console.log('here')
             if (game.models.playVirtual === false) {
 
                 var destination = game.translateCoordinates(entityX, entityY);

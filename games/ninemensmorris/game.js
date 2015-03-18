@@ -104,6 +104,7 @@ var blackStone = {
     mode : "PLACE",
     placeTo : "ANY",
 
+    // Moves are getting automatically enabled when player is in mode "MOVING"
     moves : [{
         name : "Move to connected field",
         type : "By Connected Field IDs",
@@ -125,6 +126,7 @@ var whiteStone = {
     }]
 };
 
+
 var quantity = 2;
 var black = game.addBlueprint(player2, blackStone, quantity),
     white = game.addBlueprint(player1, whiteStone, quantity);
@@ -137,13 +139,16 @@ game.addEntitiesToGameBoard([
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    white,0,white,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,black,0,0,0,black,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     black,0,0,0,0,0,black,0,0,0,0,0,black]);
+
+// Add player goal: build a line / row of three own entities
+
 
 // Game Rules
 // Take an opponent entity from the game board if the last move
@@ -174,22 +179,66 @@ game.addGameRuleAtom({
     ]
 });
 
-// Assemble goal atoms to game goals
+// If one player has three entities on a line...
+game.assembleGameRule({
+    name     : "Enable Capture Move",
+    atoms    : ["Three entities on a line with last move"]
+});
+
+// ...then prevent a player change and restrict moves to capture move
+game.connectGameRuleConsequences({
+        ruleName: "Enable Capture Move",
+        consequences: [{
+            jobName: "Output Capture message",
+            jobFunction: "Print Game Process",
+            jobArguments: "Mühle."
+        }, {
+            jobName: "Add unassociated opponent entities to the meta agents capture moves",
+            jobFunction: "Capture Unassociated Opponent Entities",
+            jobArguments : {
+                associations : [
+                    // Horizontal
+                    [1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9],
+                    [10, 11, 12],
+                    [13, 14, 15],
+                    [16, 17, 18],
+                    [19, 20, 21],
+                    [22, 23, 24],
+                    // Vertical
+                    [1, 10, 22],
+                    [4, 11, 19],
+                    [7, 12, 16],
+                    [2, 5, 8],
+                    [17, 20, 23],
+                    [9, 13, 18],
+                    [6, 14, 21],
+                    [3, 15, 24]
+                ]
+            }
+        }, {
+            jobName: "Restrict Moves To Capture Moves",
+            jobFunction: "Change Game Mode",
+            jobArguments: { mode: "FREE CAPTURE" }
+        }]
+    });
+
+// Release capture game state
+game.addGameRuleAtom({
+    atomName : "Game State Is CAPTURE",
+    atomFunction : "Game State Is",
+    atomArguments : "CAPTURE"
+});
+
 game.assembleGameRule({
     name     : "Delete opponent entity",
-    atoms    : ["Three entities on a line with last move"]
+    atoms    : ["Game State Is CAPTURE"]
 });
 
 game.connectGameRuleConsequences({
     ruleName     : "Delete opponent entity",
     consequences : [{
-        jobName: "Enable Second Move",
-        jobFunction: "Prevent Player Change"
-    }, {
-        jobName: "Output Message",
-        jobFunction: "Print Game Process",
-        jobArguments: "Mühle"
-    }, {
         jobName: "Highlight opponent entities which can be captured",
         jobFunction: "Highlight Unassociated Opponent Entities",
         jobArguments : {
