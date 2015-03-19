@@ -366,8 +366,10 @@ Spoooky.GridWelt = function(game) {
         if (self_GridWelt.isValidCoordinate(xPosition, yPosition)) {
 
             var currentEntity = self_GridWelt.popFromCell(xPosition, yPosition);
-            // Befindet sich ein Entity auf der Spielzelle, so muss auch der Entity gelÃ¶scht werden
+
+            // Delete entity on cell
             if (currentEntity && currentEntity !== 0) {
+
                 currentEntity.seppuku();
                 return true;
             }
@@ -411,6 +413,7 @@ Spoooky.GridWelt = function(game) {
         var parsedX = parseInt(xPosition, 10), parsedY;
 
         if (parsedX < self_GridWelt.getColumns() && parsedX >= 0) {
+
             parsedY = parseInt(yPosition, 10);
             if (parsedY >= 0 && parsedY < self_GridWelt.getRows()) {
                 return true;

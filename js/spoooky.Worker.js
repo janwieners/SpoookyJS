@@ -1,6 +1,21 @@
 // Import necessary scripts to build virtual SpoookyJS games
-importScripts("libs/underscore-min.js", "spoooky.min.js");
-//importScripts("libs/underscore-min.js", "spoooky.js", "spoooky.AI.js");
+//importScripts("libs/underscore-min.js", "spoooky.js");
+
+// Debug imports
+importScripts("libs/underscore-min.js",
+    "spoooky.js",
+    "spoooky.Models.js",
+    "spoooky.Game.js",
+    "spoooky.DiceBox.js",
+    "spoooky.GridWelt.js",
+    "spoooky.OffBoard.js",
+    "spoooky.GameEvents.js",
+    "spoooky.JobQueue.js",
+    "spoooky.Areas.js",
+    "spoooky.Agent.js",
+    "spoooky.MetaAgent.js",
+    "spoooky.Entity.js",
+    "spoooky.AI.js");
 
 self.addEventListener("message", function(e) {
 

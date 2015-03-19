@@ -105,10 +105,24 @@ var blackStone = {
     placeTo : "ANY",
 
     // Moves are getting automatically enabled when player is in mode "MOVING"
+    // Move to connected fields if player has got more than 3 entities
     moves : [{
         name : "Move to connected field",
         type : "By Connected Field IDs",
-        conditions : [{ condition : "Is Empty", state : true }]
+        conditions : [
+            { condition : "Is Empty", state : true },
+            { condition : "Player Owns > n Entities",
+                playerID : player2.getID(),
+                value : 3,
+                state : true }]
+    }, {
+        name : "Jump",
+        type : "Jump To Free Field",
+        conditions : [{
+            condition : "Player Owns n Entities",
+            playerID : player2.getID(),
+            value : 3,
+            state : true }]
     }]
 };
 
@@ -119,70 +133,95 @@ var whiteStone = {
     mode : "PLACE",
     placeTo : "ANY",
 
+    // Move to connected fields if player has got more than 3 entities
     moves : [{
         name : "Move to connected field",
         type : "By Connected Field IDs",
-        conditions : [{ condition : "Is Empty", state : true }]
+        conditions : [
+            { condition : "Is Empty", state : true },
+            { condition : "Player Owns > n Entities",
+                playerID : player1.getID(),
+                value : 3,
+                state : true }]
+    }, {
+        name : "Jump",
+        type : "Jump To Free Field",
+        conditions : [{
+            condition : "Player Owns n Entities",
+            playerID : player1.getID(),
+            value : 3,
+            state : true }]
     }]
 };
 
+var quantity = 9;
+var white = game.addBlueprint(player1, whiteStone, quantity),
+    black = game.addBlueprint(player2, blackStone, quantity);
 
-var quantity = 2;
-var black = game.addBlueprint(player2, blackStone, quantity),
-    white = game.addBlueprint(player1, whiteStone, quantity);
-
-// Testing
+// Test setup
+/*
 game.addEntitiesToGameBoard([
-    white,0,0,0,0,0,0,0,0,0,0,0,white,
+    white,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,white,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    white,0,white,0,0,0,0,0,0,0,0,0,black,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    white,0,white,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,black,0,0,0,black,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    black,0,0,0,0,0,black,0,0,0,0,0,black]);
+    black,0,0,0,0,0,black,0,0,0,0,0,0]);
 
-// Add player goal: build a line / row of three own entities
+game.setGameMode("MOVING");
+*/
 
+// *** Game Rules ***
+var cellConnections = [
+    // Horizontal
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [10, 11, 12],
+    [13, 14, 15],
+    [16, 17, 18],
+    [19, 20, 21],
+    [22, 23, 24],
+    // Vertical
+    [1, 10, 22],
+    [4, 11, 19],
+    [7, 12, 16],
+    [2, 5, 8],
+    [17, 20, 23],
+    [9, 13, 18],
+    [6, 14, 21],
+    [3, 15, 24]
+];
 
-// Game Rules
 // Take an opponent entity from the game board if the last move
-// of the current player
+// of the current player led to a mill
 game.addGameRuleAtom({
     atomName : "Three entities on a line with last move",
     atomFunction : "Player Has Entities On Nearby Connected Fields After Last Move",
     // Field IDs, clusters are OR-connected
-    atomArguments : [
-        // Horizontal
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-        [10, 11, 12],
-        [13, 14, 15],
-        [16, 17, 18],
-        [19, 20, 21],
-        [22, 23, 24],
-        // Vertical
-        [1, 10, 22],
-        [4, 11, 19],
-        [7, 12, 16],
-        [2, 5, 8],
-        [17, 20, 23],
-        [9, 13, 18],
-        [6, 14, 21],
-        [3, 15, 24]
-    ]
+    atomArguments : cellConnections
+});
+
+// Check for free entities of the opponent player
+game.addGameRuleAtom({
+    atomName : "Opponent has free entities on the game board",
+    atomFunction : "Non-associated Opponent Entities",
+    // Define associations
+    atomArguments : cellConnections
 });
 
 // If one player has three entities on a line...
 game.assembleGameRule({
     name     : "Enable Capture Move",
-    atoms    : ["Three entities on a line with last move"]
+    atoms    : ["Three entities on a line with last move",
+        "Opponent has free entities on the game board"]
 });
 
 // ...then prevent a player change and restrict moves to capture move
@@ -196,26 +235,7 @@ game.connectGameRuleConsequences({
             jobName: "Add unassociated opponent entities to the meta agents capture moves",
             jobFunction: "Capture Unassociated Opponent Entities",
             jobArguments : {
-                associations : [
-                    // Horizontal
-                    [1, 2, 3],
-                    [4, 5, 6],
-                    [7, 8, 9],
-                    [10, 11, 12],
-                    [13, 14, 15],
-                    [16, 17, 18],
-                    [19, 20, 21],
-                    [22, 23, 24],
-                    // Vertical
-                    [1, 10, 22],
-                    [4, 11, 19],
-                    [7, 12, 16],
-                    [2, 5, 8],
-                    [17, 20, 23],
-                    [9, 13, 18],
-                    [6, 14, 21],
-                    [3, 15, 24]
-                ]
+                associations : cellConnections
             }
         }, {
             jobName: "Restrict Moves To Capture Moves",
@@ -242,28 +262,10 @@ game.connectGameRuleConsequences({
         jobName: "Highlight opponent entities which can be captured",
         jobFunction: "Highlight Unassociated Opponent Entities",
         jobArguments : {
-            associations : [
-                // Horizontal
-                [1, 2, 3],
-                [4, 5, 6],
-                [7, 8, 9],
-                [10, 11, 12],
-                [13, 14, 15],
-                [16, 17, 18],
-                [19, 20, 21],
-                [22, 23, 24],
-                // Vertical
-                [1, 10, 22],
-                [4, 11, 19],
-                [7, 12, 16],
-                [2, 5, 8],
-                [17, 20, 23],
-                [9, 13, 18],
-                [6, 14, 21],
-                [3, 15, 24]
-            ]
+            associations : cellConnections
         }
     }]});
+
 
 // Change game mode to "MOVING" if every entity of the players has been placed
 // on the game board
@@ -272,15 +274,25 @@ game.addGameRuleAtom({
     atomFunction : "All players have placed their entities on the game board"
 });
 
-// Assemble goal atoms to game goals
+game.addGameRuleAtom({
+    atomName : "Game is not in FREE CAPTURE mode",
+    atomFunction : "Game Mode Is Not",
+    atomArguments : "FREE CAPTURE"
+});
+
+// Change game mode only if the last move didn't led to a mill
 game.assembleGameRule({
     name     : "Change game mode to moving",
-    atoms    : ["Every entity has been placed on the game board"]
+    atoms    : ["Game is not in FREE CAPTURE mode", "Every entity has been placed on the game board"]
 });
 
 game.connectGameRuleConsequences({
     ruleName     : "Change game mode to moving",
     consequences : [{
+        jobName: "Output message",
+        jobFunction: "Print Game Process",
+        jobArguments: "Alle Spielfiguren befinden sich nun auf dem Spielbrett."
+    }, {
         jobName: "Let the players move their entities",
         jobFunction: "Change Game Mode",
         jobArguments: { mode: "MOVING" }
@@ -291,8 +303,151 @@ game.connectGameRuleConsequences({
         jobName: "Delete this game rule",
         jobFunction: "Delete Game Rule",
         jobArguments: { ruleName: "Change game mode to moving" }
-    }
-    ]});
+    }]});
+
+// Game Rule: Player 1 wins if no entity of player 2 can move
+game.addGameRuleAtom({
+    atomName : "No entity of player 2 can be placed",
+    atomFunction : "Player Has No Placeable Entities",
+    atomArguments : player2.getID()
+});
+
+game.addGameRuleAtom({
+    atomName : "No entity of player 2 can move",
+    atomFunction : "Player Has No Movable Entities",
+    atomArguments : player2.getID()
+});
+
+game.addGameRuleAtom({
+    atomName : "Player 2 owns more than two entities",
+    atomFunction : "Player Owns > n Entities",
+    atomArguments : { playerID : player2.getID(),
+        value : 2,
+        state : true }
+});
+
+// Assemble goal atoms to game goals
+game.assembleGameRule({
+    name     : "Player 1 wins the game",
+    atoms    : ["No entity of player 2 can be placed",
+        "No entity of player 2 can move",
+        "Player 2 owns more than two entities"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Player 1 wins the game",
+    consequences : [{
+        jobName: "Stop the Game",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Output winning message",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 1 gewinnt das Spiel!"
+    },{
+        jobName: "Set the Winner of the Game",
+        jobFunction: "Set Winner",
+        jobArguments: player1.getID()
+    }]});
+
+// Game Rule: Player 2 wins if no entity of player 1 can move
+game.addGameRuleAtom({
+    atomName : "No entity of player 1 can be placed",
+    atomFunction : "Player Has No Placeable Entities",
+    atomArguments : player1.getID()
+});
+
+game.addGameRuleAtom({
+    atomName : "No entity of player 1 can move",
+    atomFunction : "Player Has No Movable Entities",
+    atomArguments : player1.getID()
+});
+
+game.addGameRuleAtom({
+    atomName : "Player 1 owns more than two entities",
+    atomFunction : "Player Owns > n Entities",
+    atomArguments : { playerID : player1.getID(),
+        value : 2,
+        state : true }
+});
+
+// Assemble goal atoms to game goals
+game.assembleGameRule({
+    name     : "Player 2 wins the game",
+    atoms    : ["No entity of player 1 can be placed",
+        "No entity of player 1 can move",
+        "Player 1 owns more than two entities"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Player 2 wins the game",
+    consequences : [{
+        jobName: "Stop the Game",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Output winning message",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 2 gewinnt das Spiel!"
+    },{
+        jobName: "Set the Winner of the Game",
+        jobFunction: "Set Winner",
+        jobArguments: player2.getID()
+    }]});
+
+// Game Rule: Player wins if opponent has got only two entities on the game board
+game.addGameRuleAtom({
+    atomName : "Player 1 has got only two entities",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [player1.getID(), 2]
+});
+
+game.addGameRuleAtom({
+    atomName : "Player 2 has got only two entities",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [player2.getID(), 2]
+});
+
+// Assemble winning condition for player 1
+game.assembleGameRule({
+    name     : "Only two entities: Player 1 wins the game",
+    atoms    : ["Player 2 has got only two entities"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Only two entities: Player 1 wins the game",
+    consequences : [{
+        jobName: "Stop the Game",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Output winning message",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 1 gewinnt das Spiel!"
+    },{
+        jobName: "Set the Winner of the Game",
+        jobFunction: "Set Winner",
+        jobArguments: player1.getID()
+    }]});
+
+// Assemble winning condition for player 2
+game.assembleGameRule({
+    name     : "Only two entities: Player 2 wins the game",
+    atoms    : ["Player 1 has got only two entities"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Only two entities: Player 2 wins the game",
+    consequences : [{
+        jobName: "Stop the Game",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Output winning message",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 2 gewinnt das Spiel!"
+    },{
+        jobName: "Set the Winner of the Game",
+        jobFunction: "Set Winner",
+        jobArguments: player2.getID()
+    }]});
+
 
 // ***************************** //
 // *** Interface / AngularJS *** //

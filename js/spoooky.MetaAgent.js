@@ -295,11 +295,15 @@ Spoooky.MetaAgent = function(game) {
      */
     self_MetaAgent.getEntityWithID = function(entityID) {
 
-        var cur;
-        for (var index = self_MetaAgent.countEntities(); index--;) {
+        var cur, count = self_MetaAgent.countEntities(),
+            entities = myGame.models.Entities[self_MetaAgent.ID];
 
-            cur = myGame.models.Entities[self_MetaAgent.ID][index];
-            if (cur.ID === entityID) { return cur; }
+        for (var index = count; index--;) {
+
+            cur = entities[index];
+            if (cur.ID === entityID) {
+                return cur;
+            }
         }
         return false;
     };
@@ -334,18 +338,40 @@ Spoooky.MetaAgent = function(game) {
     };
 
     /**
+     * Gets all entities not placed on the game board
+     * @returns {Array}
+     */
+    self_MetaAgent.getOffBoardEntities = function() {
+
+        var entities = myGame.models.Entities[self_MetaAgent.ID],
+            cnt = entities.length, cur, offBoard = [];
+
+        for (; cnt--;) {
+
+            cur = entities[cnt];
+
+            if (cur.onBoard) {
+                offBoard.push(cur);
+            }
+        }
+
+        return offBoard
+    };
+
+    /**
      * Find associated entities of a specific type
      * @param entityType
      * @returns {Array}
      */
     self_MetaAgent.getEntitiesOfType = function(entityType) {
 
-        var returnEntities = [], cnt = self_MetaAgent.countEntities();
+        var returnEntities = [], cnt = self_MetaAgent.countEntities(),
+            entities = myGame.models.Entities[self_MetaAgent.ID];
 
         for (var index = cnt; index--;) {
 
-            if (myGame.models.Entities[self_MetaAgent.ID][index].type === entityType) {
-                returnEntities.push(myGame.models.Entities[self_MetaAgent.ID][index]);
+            if (entities[index].type === entityType) {
+                returnEntities.push(entities[index]);
             }
         }
         return returnEntities;
@@ -482,10 +508,13 @@ Spoooky.MetaAgent = function(game) {
      */
     self_MetaAgent.deleteEntity = function(entityName) {
 
-        for (var index = self_MetaAgent.countEntities(); index--;) {
+        var cnt = self_MetaAgent.countEntities(),
+            entities = myGame.models.Entities[self_MetaAgent.ID];
 
-            if (myGame.models.Entities[self_MetaAgent.ID][index].name === entityName) {
-                myGame.models.Entities[self_MetaAgent.ID].splice(index, 1);
+        for (var index = cnt; index--;) {
+
+            if (entities[index].name === entityName) {
+                entities.splice(index, 1);
                 return true;
             }
         }
@@ -603,7 +632,8 @@ Spoooky.MetaAgent = function(game) {
                     entity = entities[counter];
 
                     // Process only entities which can be moved on the game board
-                    if (entity.mode === "PLACE") { continue; }
+                    // TODO Check: necessary?
+                    // if (entity.mode === "PLACE") { continue; }
 
                     // See if the current entity can move or can capture an opponent entity
                     if (game.checkSelectCondition(entity) === true) {
@@ -772,6 +802,8 @@ Spoooky.MetaAgent = function(game) {
 
                 break;
 
+            // Free Capture Mode
+            // i.e. for the game of nine mens morris
             case "FREE CAPTURE":
 
                 var captureMoves = [], cptStorage = self_MetaAgent.captureMoveStorage,
@@ -1188,7 +1220,9 @@ Spoooky.MetaAgent = function(game) {
         self_MetaAgent.getName() + ") fragt " +
         self_MetaAgent.activeAgents + " assoziierte Agenten nach der besten Zugmoeglichkeit.");
 
-        for (var i = 0; i < self_MetaAgent.agents.length; i++) {
+        var len = self_MetaAgent.agents.length;
+
+        for (var i = 0; i < len; i++) {
             self_MetaAgent.agents[i].proposeBestMove();
         }
     };

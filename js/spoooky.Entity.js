@@ -650,6 +650,10 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
         var moveID, currentMove, frequency, currentX, currentY, freqCnt, position,
             destX, destY, possibleMoves = [], game = self_Entity.getGame();
 
+        position = self_Entity.position;
+        currentX = position.x;
+        currentY = position.y;
+
         for (var moveCounter = moveCount; moveCounter--;) {
 
             currentMove = self_Entity.getMove(moveCounter);
@@ -662,9 +666,6 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                     if (currentMove.frequency > 0 || currentMove.frequency === "ANY") {
 
                         frequency = currentMove.frequency;
-                        position = self_Entity.position;
-                        currentX = position.x;
-                        currentY = position.y;
 
                         if (frequency === "ANY") {
                             frequency = 23;
@@ -732,10 +733,6 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
 
                     // All cell connections
                     var connections = game.models.CellConnections;
-
-                    position = self_Entity.position;
-                    currentX = position.x;
-                    currentY = position.y;
 
                     // Identify the ID of the current cell and get the target cells
                     var cellID = game.models.GameGrid[currentY][currentX].cellID,
@@ -811,10 +808,6 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                             destFieldID = 0,
                             curFieldID = -1,
                             tmpFieldExists = false;
-
-                        position = self_Entity.position;
-                        currentX = position.x;
-                        currentY = position.y;
 
                         // Backgammon specific: If an entity has got a fieldID then the entity is in the bear off area
                         // and must re-enter the game
@@ -988,6 +981,63 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                     break;
                 // End of case "By Field ID"
 
+                case "Jump To Free Field":
+
+                    var freeCells = self_Entity.getWorld().getFreeCells(),
+                        i = freeCells.length;
+
+                    // Add a move for each free cell
+                    for (; i--;) {
+
+                        destX = freeCells[i].x;
+                        destY = freeCells[i].y;
+
+                        // Check every move condition
+                        if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                currentX, currentY, destX, destY)) {
+
+                            moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                destX, destY);
+
+                            possibleMoves.push({
+                                type : "MOVE",
+                                name : currentMove.name,
+                                entity: self_Entity,
+                                targetX : destX,
+                                targetY : destY,
+                                moveClass : "move_standard",
+                                freq : frequency,
+                                ID : moveID,
+                                postMove : currentMove.postMove
+                            });
+
+                            game.addJobForMoveID({
+                                jobID : moveID,
+                                jobName : "move game entity",
+                                job : "Move Entity",
+                                jobArguments : {
+                                    "entity" : self_Entity,
+                                    "destX" : destX,
+                                    "destY" : destY
+                                }
+                            });
+
+                            if (currentMove.postMove) {
+
+                                _.each(currentMove.postMove, function(postMove) {
+
+                                    game.addJobForMoveID({
+                                        jobID : moveID,
+                                        jobName : postMove.jobName,
+                                        job : postMove.jobFunction,
+                                        jobArguments : postMove.jobArguments
+                                    });
+                                });
+                            }
+                        }
+                    }
+                    break;
+                    // End of case "Jump To Free Field"
             }
         }
         return possibleMoves;

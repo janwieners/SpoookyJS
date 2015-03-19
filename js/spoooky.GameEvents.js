@@ -28,60 +28,7 @@ Spoooky.GameEvents = {
          */
         "Capture Unassociated Opponent Entities" : function(gameEvent, game) {
 
-            var associations = gameEvent.jobArguments.associations, op,
-                assoCnt = associations.length, cellCnt, opPositions = {},
-                highlightType = gameEvent.jobArguments.highlightType,
-                world = game.gameWorld, cell, cells, i;
-
-            // Get all opponent entities
-            // currently implemented for two player games
-            var opponents = game.getCurrentPlayer().getNextOpponentPlayer().getOnBoardEntities(),
-                opCount = opponents.length, position, fieldID, connected;
-
-            // Process all opponent entities; save the fieldIDs of opponent entities on the game board
-            for (; opCount--;) {
-
-                op = opponents[opCount];
-                position = op.position;
-
-                // Get the field identifier of the game board field the entity is placed on
-                fieldID = world.getFieldID(position.x, position.y);
-
-                // Save the field ID
-                opPositions[fieldID] = { ID : op.ID,
-                    x : position.x,
-                    y : position.y,
-                    associated : false };
-            }
-
-            // Process all associations
-            for (i = assoCnt; i--;) {
-
-                cells = associations[i];
-                cellCnt = cells.length;
-
-                // Number of opponent entities on associated cells
-                opCount = 0;
-
-                for (j = cellCnt; j--;) {
-
-                    cell = cells[j];
-
-                    if (opPositions[cell]) {
-                        opCount++;
-                    }
-                }
-
-                if (opCount === cellCnt) {
-
-                    // Mark all associated entities
-                    for (j = cellCnt; j--;) {
-
-                        cell = cells[j];
-                        opPositions[cell].associated = true;
-                    }
-                }
-            }
+            var op, i, opPositions = game.getAssociatedOpponentEntities(gameEvent.jobArguments.associations);
 
             // Highlight non-associated entities
             for (i in opPositions) {

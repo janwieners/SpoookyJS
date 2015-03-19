@@ -1127,6 +1127,71 @@ Spoooky.Game = function() {
     };
 
     /**
+     * Identify and get associated opponent entities.
+     * Entities are associated by their field IDs, i.e. connectedFields = [[1, 2, 3], [4, 5, 6],...]
+     * @param connectedFields
+     * @returns {{}}
+     */
+    self_Game.getAssociatedOpponentEntities = function(connectedFields) {
+
+        var associations = connectedFields, op,
+            cellCnt, opPositions = {}, world = self_Game.gameWorld,
+            cell, cells, i = associations.length, j;
+
+        // Get all opponent entities
+        // currently implemented for two player games
+        var opponents = self_Game.getCurrentPlayer().getNextOpponentPlayer().getOnBoardEntities(),
+            opCount = opponents.length, position, fieldID, connected;
+
+        // Process all opponent entities; save the fieldIDs of opponent entities on the game board
+        for (; opCount--;) {
+
+            op = opponents[opCount];
+            position = op.position;
+
+            // Get the field identifier of the game board field the entity is placed on
+            fieldID = world.getFieldID(position.x, position.y);
+
+            // Save the field ID
+            opPositions[fieldID] = { ID : op.ID,
+                x : position.x,
+                y : position.y,
+                associated : false };
+        }
+
+        // Process all associations
+        for (; i--;) {
+
+            cells = associations[i];
+            cellCnt = cells.length;
+
+            // Number of opponent entities on associated cells
+            opCount = 0;
+
+            for (j = cellCnt; j--;) {
+
+                cell = cells[j];
+
+                if (opPositions[cell]) {
+                    opCount++;
+                }
+            }
+
+            if (opCount === cellCnt) {
+
+                // Mark all associated entities
+                for (j = cellCnt; j--;) {
+
+                    cell = cells[j];
+                    opPositions[cell].associated = true;
+                }
+            }
+        }
+
+        return opPositions;
+    };
+
+    /**
      * Game rule atoms
      */
     self_Game.gameRuleAtoms = {
@@ -1249,6 +1314,11 @@ Spoooky.Game = function() {
 
         },
 
+        "Game Mode Is Not": function(currentRuleAtom) {
+
+            return self_Game.models.gameMode !== currentRuleAtom.atomArguments;
+        },
+
         // Game rule atom for the game of nine men's morris
         "Player Has Entities On Nearby Connected Fields After Last Move": function(currentRuleAtom) {
 
@@ -1311,6 +1381,34 @@ Spoooky.Game = function() {
             return false;
         },
 
+        "Non-associated Opponent Entities": function(currentRuleAtom) {
+
+            var opPositions = self_Game.getAssociatedOpponentEntities(currentRuleAtom.atomArguments);
+
+            // Search for non-associated entities
+            for (i in opPositions) {
+
+                op = opPositions[i];
+
+                if (!op.associated) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        "Player Has No Placeable Entities": function(currentRuleAtom) {
+
+            // returns true if no entity, owned by meta agent, can move
+            var currentPlayer = self_Game.getPlayerWithID(currentRuleAtom.atomArguments);
+
+            if (currentPlayer.getPlaceableEntities().length > 0) {
+                return false;
+            }
+
+            return true;
+        },
+
         "Player Has No Movable Entities": function(currentRuleAtom) {
 
             // returns true if no entity, owned by meta agent, can move
@@ -1358,6 +1456,15 @@ Spoooky.Game = function() {
         "Player Has Number Of Entities": function(currentRuleAtom) {
             var metaAgent = self_Game.getPlayerWithID(currentRuleAtom.atomArguments[0]);
             return (metaAgent.countEntities() === currentRuleAtom.atomArguments[1]);
+        },
+
+        "Player Owns > n Entities" : function(currentRuleAtom) {
+
+            var args = currentRuleAtom.atomArguments;
+            if (self_Game.getPlayerWithID(args.playerID).getEntities().length > args.value) {
+                return true;
+            }
+            return false;
         },
 
         "Player Has No Entity Which Satisfies Goals": function(currentRuleAtom) {
@@ -2390,6 +2497,22 @@ Spoooky.Game = function() {
             return true;
         },
 
+        "Player Owns n Entities" : function(args, curState, cnt) {
+
+            if (self_Game.getPlayerWithID(args._conditions[cnt].playerID).getEntities().length === args._conditions[cnt].value) {
+                return true;
+            }
+            return false;
+        },
+
+        "Player Owns > n Entities" : function(args, curState, cnt) {
+
+            if (self_Game.getPlayerWithID(args._conditions[cnt].playerID).getEntities().length > args._conditions[cnt].value) {
+                return true;
+            }
+            return false;
+        },
+
         "Game State" : function(args, curState, cnt) {
 
             if (self_Game.models.gameState === args._conditions[cnt].value && curState === true) {
@@ -2401,8 +2524,9 @@ Spoooky.Game = function() {
 
         "Field Is Attackable By Opponent Entity" : function(args, curState, cnt) {
 
-            var destinationX = parseInt(args._curX + args._conditions[cnt].relativeCoordinate[0], 10),
-                destinationY = parseInt(args._curY + args._conditions[cnt].relativeCoordinate[1], 10);
+            var rel = args._conditions[cnt],
+                destinationX = parseInt(args._curX + rel.relativeCoordinate[0], 10),
+                destinationY = parseInt(args._curY + rel.relativeCoordinate[1], 10);
 
             // Move entity virtually to destination field
             self_Game.doVirtualMove(args._curX, args._curY, destinationX, destinationY);
@@ -2923,8 +3047,9 @@ Spoooky.Game = function() {
      */
     self_Game.executePostMoveJobs = function() {
 
-        if (self_Game.models.gameMode === "PLACING" ||
-            self_Game.models.gameMode === "FREE CAPTURE") {
+        var mode = self_Game.models.gameMode;
+
+        if (mode === "PLACING" || mode === "FREE CAPTURE") {
 
             // Show free fields after player change / executed jobs
             self_Game.showFieldsToPlaceEntity();
@@ -3221,9 +3346,7 @@ Spoooky.Game = function() {
     self_Game.addEntitiesToGameBoard = function(gameBoardConfiguration) {
 
         //  Create Entities for players and put them on the game board
-        var counter = 0,
-            metaAgent, x,
-            newEntity = null, gbConfig,
+        var counter = 0, metaAgent, x, newEntity, gbConfig,
             gridRows = self_Game.gameWorld.getRows(),
             gridColumns = self_Game.gameWorld.getColumns();
 
@@ -3254,14 +3377,18 @@ Spoooky.Game = function() {
      */
     self_Game.addEntityToGame = function(bluePrint, quantity) {
 
+        if (quantity === 0) {
+            return false;
+        }
+
         // Create Entities for players
         var metaAgent = self_Game.getPlayerWithID(bluePrint.associatedWithMetaAgent);
 
         // Use a finite number of entites...
-        if (quantity) {
+        if (quantity > 0) {
 
             bluePrint.unlimitedQuantity = false;
-            for (var counter = quantity; counter--;) {
+            for (; quantity--;) {
                 metaAgent.entityFactory(bluePrint);
             }
         } else {
