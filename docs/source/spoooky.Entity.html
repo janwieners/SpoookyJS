@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
+ *
+ * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
+ *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ **/
+
+<span id='Spoooky-Entity-method-constructor'><span id='Spoooky-Entity'>/**
+</span></span> * Spoooky.Entity
+ * Entities of the game
+ *
+ * @param entityName
+ * @param entityID
+ * @param typeID
+ * @param game
+ * @constructor
+ */
+Spoooky.Entity = function(entityName, entityID, typeID, game) {
+
+    var self_Entity = this,
+        myGame = game;
+
+<span id='Spoooky-Entity-property-unlimitedQuantity'>    /**
+</span>     * Flag which can be used in board games where entities are
+     * placed to enable placing of an unlimited number of entities
+     * @type {boolean}
+     */
+    self_Entity.unlimitedQuantity = false;
+
+<span id='Spoooky-Entity-property-mode'>    /**
+</span>     * Entity mode
+     * MOVE for movable entities
+     * PLACE for droppable entities
+     * @type {string}
+     */
+    self_Entity.mode = &quot;MOVE&quot;;
+
+<span id='Spoooky-Entity-property-placeTo'>    /**
+</span>     * If entity mode is PLACE then placeTo defines the destination the entity
+     * can be placed on the game board
+     * @type {number}
+     */
+    self_Entity.placeTo = 0;
+
+<span id='Spoooky-Entity-method-getGame'>    /**
+</span>     * Get the associated game the entity plays in
+     * @returns {*}
+     */
+    self_Entity.getGame = function() {
+        return myGame;
+    };
+
+<span id='Spoooky-Entity-property-ID'>    /**
+</span>     * Unique identifier of the entity
+     * @type {*}
+     */
+    self_Entity.ID = entityID;
+
+<span id='Spoooky-Entity-method-getID'>    /**
+</span>     * Get the entity ID
+     * @returns {*}
+     */
+    self_Entity.getID = function() {
+        return self_Entity.ID;
+    };
+
+<span id='Spoooky-Entity-method-setID'>    /**
+</span>     * Set the unique entity identifier
+     * @param newID
+     */
+    self_Entity.setID = function(newID) {
+        self_Entity.ID = newID;
+    };
+
+<span id='Spoooky-Entity-property-typeID'>    /**
+</span>     * Unique type identifier
+     * Necessary to create game state signatures
+     * @type {*}
+     */
+    self_Entity.typeID = typeID;
+
+<span id='Spoooky-Entity-method-getTypeID'>    /**
+</span>     * Get the entity type identifier
+     * @returns {*}
+     */
+    self_Entity.getTypeID = function() {
+        return self_Entity.typeID;
+    };
+
+<span id='Spoooky-Entity-method-setTypeID'>    /**
+</span>     * Set the unique entity type identifier
+     * @param newID
+     */
+    self_Entity.setTypeID = function(newID) {
+        self_Entity.typeID = newID;
+    };
+
+<span id='Spoooky-Entity-property-name'>    /**
+</span>     * Name of the entity
+     * @type {*}
+     */
+    self_Entity.name = entityName;
+
+<span id='Spoooky-Entity-property-enabled'>    /**
+</span>     * Entity status
+     * @type {boolean}
+     */
+    self_Entity.enabled = true;
+
+<span id='Spoooky-Entity-property-moveCounter'>    /**
+</span>     * Record moves made by the entity
+     * @type {number}
+     */
+    self_Entity.moveCounter = 0;
+
+<span id='Spoooky-Entity-method-increaseMoveCounter'>    /**
+</span>     * Increase the move counter
+     */
+    self_Entity.increaseMoveCounter = function() {
+        self_Entity.moveCounter += 1;
+    };
+
+<span id='Spoooky-Entity-method-getMoveCount'>    /**
+</span>     * Get the number of moves the entity made
+     * @returns {number}
+     */
+    self_Entity.getMoveCount = function() {
+        return self_Entity.moveCounter;
+    };
+
+<span id='Spoooky-Entity-property-lastExecutedMove'>    /**
+</span>     * Last successfully executed move of the entity
+     * @type {number}
+     */
+    self_Entity.lastExecutedMove = 0;
+
+<span id='Spoooky-Entity-method-addExecutedMove'>    /**
+</span>     * Adds a successfully executed move of the entity to its move history
+     * @param toX
+     * @param toY
+     * @param round
+     * @param moveType
+     */
+    self_Entity.addExecutedMove = function(toX, toY, round, moveType) {
+
+        self_Entity.increaseMoveCounter();
+
+        self_Entity.lastExecutedMove = {
+            destX : toX,
+            destY : toY,
+            round : round,
+            type : moveType
+        };
+    };
+
+<span id='Spoooky-Entity-method-getLastExecutedMove'>    /**
+</span>     * Retrieve the last executed move
+     * @returns {number}
+     */
+    self_Entity.getLastExecutedMove = function() {
+        return self_Entity.lastExecutedMove;
+    };
+
+<span id='Spoooky-Entity-method-enable'>    /**
+</span>     * Enables the entity
+     */
+    self_Entity.enable = function() {
+        self_Entity.enabled = true;
+    };
+
+<span id='Spoooky-Entity-method-disable'>    /**
+</span>     * Disables the entity
+     */
+    self_Entity.disable = function() {
+        self_Entity.enabled = false;
+    };
+
+<span id='Spoooky-Entity-method-setName'>    /**
+</span>     * Set the entity name
+     * @param newName
+     */
+    self_Entity.setName = function(newName) {
+        self_Entity.name = newName;
+    };
+
+<span id='Spoooky-Entity-property-type'>    /**
+</span>     * Entity type
+     * @type {string}
+     */
+    self_Entity.type = &quot;default&quot;;
+
+<span id='Spoooky-Entity-method-getType'>    /**
+</span>     * Get the type of the entity
+     * @returns {string}
+     */
+    self_Entity.getType = function() {
+        return self_Entity.type;
+    };
+
+<span id='Spoooky-Entity-method-setType'>    /**
+</span>     * Set the entity type
+     * @param entityType
+     */
+    self_Entity.setType = function(entityType) {
+        self_Entity.type = entityType;
+    };
+
+<span id='Spoooky-Entity-method-getWorld'>    /**
+</span>     * Getter for the game world
+     * @returns {Object}
+     */
+    self_Entity.getWorld = function() {
+        return self_Entity.getGame().gameWorld;
+    };
+
+<span id='Spoooky-Entity-method-isOpponent'>    /**
+</span>     * Checks for an opponent entity at the destination coordinates
+     * @param xCoordinate
+     * @param yCoordinate
+     * @returns {boolean}
+     */
+    self_Entity.isOpponent = function(xCoordinate, yCoordinate) {
+
+        var cellContent;
+
+        if (self_Entity.getWorld().isValidCoordinate(xCoordinate, yCoordinate)) {
+
+            cellContent = self_Entity.getWorld().peekCell(xCoordinate, yCoordinate);
+
+            // There's an opponent entity at the destination field
+            if (cellContent !== false &amp;&amp; (cellContent.getMetaPlayerID() !== self_Entity.getMetaPlayerID())) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-method-isEmptyCell'>    /**
+</span>     * Checks for an empty cell at the destination coordinates
+     * @param xCoordinate
+     * @param yCoordinate
+     * @returns {boolean}
+     */
+    self_Entity.isEmptyCell = function (xCoordinate, yCoordinate) {
+
+        if (self_Entity.getWorld().isValidCoordinate(xCoordinate, yCoordinate)) {
+            return (self_Entity.getWorld().peekCell(xCoordinate, yCoordinate) === false);
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-property-visualRepresentation'>    /**
+</span>     * Visual representation of the entity
+     * @type {{type: string, colour: string, imageURL: string}}
+     */
+    self_Entity.visualRepresentation = {
+        type : &quot;&quot;,
+        colour : &quot;&quot;,
+        imageURL : &quot;&quot;
+    };
+
+<span id='Spoooky-Entity-method-getView'>    /**
+</span>     * Get the visual representation of the entity
+     * @returns {string}
+     */
+    self_Entity.getView = function() {
+        return self_Entity.visualRepresentation.imageURL;
+    };
+
+<span id='Spoooky-Entity-property-position'>    /**
+</span>     * Current position of the entity in the game worldj
+     * @type {{x: number, y: number}}
+     */
+    self_Entity.position = {
+        x : -1,
+        y : -1
+    };
+
+<span id='Spoooky-Entity-method-getPosition'>    /**
+</span>     * Get the position of the entity
+     * @returns {{x: number, y: number}}
+     */
+    self_Entity.getPosition = function() {
+        return self_Entity.position;
+    };
+
+<span id='Spoooky-Entity-method-getFieldID'>    /**
+</span>     * Get the field identifier of entity's position
+     * @returns {*}
+     */
+    self_Entity.getFieldID = function() {
+
+        var position = self_Entity.position;
+        return self_Entity.getWorld().getFieldID(position.x, position.y);
+    };
+
+<span id='Spoooky-Entity-method-setPosition'>    /**
+</span>     * Set the position of the entity
+     * @param xPos
+     * @param yPos
+     */
+    self_Entity.setPosition = function(xPos, yPos) {
+        self_Entity.position.x = xPos;
+        self_Entity.position.y = yPos;
+    };
+
+<span id='Spoooky-Entity-property-tmp'>    /**
+</span>     * Holds temporary stuff
+     * @type {{}}
+     */
+    self_Entity.tmp = {};
+
+<span id='Spoooky-Entity-property-targeting'>    /**
+</span>     * Holds coordinates of target entity (for capture move)
+     * @type {{x: null, y: null}}
+     */
+    self_Entity.targeting = { x: null, y: null };
+
+<span id='Spoooky-Entity-method-setTarget'>    /**
+</span>     * Set the entity's target
+     * @param xCoord
+     * @param yCoord
+     */
+    self_Entity.setTarget = function(xCoord, yCoord) {
+        self_Entity.targeting.x = xCoord;
+        self_Entity.targeting.y = yCoord;
+    };
+
+<span id='Spoooky-Entity-method-unsetTarget'>    /**
+</span>     * Reset entity's target focus
+     */
+    self_Entity.unsetTarget = function() {
+        self_Entity.targeting.x = null;
+        self_Entity.targeting.y = null;
+    };
+
+<span id='Spoooky-Entity-property-goalTargets'>    /**
+</span>     * Targets (coordinates) of the entity, i.e.
+     * goalTargets : [{ x: 23, y: 15 }, {...}]
+     * In the game progress, the entity is anxious to
+     * reach those target fields
+     * @type {Array}
+     */
+    self_Entity.goalTargets = [];
+
+<span id='Spoooky-Entity-method-addGoalTarget'>    /**
+</span>     * Add a goal target
+     * @param target
+     */
+    self_Entity.addGoalTarget = function(target){
+        self_Entity.goalTargets.push(target);
+    };
+
+<span id='Spoooky-Entity-method-setGoalTargets'>    /**
+</span>     * Set the entity's goal targets
+     * @param targets
+     */
+    self_Entity.setGoalTargets = function(targets) {
+        self_Entity.goalTargets = targets;
+    };
+
+<span id='Spoooky-Entity-method-getGoalTargets'>    /**
+</span>     * Get the goal targets of the entity
+     * @returns {Array}
+     */
+    self_Entity.getGoalTargets = function() {
+        return self_Entity.goalTargets;
+    };
+
+<span id='Spoooky-Entity-method-setRepresentation'>    /**
+</span>     * Set the visual representation of the entity
+     * @param representationType
+     * @param texture
+     */
+    self_Entity.setRepresentation = function (representationType, texture) {
+
+        if (representationType === &quot;colour&quot; || representationType === &quot;image&quot;) {
+            self_Entity.visualRepresentation = {
+                type : representationType,
+                colour : texture,
+                imageURL : texture
+            };
+        }
+    };
+
+<span id='Spoooky-Entity-property-associatedWithPlayerID'>    /**
+</span>     * ID of the associated entity
+     * @type {number}
+     */
+    self_Entity.associatedWithPlayerID = null;
+
+<span id='Spoooky-Entity-method-setAssociatedPlayerID'>    /**
+</span>     * Set the associated meta player id
+     * @param playerID
+     */
+    self_Entity.setAssociatedPlayerID = function (playerID) {
+        self_Entity.associatedWithPlayerID = playerID;
+    };
+
+<span id='Spoooky-Entity-method-getMetaPlayerID'>    /**
+</span>     * Get the id of the associated meta player
+     * @returns {number}
+     */
+    self_Entity.getMetaPlayerID = function() {
+        return self_Entity.associatedWithPlayerID;
+    };
+
+<span id='Spoooky-Entity-method-getName'>    /**
+</span>     * Get the name of the entity
+     * @returns {*}
+     */
+    self_Entity.getName = function() {
+        return self_Entity.name;
+    };
+
+<span id='Spoooky-Entity-method-getAssociatedPlayer'>    /**
+</span>     * Get the associated meta agent
+     * @returns {*}
+     */
+    self_Entity.getAssociatedPlayer = function() {
+
+        return self_Entity.getGame().getPlayerWhoOwnsEntity(self_Entity.getName());
+    };
+
+<span id='Spoooky-Entity-method-seppuku'>    /**
+</span>     * Say goodbye, entity
+     */
+    self_Entity.seppuku = function() {
+
+        if (self_Entity.getAssociatedPlayer() !== false) {
+            self_Entity.getAssociatedPlayer().deleteEntity(self_Entity.getName());
+        }
+    };
+
+<span id='Spoooky-Entity-method-isOwnedByPlayerID'>    /**
+</span>     * Check if entity is owned by meta agent with id
+     * @param playerID
+     * @returns {boolean}
+     */
+    self_Entity.isOwnedByPlayerID = function(playerID) {
+        return (self_Entity.associatedWithPlayerID === playerID);
+    };
+
+<span id='Spoooky-Entity-method-translateDirection'>    /**
+</span>     * Translate string coordinates / directions into real directions
+     * @param direction
+     * @returns {*[]}
+     */
+    self_Entity.translateDirection = function (direction) {
+
+        var xDir = 0,
+            yDir = 0;
+
+        if (typeof(direction) === &quot;object&quot; &amp;&amp; (direction instanceof Array)) {
+            xDir = direction[0];
+            yDir = direction[1];
+        } else {
+
+            switch(direction) {
+                case &quot;n&quot;:
+                case &quot;north&quot;:
+                    xDir = 0;
+                    yDir = -1;
+                    break;
+
+                case &quot;ne&quot;:
+                case &quot;northeast&quot;:
+                    xDir = +1;
+                    yDir = -1;
+                    break;
+
+                case &quot;e&quot;:
+                case &quot;east&quot;:
+                case &quot;right&quot;:
+                    xDir = +1;
+                    yDir = 0;
+                    break;
+
+                case &quot;se&quot;:
+                case &quot;southeast&quot;:
+                    xDir = +1;
+                    yDir = +1;
+                    break;
+
+                case &quot;s&quot;:
+                case &quot;south&quot;:
+                    xDir = 0;
+                    yDir = +1;
+                    break;
+
+                case &quot;sw&quot;:
+                case &quot;southwest&quot;:
+                    xDir = -1;
+                    yDir = +1;
+                    break;
+
+                case &quot;w&quot;:
+                case &quot;west&quot;:
+                case &quot;left&quot;:
+                    xDir = -1;
+                    yDir = 0;
+                    break;
+
+                case &quot;nw&quot;:
+                case &quot;northwest&quot;:
+                    xDir = -1;
+                    yDir = -1;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        return [xDir, yDir];
+    };
+
+<span id='Spoooky-Entity-property-moves'>    /**
+</span>     * Moves of the entity
+     * @type {Array}
+     */
+    self_Entity.moves = [];
+
+<span id='Spoooky-Entity-method-addMove'>    /**
+</span>     * Add a move
+     * @param moveArguments
+     */
+    self_Entity.addMove = function (moveArguments) {
+
+        var moveDirection = self_Entity.translateDirection(moveArguments.direction),
+            xDir = moveDirection[0],
+            yDir = moveDirection[1];
+
+        self_Entity.moves.push({
+            name        : moveArguments.name,
+            type		: moveArguments.type,
+            direction	: moveArguments.direction,
+            xDirection  : xDir,
+            yDirection  : yDir,
+            frequency   : moveArguments.frequency,
+            conditions  : moveArguments.conditions,
+            postMove    : moveArguments.postMove
+        });
+    };
+
+<span id='Spoooky-Entity-method-countPossibleMoves'>    /**
+</span>     * Get the number of executable moves
+     * @returns {Number}
+     */
+    self_Entity.countPossibleMoves = function() {
+        return self_Entity.moves.length;
+    };
+
+<span id='Spoooky-Entity-method-countFieldsWithID'>    /**
+</span>     * Count fields with id
+     * @param fieldID
+     * @returns {Number}
+     */
+    self_Entity.countFieldsWithID = function(fieldID) {
+        return self_Entity.getWorld().getContentOfFieldsWithFieldID(fieldID).length;
+    };
+
+<span id='Spoooky-Entity-method-countOpponentsOnFieldsWithID'>    /**
+</span>     * Count opponent entities on fields with specific id
+     * @param fieldID
+     * @param selectedentity
+     * @returns {number}
+     */
+    self_Entity.countOpponentsOnFieldsWithID = function(fieldID, selectedentity) {
+
+        var fieldsToCheck = self_Entity.getWorld().getContentOfFieldsWithFieldID(fieldID),
+            opponentCount = 0,
+            currententity;
+
+        for (var counter = fieldsToCheck.length; counter--;) {
+
+            currententity = fieldsToCheck[counter];
+            if (currententity) {
+                if (currententity.getMetaPlayerID() !== selectedentity.getMetaPlayerID()) {
+                    opponentCount += 1;
+                }
+            }
+        }
+        return opponentCount;
+    };
+
+<span id='Spoooky-Entity-method-countOwnOnFieldsWithID'>    /**
+</span>     * Count own entities on fields with specific identifier
+     * @param fieldID
+     * @param selectedentity
+     * @returns {number}
+     */
+    self_Entity.countOwnOnFieldsWithID = function(fieldID, selectedentity) {
+
+        var fieldsToCheck = self_Entity.getWorld().getContentOfFieldsWithFieldID( fieldID ),
+            ownCount = 0,
+            currentEntity;
+
+        for (var counter = fieldsToCheck.length; counter--;) {
+
+            currentEntity = fieldsToCheck[counter];
+            if (currentEntity) {
+                if (currentEntity.getMetaPlayerID() === selectedentity.getMetaPlayerID()) {
+                    ownCount += 1;
+                }
+            }
+        }
+        return ownCount;
+    };
+
+<span id='Spoooky-Entity-method-getMove'>    /**
+</span>     * Get an entity move with a unique identifier
+     * @param moveID
+     * @returns {*}
+     */
+    self_Entity.getMove = function(moveID) {
+
+        if (moveID &gt;= 0 &amp;&amp; moveID &lt; self_Entity.countPossibleMoves()) {
+            return self_Entity.moves[moveID];
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-method-canMove'>    /**
+</span>     * Is it possible for the entity to execute a move?
+     * @returns {boolean}
+     */
+    self_Entity.canMove = function() {
+
+        var entityMoves = self_Entity.getMoves();
+        // Add Post Move Check
+        self_Entity.getGame().performPostMoveChecks(this, entityMoves);
+        return ( !_.isEmpty(entityMoves) );
+    };
+
+<span id='Spoooky-Entity-method-getMoves'>    /**
+</span>     * Get all executable moves of the entity
+     * !Performance critical!
+     * @returns {*}
+     */
+    self_Entity.getMoves = function() {
+
+        var moveCount = self_Entity.countPossibleMoves();
+
+        if (moveCount &lt;= 0) { return false; }
+
+        var moveID, currentMove, frequency, currentX, currentY, freqCnt, position,
+            destX, destY, possibleMoves = [], game = self_Entity.getGame();
+
+        position = self_Entity.position;
+        currentX = position.x;
+        currentY = position.y;
+
+        for (var moveCounter = moveCount; moveCounter--;) {
+
+            currentMove = self_Entity.getMove(moveCounter);
+
+            switch (currentMove.type) {
+
+                // Default 2D move
+                case &quot;Default&quot;:
+
+                    if (currentMove.frequency &gt; 0 || currentMove.frequency === &quot;ANY&quot;) {
+
+                        frequency = currentMove.frequency;
+
+                        if (frequency === &quot;ANY&quot;) {
+                            frequency = 23;
+                        }
+
+                        // Check every possible move of the entity
+                        for (freqCnt = 1; freqCnt &lt;= frequency; freqCnt += 1) {
+
+                            destX = currentX + currentMove.xDirection * freqCnt;
+                            destY = currentY + currentMove.yDirection * freqCnt;
+
+                            if (self_Entity.getWorld().isEmpty(destX, destY) === false) { break; }
+
+                            // Check every move condition
+                            if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                    currentX, currentY, destX, destY)) {
+
+                                moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                    destX, destY);
+
+                                possibleMoves.push({
+                                    type : &quot;MOVE&quot;,
+                                    name : currentMove.name,
+                                    entity: self_Entity,
+                                    targetX : destX,
+                                    targetY : destY,
+                                    moveClass : &quot;move_standard&quot;,
+                                    freq : frequency,
+                                    ID : moveID,
+                                    postMove : currentMove.postMove
+                                });
+
+                                game.addJobForMoveID({
+                                    jobID : moveID,
+                                    jobName : &quot;move game entity&quot;,
+                                    job : &quot;Move Entity&quot;,
+                                    jobArguments : {
+                                        &quot;entity&quot; : self_Entity,
+                                        &quot;destX&quot; : destX,
+                                        &quot;destY&quot; : destY
+                                    }
+                                });
+
+                                if (currentMove.postMove) {
+
+                                    _.each(currentMove.postMove, function(postMove) {
+
+                                        game.addJobForMoveID({
+                                            jobID : moveID,
+                                            jobName : postMove.jobName,
+                                            job : postMove.jobFunction,
+                                            jobArguments : postMove.jobArguments
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                // End case &quot;Default&quot;
+
+                // Move to connected field(s)
+                case &quot;By Connected Field IDs&quot;:
+
+                    // All cell connections
+                    var connections = game.models.CellConnections;
+
+                    // Identify the ID of the current cell and get the target cells
+                    var cellID = game.models.GameGrid[currentY][currentX].cellID,
+                        targetCells = connections[cellID], targetCell;
+
+                    for (var i = targetCells.length; i--;) {
+
+                        // Use only the first retrieved cell
+                        targetCell = self_Entity.getWorld().getFieldsWithFieldID(targetCells[i], true);
+
+                        destX = targetCell.position.x;
+                        destY = targetCell.position.y;
+
+                        if (self_Entity.getWorld().isEmpty(destX, destY) === false) { continue; }
+
+                        // Check every move condition
+                        if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                currentX, currentY,destX, destY)) {
+
+                            moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                destX, destY);
+
+                            possibleMoves.push({
+                                type : &quot;MOVE&quot;,
+                                name : currentMove.name,
+                                entity: self_Entity,
+                                targetX : destX,
+                                targetY : destY,
+                                moveClass : &quot;move_standard&quot;,
+                                freq : frequency,
+                                ID : moveID,
+                                postMove : currentMove.postMove
+                            });
+
+                            game.addJobForMoveID({
+                                jobID : moveID,
+                                jobName : &quot;move game entity&quot;,
+                                job : &quot;Move Entity&quot;,
+                                jobArguments : {
+                                    &quot;entity&quot; : self_Entity,
+                                    &quot;destX&quot; : destX,
+                                    &quot;destY&quot; : destY
+                                }
+                            });
+
+                            if (currentMove.postMove) {
+
+                                _.each(currentMove.postMove, function(postMove) {
+
+                                    game.addJobForMoveID({
+                                        jobID : moveID,
+                                        jobName : postMove.jobName,
+                                        job : postMove.jobFunction,
+                                        jobArguments : postMove.jobArguments
+                                    });
+                                });
+                            }
+                        }
+                    }
+
+                    break;
+                // End case &quot;By Connected Field IDs&quot;
+
+                // Check dice moves - Currently: Check Backgammon Moves
+                case &quot;By Field ID&quot;:
+
+                    if (currentMove.frequency === &quot;DICE&quot;) {
+
+                        // *** CHECK DICE MOVES - Currently: Check Backgammon Moves ***
+                        var diceValues = game.getDiceBox().getDiceValues(),
+                            diceValueCount = diceValues.length,
+                            destArray = [],
+                            destFieldID = 0,
+                            curFieldID = -1,
+                            tmpFieldExists = false;
+
+                        // Backgammon specific: If an entity has got a fieldID then the entity is in the bear off area
+                        // and must re-enter the game
+                        if (_.isUndefined(self_Entity.tmp.fieldID) === false) {
+
+                            curFieldID = self_Entity.tmp.fieldID;
+                            tmpFieldExists = true;
+                        } else {
+                            curFieldID = self_Entity.getWorld().getFieldID(currentX, currentY);
+                        }
+
+                        // Show moves for every dice value
+                        for (var curCounter = diceValueCount; curCounter--;) {
+
+                            if (currentMove.direction[1] === &quot;POSITIVE&quot;) {
+                                destFieldID = parseInt(curFieldID + diceValues[curCounter], 10);
+                            } else if (currentMove.direction[1] === &quot;NEGATIVE&quot;) {
+                                destFieldID = parseInt(curFieldID - diceValues[curCounter], 10);
+                            } else {
+                                // ToDo Implement both directions
+                            }
+
+                            if (currentMove.type === &quot;By Field ID&quot;) {
+
+                                // Legal move to an empty field - Backgammon specific
+                                if (self_Entity.countOpponentsOnFieldsWithID(destFieldID, self_Entity) === 0) {
+
+                                    destArray = self_Entity.getWorld().getFreeFieldsWithFieldID(destFieldID);
+
+                                    if (destArray[0]) {
+                                        destX = destArray[0][0];
+                                        // For Backgammon: put game entity on top or on bottom
+                                        if (destFieldID &lt;= 12) {
+                                            destY = destArray[parseInt(destArray.length-1, 10)][1];
+                                        } else {
+                                            destY = destArray[0][1];
+                                        }
+
+                                        // Legal Move Found
+                                        moveID = game.getUniqueMoveID(self_Entity.name,
+                                            currentMove.name, destX, destY);
+
+                                        possibleMoves.push({
+                                            type : &quot;DICE&quot;,
+                                            diceID : curCounter,
+                                            diceValue : diceValues[curCounter],
+                                            name : currentMove.name,
+                                            entity: self_Entity,
+                                            targetX : destX,
+                                            targetY : destY,
+                                            moveClass : &quot;move_standard&quot;,
+                                            freq : &quot;DICE&quot;,
+                                            ID : moveID,
+                                            postmove : currentMove.postMove
+                                        });
+
+                                        if (tmpFieldExists === true) {
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : &quot;Put the entity to the destination field&quot;,
+                                                job : &quot;Place Entity&quot;,
+                                                jobArguments : { entity : self_Entity,
+                                                    xPosition : destX, yPosition : destY }
+                                            });
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : &quot;Remove the current entity from off board area&quot;,
+                                                job : &quot;Delete Entity from OffBoard&quot;,
+                                                jobArguments : { entity : self_Entity }
+                                            });
+
+                                        } else {
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : &quot;move game entity&quot;,
+                                                job : &quot;Move Entity&quot;,
+                                                jobArguments : {
+                                                    &quot;entity&quot; : self_Entity,
+                                                    &quot;destX&quot; : destX,
+                                                    &quot;destY&quot; : destY
+                                                }
+                                            });
+                                        }
+
+                                        game.addJobForMoveID({
+                                            jobID : moveID,
+                                            jobName : &quot;Delete Dice Value&quot;,
+                                            job : &quot;Delete Dice Value&quot;,
+                                            jobArguments : curCounter
+                                        });
+
+                                        if (currentMove.postMove) {
+                                            _.each(currentMove.postMove, function(postMove) {
+                                                game.addJobForMoveID({
+                                                    jobID : moveID,
+                                                    jobName : postMove.jobName,
+                                                    job : postMove.jobFunction,
+                                                    jobArguments : postMove.jobArguments
+                                                });
+                                            });
+                                        }
+                                    } else if (self_Entity.countOwnOnFieldsWithID(destFieldID, self_Entity) ===
+                                        self_Entity.countFieldsWithID(destFieldID)) {
+
+                                        // *** Destination Field Full - Put the entity on top of own entitys ***
+                                        var fields = self_Entity.getWorld().getFieldsWithFieldID(destFieldID);
+
+                                        if (fields[0]) {
+                                            destX = fields[0].position.x;
+                                            if (destFieldID &lt;= 12) {
+                                                destY = fields[0].position.y;
+                                            } else {
+                                                destY = fields[parseInt(fields.length-1, 10)].position.y;
+                                            }
+
+                                            // Prepare Legal Move
+                                            moveID = game.getUniqueMoveID(self_Entity.name,
+                                                currentMove.name, destX, destY);
+
+                                            possibleMoves.push({
+                                                type : &quot;DICE&quot;,
+                                                diceValue : diceValues[curCounter],
+                                                name : currentMove.name,
+                                                entity: self_Entity,
+                                                targetX : destX,
+                                                targetY : destY,
+                                                moveClass : &quot;move_standard&quot;,
+                                                freq : &quot;DICE&quot;,
+                                                ID : moveID,
+                                                postmove : currentMove.postMove
+                                            });
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : &quot;move game entity&quot;,
+                                                job : &quot;Move Entity&quot;,
+                                                jobArguments : {
+                                                    &quot;entity&quot; : self_Entity,
+                                                    &quot;destX&quot; : destX,
+                                                    &quot;destY&quot; : destY
+                                                }
+                                            });
+
+                                            game.addJobForMoveID({
+                                                jobID : moveID,
+                                                jobName : &quot;Delete Dice Value&quot;,
+                                                job : &quot;Delete Dice Value&quot;,
+                                                jobArguments : curCounter
+                                            });
+
+                                            if (currentMove.postMove) {
+                                                _.each(currentMove.postMove, function(postMove) {
+
+                                                    game.addJobForMoveID({
+                                                        jobID : moveID,
+                                                        jobName : postMove.jobName,
+                                                        job : postMove.jobFunction,
+                                                        jobArguments : postMove.jobArguments
+                                                    });
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                // End of case &quot;By Field ID&quot;
+
+                case &quot;Jump To Free Field&quot;:
+
+                    var freeCells = self_Entity.getWorld().getFreeCells(),
+                        i = freeCells.length;
+
+                    // Add a move for each free cell
+                    for (; i--;) {
+
+                        destX = freeCells[i].x;
+                        destY = freeCells[i].y;
+
+                        // Check every move condition
+                        if (game.isLegalMove(self_Entity, currentMove.conditions,
+                                currentX, currentY, destX, destY)) {
+
+                            moveID = game.getUniqueMoveID(self_Entity.name, currentMove.name,
+                                destX, destY);
+
+                            possibleMoves.push({
+                                type : &quot;MOVE&quot;,
+                                name : currentMove.name,
+                                entity: self_Entity,
+                                targetX : destX,
+                                targetY : destY,
+                                moveClass : &quot;move_standard&quot;,
+                                freq : frequency,
+                                ID : moveID,
+                                postMove : currentMove.postMove
+                            });
+
+                            game.addJobForMoveID({
+                                jobID : moveID,
+                                jobName : &quot;move game entity&quot;,
+                                job : &quot;Move Entity&quot;,
+                                jobArguments : {
+                                    &quot;entity&quot; : self_Entity,
+                                    &quot;destX&quot; : destX,
+                                    &quot;destY&quot; : destY
+                                }
+                            });
+
+                            if (currentMove.postMove) {
+
+                                _.each(currentMove.postMove, function(postMove) {
+
+                                    game.addJobForMoveID({
+                                        jobID : moveID,
+                                        jobName : postMove.jobName,
+                                        job : postMove.jobFunction,
+                                        jobArguments : postMove.jobArguments
+                                    });
+                                });
+                            }
+                        }
+                    }
+                    break;
+                    // End of case &quot;Jump To Free Field&quot;
+            }
+        }
+        return possibleMoves;
+    };
+
+<span id='Spoooky-Entity-method-canReachGoal'>    /**
+</span>     * Can the entity reach a goal?
+     * @returns {boolean}
+     */
+    self_Entity.canReachGoal = function() {
+        return (!_.isEmpty(self_Entity.getGoalMoves()));
+    };
+
+<span id='Spoooky-Entity-method-canCapture'>    /**
+</span>     * Can the entity capture an opponent entity?
+     * @returns {boolean}
+     */
+    self_Entity.canCapture = function() {
+
+        var goalMoves = self_Entity.getGoalMoves();
+
+        for (var counter = goalMoves.length; counter--;) {
+            if (goalMoves[counter].type === &quot;CAPTURE&quot;) { return true; }
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-method-canCaptureAt'>    /**
+</span>     * Is it possible for the entity to capture an opponent entity at a specific position?
+     * @param xPosition
+     * @param yPosition
+     * @returns {boolean}
+     */
+    self_Entity.canCaptureAt = function(xPosition, yPosition) {
+
+        var captureMoves = self_Entity.getGoalMoves(),
+            counter,
+            move;
+
+        for (counter = captureMoves.length; counter--;) {
+
+            move = captureMoves[counter];
+
+            if (move.type === &quot;CAPTURE&quot; &amp;&amp;
+                xPosition === move.targetX &amp;&amp;
+                yPosition === move.targetY) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-method-getGoalMoves'>    /**
+</span>     * Get all the goal moves of the entity
+     * @param stdMoves
+     * @returns {Array}
+     */
+    self_Entity.getGoalMoves = function(stdMoves) {
+
+        var currentGoal, moveID, targetX, targetY,
+            goalCount = self_Entity.countGoals(),
+            currentX, currentY,
+            moveDirection = null,
+            goalMoves = [],
+            entityMoves, moveCount, move,
+            target, curGoalID, i,
+            game = self_Entity.getGame();
+
+        if (stdMoves) {
+            entityMoves = stdMoves;
+        } else {
+            entityMoves = self_Entity.getMoves();
+        }
+
+        currentX = self_Entity.position.x;
+        currentY = self_Entity.position.y;
+
+        // *****
+        // Identify goal moves for board games without dices
+        // *****
+        if (!game.models.DiceBox.isEnabled) {
+
+            // Check initial position of the entity
+            for (curGoalID = goalCount; curGoalID--;) {
+
+                currentGoal = self_Entity.getGoal(curGoalID);
+                if (self_Entity.executeGoalByName(currentGoal.name) === true) {
+
+                    // Save capturable opponent in capture table
+                    moveDirection = self_Entity.translateDirection(currentGoal.move);
+
+                    targetX = parseInt(currentX + moveDirection[0], 10);
+                    targetY = parseInt(currentY + moveDirection[1], 10);
+
+                    moveID = game.getUniqueMoveID(self_Entity.name,
+                        currentGoal.name, targetX, targetY);
+
+                    goalMoves.push({
+                        ID : moveID,
+                        type : currentGoal.type,
+                        entity : self_Entity,
+                        name : currentGoal.name,
+                        preArrangeX : parseInt(currentX, 10),
+                        preArrangeY : parseInt(currentY, 10),
+                        targetX : targetX,
+                        targetY : targetY,
+                        moveClass : &quot;move_goal&quot;
+                    });
+                }
+            }
+
+            moveCount = entityMoves.length;
+            for (i = moveCount; i--;) {
+
+                move = entityMoves[i];
+
+                if (move.freq &gt; 1) {
+
+                    // Move entity to destination cell
+                    game.doVirtualMove(self_Entity.position.x, self_Entity.position.y,
+                        move.targetX, move.targetY);
+
+                    currentX = move.targetX;
+                    currentY = move.targetY;
+
+                    for (curGoalID = goalCount; curGoalID--;) {
+
+                        currentGoal = self_Entity.getGoal(curGoalID);
+                        if (currentGoal.move === move.name) {
+
+                            if (self_Entity.executeGoalByName(currentGoal.name) === true) {
+
+                                // Save capturable opponent in capture table
+                                moveDirection = self_Entity.translateDirection(currentGoal.move);
+
+                                targetX = parseInt(currentX + moveDirection[0], 10);
+                                targetY = parseInt(currentY + moveDirection[1], 10);
+
+                                moveID = game.getUniqueMoveID(self_Entity.name,
+                                    currentGoal.name, targetX, targetY);
+
+                                goalMoves.push({
+                                    ID : moveID,
+                                    type : currentGoal.type,
+                                    entity : self_Entity,
+                                    name : currentGoal.name,
+                                    preArrangeX : parseInt(currentX, 10),
+                                    preArrangeY : parseInt(currentY, 10),
+                                    targetX : targetX,
+                                    targetY : targetY,
+                                    moveClass : &quot;move_goal&quot;
+                                });
+                            }
+                        }
+                    }
+                    // Rewind virtual move
+                    game.undoVirtualMove();
+                }
+            }
+        } else {
+
+            // *****
+            // Identify capture moves for board games with dices
+            // *****
+
+            // *** CHECK DICE CAPTURE MOVES - Currently: Check Backgammon Moves ***
+            var diceValues = game.getDiceBox().getDiceValues(),
+                diceValueCount = diceValues.length,
+                destFieldID = 0,
+                curFieldID = self_Entity.getWorld().getFieldID(currentX, currentY),
+                destination, curCounter;
+
+            // Backgammon specific: If an entity has got a fieldID then the entity is in
+            // the bear off area and must re-enter the game
+            if (_.isUndefined(self_Entity.tmp.fieldID) === false) {
+                curFieldID = self_Entity.tmp.fieldID;
+            }
+
+            // Check goal moves for every dice value
+            for (curCounter = diceValueCount; curCounter--;) {
+
+                for (curGoalID = goalCount; curGoalID--;) {
+
+                    currentGoal = self_Entity.getGoal(curGoalID);
+                    destination = null;
+
+                    if (self_Entity.executeGoalByName(currentGoal.name, diceValues[curCounter]) === true) {
+
+                        // Backgammon-specific
+                        if (currentGoal.move === &quot;BEAR OFF MOVE&quot;) {
+
+                            // Target Area of the current bear off move (i.e. &quot;player1BearOffArea&quot;)
+                            target = currentGoal.area;
+
+                            moveID = game.getUniqueMoveID(self_Entity.name,
+                                currentGoal.name, target, &quot;bearoff&quot;);
+
+                            game.setMoveID(moveID);
+
+                            // Connect this move with the current dice value (ID)
+                            game.getDiceBox().
+                                connectMoveIDWithDiceValue(moveID, curCounter, target);
+
+                            // ...so that mechanisms which will executed &quot;immediately&quot; know where to apply
+
+                            goalMoves.push({
+                                ID : moveID,
+                                type : &quot;DICE&quot;,
+                                entity: self_Entity,
+                                name : currentGoal.name,
+                                diceID : curCounter,
+                                diceValue : diceValues[curCounter],
+                                targetArea : target,
+                                moveClass : &quot;move_bearoff&quot;
+                            });
+
+                            // Connect this moveID with offBoard Area
+                            game.getArea(target).moveID = game.models.moveID;
+
+                        } else {
+
+                            // Standard goal move
+                            if (currentGoal.move === &quot;MOVE POSITIVE&quot;) {
+                                destFieldID = parseInt(curFieldID + diceValues[curCounter], 10);
+                            } else if (currentGoal.move === &quot;MOVE NEGATIVE&quot;) {
+                                destFieldID = parseInt(curFieldID - diceValues[curCounter], 10);
+                            }
+
+                            // Save coordinates of capturable opponent entity:
+                            // Get coordinates of the first element of the stack
+                            var contents = self_Entity.getWorld().getContentOfFieldsWithFieldID(destFieldID);
+                            destination = _.first(contents);
+
+                            if (destination === 0 ) {
+                                destination = _.last(contents);
+                            }
+
+                            // Identify target coordinates
+                            target = { x: destination.position.x, y: destination.position.y };
+
+                            moveID = game.getUniqueMoveID(self_Entity.name,
+                                currentGoal.name, target.x, target.y);
+
+                            game.setMoveID(moveID);
+
+                            // Connect this move with the current dice value (ID)
+                            game.getDiceBox().connectMoveIDWithDiceValue(moveID, curCounter, target);
+                            // ...so that mechanisms which will executed &quot;immediately&quot; know where to apply
+
+                            goalMoves.push({
+                                ID : moveID,
+                                name : currentGoal.name,
+                                entity: self_Entity,
+                                type : &quot;DICE&quot;,
+                                diceValue : diceValues[curCounter],
+                                diceID : curCounter,
+                                targetX : parseInt(target.x, 10),
+                                targetY : parseInt(target.y, 10),
+                                moveClass : &quot;move_goal&quot;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        return goalMoves;
+    };
+
+<span id='Spoooky-Entity-method-canBeCaptured'>    /**
+</span>     * Check if current entity can be captured by an opponent entity
+     * @returns {boolean}
+     */
+    self_Entity.canBeCaptured = function() {
+
+        var opponentPlayer = self_Entity.getAssociatedPlayer().getNextOpponentPlayer(),
+            opponentEntityCount = opponentPlayer.countEntities(),
+            opEntities = opponentPlayer.getEntities(),
+            counter, position;
+
+        for (counter = opponentEntityCount; counter--;) {
+
+            position = self_Entity.position;
+            if (opEntities[counter].canCaptureAt(position.x, position.y) === true) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-property-goals'>    /**
+</span>     * Entity goals
+     * @type {Array}
+     */
+    self_Entity.goals = [];
+
+<span id='Spoooky-Entity-method-assembleGoal'>    /**
+</span>     * Assemble an entity goal
+     * @param newGoal
+     */
+    self_Entity.assembleGoal = function(newGoal) {
+        self_Entity.goals.push(newGoal);
+    };
+
+<span id='Spoooky-Entity-method-getGoal'>    /**
+</span>     * Get an entity goal with an id
+     * @param goalID
+     * @returns {*}
+     */
+    self_Entity.getGoal = function(goalID) {
+        if (goalID &gt;= 0 &amp;&amp; goalID &lt; self_Entity.goals.length) {
+            return self_Entity.goals[goalID];
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-method-countGoals'>    /**
+</span>     * Count the number of entity goals
+     * @returns {Number}
+     */
+    self_Entity.countGoals = function() {
+        return self_Entity.goals.length;
+    };
+
+<span id='Spoooky-Entity-method-executeGoalByName'>    /**
+</span>     * Execute an entity goal with a specific goal name
+     * @param goalName
+     * @param additionalArgument
+     * @returns {boolean}
+     */
+    self_Entity.executeGoalByName = function(goalName, additionalArgument) {
+
+        if (self_Entity.enabled === false) { return false; }
+
+        var count = self_Entity.goals.length,
+            goalCounter, goals = self_Entity.goals;
+
+        for (goalCounter = 0; goalCounter &lt; count; goalCounter += 1) {
+            if (goals[goalCounter].name === goalName) {
+
+                var returnValue = true,
+                    atomCounter = 0,
+                    goalAtoms = goals[goalCounter].atoms,
+                    goalAtomCount = goalAtoms.length;
+
+                for (atomCounter = 0; atomCounter &lt; goalAtomCount; atomCounter += 1) {
+                    returnValue = self_Entity.getGame().
+                        executeEntityGoalAtomByName(self_Entity, goalAtoms[atomCounter], additionalArgument);
+                    if (returnValue === false || returnValue === -1) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    };
+
+<span id='Spoooky-Entity-property-goalAtoms'>    /**
+</span>     * Array of entity goal atoms
+     * @type {Array}
+     */
+    self_Entity.goalAtoms = [];
+
+<span id='Spoooky-Entity-method-addGoalAtom'>    /**
+</span>     * Add a goal atom
+     * @param goalAtomName
+     * @param goalAtomFunctionName
+     * @param goalAtomArguments
+     */
+    self_Entity.addGoalAtom = function(goalAtomName, goalAtomFunctionName, goalAtomArguments) {
+
+        self_Entity.goalAtoms.push({
+            atomName: goalAtomName,
+            atomFunction: goalAtomFunctionName,
+            atomArguments: goalAtomArguments
+        });
+    };
+};</pre>
+</body>
+</html>

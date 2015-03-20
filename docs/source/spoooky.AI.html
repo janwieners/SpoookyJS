@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Spoooky-AI'>/**
+</span> * Spoooky.AI
+ * Implementations of artificial intelligence methods
+ */
+Spoooky.AI = {
+
+<span id='Spoooky-AI-property-game'>    /**
+</span>     * Game-connector
+     */
+    game : 0,
+
+<span id='Spoooky-AI-method-constructor'>    /**
+</span>     * Monte Carlo Node
+     * @param move
+     * @param parentNode
+     * @param gameState
+     * @param uctConstant
+     * @constructor
+     */
+    MCnode : function(move, parentNode, gameState, uctConstant) {
+
+        var self_MCnode = this;
+
+<span id='Spoooky-AI-property-depth'>        /**
+</span>         * Depth in which the node has been discovered
+         */
+        self_MCnode.depth = 0;
+
+<span id='Spoooky-AI-property-nodeID'>        /**
+</span>         * Unique node identifier
+         * @type {number}
+         */
+        self_MCnode.nodeID = 0;
+
+        if (parentNode !== &quot;Root Node&quot;) {
+            self_MCnode.depth = parentNode.depth + 1;
+            self_MCnode.nodeID = (Date.now() + _.random(0, 99999)).toString();
+        } else {
+            self_MCnode.nodeID = &quot;Root&quot;;
+        }
+
+<span id='Spoooky-AI-property-move'>        /**
+</span>         * Move that led to this node
+         * @type {*}
+         */
+        self_MCnode.move = move;
+
+<span id='Spoooky-AI-property-parent'>        /**
+</span>         * Associated parent node
+         * @type {*}
+         */
+        self_MCnode.parent = parentNode;
+
+<span id='Spoooky-AI-property-childNodes'>        /**
+</span>         * Child nodes of this node
+         * @type {Array}
+         */
+        self_MCnode.childNodes = [];
+
+<span id='Spoooky-AI-property-wins'>        /**
+</span>         * Win counter of this node
+         * @type {number}
+         */
+        self_MCnode.wins = 0;
+
+<span id='Spoooky-AI-property-simulationSteps'>        /**
+</span>         * Simulation steps executed at this node
+         * @type {number}
+         */
+        self_MCnode.simulationSteps = 0;
+
+<span id='Spoooky-AI-property-visits'>        /**
+</span>         * Number of visits
+         * @type {number}
+         */
+        self_MCnode.visits = 0;
+
+<span id='Spoooky-AI-property-'>        /**
+</span>         * Index of the move in the allEntitiesMoves array
+         * @type {number}
+         */
+        self_MCnode.moveIndex;
+
+<span id='Spoooky-AI-property-type'>        /**
+</span>         * Indicate the type of the node (default or chance node)
+         * @type {string}
+         */
+        self_MCnode.type = &quot;DEFAULT&quot;;
+
+<span id='Spoooky-AI-property-terminal'>        /**
+</span>         * Indicate terminal nodes
+         * @type {boolean}
+         */
+        self_MCnode.terminal = false;
+
+<span id='Spoooky-AI-property-winnerID'>        /**
+</span>         * ID of the state-winning player
+         * @type {boolean}
+         */
+        self_MCnode.winnerID = false;
+
+<span id='Spoooky-AI-property-untriedMoves'>        /**
+</span>         * Untried moves
+         * @type {*}
+         */
+        self_MCnode.untriedMoves = [];
+
+<span id='Spoooky-AI-method-getWinRate'>        /**
+</span>         * Calculate the win rate of this node
+         * @returns {number}
+         */
+        self_MCnode.getWinRate = function() {
+
+            if (self_MCnode.visits &gt; 0) {
+                return (self_MCnode.wins / self_MCnode.visits);
+            }
+            return 0;
+        };
+
+<span id='Spoooky-AI-method-hasUntriedMoves'>        /**
+</span>         * Check for untried moves in the node
+         * @returns {boolean}
+         */
+        self_MCnode.hasUntriedMoves = function() {
+
+            if (self_MCnode.untriedMoves === false || self_MCnode.untriedMoves.length === 0) {
+                return false;
+            }
+            return true;
+        };
+
+<span id='Spoooky-AI-method-hasChildNodes'>        /**
+</span>         * Check if the node has child nodes
+         * @returns {boolean}
+         */
+        self_MCnode.hasChildNodes = function() {
+
+            if (self_MCnode.childNodes === false || self_MCnode.childNodes.length === 0) {
+                return false;
+            }
+            return true;
+        };
+
+<span id='Spoooky-AI-method-getRandomMoveIndexFromUntriedMoves'>        /**
+</span>         * Get a random move index from the array of untried moves
+         * @returns {number|*}
+         */
+        self_MCnode.getRandomMoveIndexFromUntriedMoves = function() {
+            return _.random(0, parseInt(self_MCnode.untriedMoves.length-1, 10));
+        };
+
+<span id='Spoooky-AI-property-playerToMove'>        /**
+</span>         * Unique identifier of the player who takes turn in this node
+         * @type {number|*}
+         */
+        self_MCnode.playerToMove = gameState.getCurrentPlayerID();
+
+<span id='Spoooky-AI-property-UCTCONSTANT'>        /**
+</span>         * UCT Multiplier constant. Has to be fine tuned.
+         * Larger values give uniform search
+         * Smaller values give very selective search
+         * Cf. Kocsis and Szepesvári (2006): Bandit based Monte-CarloPlanning
+         * @type {number}
+         */
+        self_MCnode.UCTCONSTANT = uctConstant;
+
+<span id='Spoooky-AI-method-getUnvisitedChildNodes'>        /**
+</span>         * Retrieve unvisited child nodes
+         * @returns {Array}
+         */
+        self_MCnode.getUnvisitedChildNodes = function() {
+
+            var unvisited = [], cur, i,
+                childNodes = self_MCnode.childNodes;
+
+            for (i = childNodes.length; i--;) {
+
+                cur = childNodes[i];
+                if (cur.visits === 0) {
+                    unvisited.push(cur);
+                }
+            }
+            return unvisited;
+        };
+
+<span id='self_MCnode-UCTSelectChild'>        /**
+</span>         * Select a child node by the upper confidence bounds applied to trees algorithm
+         * cf.
+         * - http://www.ru.is/faculty/yngvi/pdf/WinandsB09.pdf
+         * - http://www.math-info.univ-paris5.fr/~Bouzy/publications/CWHUB-pMCTS-2007.pdf
+         * @returns {*}
+         */
+        self_MCnode.UCTSelectChild = function() {
+
+            var selected = &quot;None&quot;, bestValue = 0,
+                curChild, childNodes = self_MCnode.childNodes, uctValue;
+
+            for (var i = childNodes.length; i--;) {
+
+                curChild = childNodes[i];
+
+                // Upper Confidence Bounds applied to Trees enhanced with Progressive Bias
+                // cf. Browne et al. (2012): A Survey of Monte Carlo Tree Search Methods.
+                uctValue = curChild.getWinRate() + 2 * self_MCnode.UCTCONSTANT * Math.sqrt(
+                    2 * Math.log(self_MCnode.visits) / curChild.visits);
+
+                if (uctValue &gt; bestValue) {
+
+                    selected = curChild;
+                    bestValue = uctValue;
+                }
+            }
+
+            // Hopeless game situation: Every possible move leads to a lost game
+            if (selected === &quot;None&quot;) {
+                return childNodes[_.random(0, childNodes.length-1)];
+            }
+
+            return selected;
+        };
+
+<span id='self_MCnode-UCTSelectChild-method-addChild'>        /**
+</span>         * Add a child node to the current node
+         * @param moveIndex
+         * @param state
+         * @returns {Spoooky.AI.MCnode}
+         */
+        self_MCnode.addChild = function(moveIndex, state, maxDepth, agentFocus) {
+
+            // Create a new monte carlo node
+            var newNode = new Spoooky.AI.MCnode(self_MCnode.untriedMoves[moveIndex],
+                self_MCnode, state, self_MCnode.UCTCONSTANT);
+
+            // Connect the child node with the index of the executed move
+            newNode.moveIndex = moveIndex;
+
+            if (state.models.gameState !== &quot;END&quot; &amp;&amp; newNode.depth &lt; maxDepth) {
+                newNode.untriedMoves = state.getCurrentPlayer().getExecutableMovesByAgentFocus(&quot;ALL&quot;);
+            }
+
+            if (state.models.gameState === &quot;END&quot;) {
+                newNode.terminal = true;
+                newNode.winnerID = state.models.winnerID;
+            }
+
+            // Delete the executed move from untried moves of the parent node
+            self_MCnode.untriedMoves.splice(moveIndex, 1);
+
+            // Add the newly created node to the child nodes of current node
+            self_MCnode.childNodes.push(newNode);
+
+            // Check for chance node
+            if (state.models.gameState === &quot;WAITINGFORDICEROLL&quot;) {
+                newNode.type = &quot;CHANCE NODE&quot;;
+            }
+
+            return newNode;
+        };
+
+<span id='self_MCnode-UCTSelectChild-method-update'>        /**
+</span>         * Update node's win and visit values
+         * @param result
+         */
+        self_MCnode.update = function(result) {
+
+            self_MCnode.visits++;
+            self_MCnode.wins += result;
+        };
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-constructor'>    /**
+</span>     * Virtually plays a game from a gamestate to the end of the game
+     * @param game
+     * @param maxSteps
+     * @param agentFocus
+     * @param playerID - ID of the currently deciding meta agent
+     * @param QLearner - Q-Learning module of the meta agent
+     * @param learn
+     * @param endTime
+     * @returns {{winnerID: (boolean|number|*), steps: number}}
+     * @constructor
+     */
+    UCTrollout : function(game, maxSteps, agentFocus, playerID, QLearner, learn, endTime) {
+
+        // Check if already in terminal game state
+        if (game.models.gameState === &quot;END&quot;) {
+
+            return {
+                &quot;finalState&quot; : game,
+                &quot;steps&quot; : 1
+            };
+        }
+
+        var allMoves, counter = 0, execMove, winnerID,
+            models = game.models, fromState = &quot;&quot;, toState = &quot;&quot;;
+
+        models.playVirtual = true;
+
+        // Play the game for maxSteps rounds at maximum
+        while (counter &lt;= maxSteps) {
+
+            // Update step counter
+            counter++;
+
+            // Stop processing if out of runtime
+            if (Date.now() &gt; endTime) { break; }
+
+            // For dice games
+            if (models.gameState === &quot;WAITINGFORDICEROLL&quot;) {
+
+                Spoooky.GameEvents.fireEvent({ job : &quot;Roll Backgammon Dices&quot; }, game);
+
+                // If the game state is the same after the fired event then the meta agent can't move
+                if (models.gameState === &quot;WAITINGFORDICEROLL&quot;) {
+                    // Perform a pseudo loop
+                    game.loop(false, null, null);
+                    continue;
+                }
+            }
+
+            allMoves = game.getCurrentPlayer().getAllEntityMoves();
+            //console.log(allMoves)
+
+            // Execute move in virtual game
+            if (allMoves.length &gt; 0) {
+
+                if (learn) {
+                    fromState = game.gameWorld.createBoardSignature();
+                }
+
+                execMove = allMoves[_.random(0, allMoves.length-1)];
+
+                game.executeMove(execMove);
+
+                if (learn) {
+                    toState = game.gameWorld.createBoardSignature();
+                }
+            }
+
+            // Prepare empty moves
+            if (_.isUndefined(execMove)) {
+                execMove = { targetX : &quot;x&quot;, targetY : &quot;y&quot;, moveIndex : &quot;none&quot; };
+            }
+
+            if (models.gameState === &quot;END&quot;) {
+
+                winnerID = models.winnerID;
+
+                if (learn) {
+                    if (winnerID === playerID) {
+                        QLearner.add(fromState, toState, 1.0,
+                            game.translateCoordinates(execMove.targetX, execMove.targetY), execMove.moveIndex);
+                    } else if (winnerID === false) {
+                        // draw
+                    } else {
+                        QLearner.add(fromState, toState, -1.0,
+                            game.translateCoordinates(execMove.targetX, execMove.targetY), execMove.moveIndex);
+                    }
+                }
+
+                // Stop processing if the game is in its terminal state
+                return {
+                    &quot;finalState&quot; : game,
+                    &quot;steps&quot; : counter
+                };
+            }
+
+            if (learn) {
+                QLearner.add(fromState, toState, undefined,
+                    game.translateCoordinates(execMove.targetX, execMove.targetY), execMove.moveIndex);
+            }
+        }
+
+        return {
+            &quot;finalState&quot; : game,
+            &quot;steps&quot; : counter
+        };
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-UCT'>    /**
+</span>     * Execute a Monte Carlo UCT search for itermax iterations starting with the current initial state of the game.
+     * Cf. the python code under http://mcts.ai/code/python.html
+     *
+     * Steps of Monte Carlo Tree Search (with UCT)
+     * See also the wikipedia article: http://en.wikipedia.org/wiki/Monte_Carlo_tree_search
+     *
+     * Step I: Selection
+     * Start from root node R and select successive child nodes down to a leaf node L.
+     *
+     * Step II: Expansion
+     * Unless the chosen leaf node L ends the game: create none or more child nodes of the leaf node
+     * and choose the node C from the created nodes.
+     *
+     * Step III: Simulation
+     * Play a random playout from node C or from node L if no child C was created.
+     *
+     * Step IV: Backpropagation
+     * Update information in the nodes on the path from C to R, using the result of the playout
+
+     * @param game
+     * @param agentFocus
+     * @param maxSteps
+     * @param maxTime
+     * @param learn
+     * @param uctConstant
+     * @returns {{results: Array}}
+     */
+    UCT : function(game, agentFocus, maxSteps, maxTime, learn, uctConstant, generateMctsGraph) {
+
+        var gameState, node, execMove, rootNode, i,
+            rolloutResult, addResult = 0, iterations = 0, gameWorld,
+            curPlayerID = game.getCurrentPlayerID(), move,
+            QLearner, fromState = &quot;&quot;, toState = &quot;&quot;, stepCount = 0,
+            endTime = Date.now() + maxTime, maxDepth = 9999999;
+
+        if (learn) {
+            QLearner = new Spoooky.QLearner(0.8);
+        }
+
+        // Create the root node for the root game state
+        rootNode = new Spoooky.AI.MCnode({ &quot;ID&quot; : &quot;Root&quot;, &quot;name&quot; : &quot;Root&quot; },
+            &quot;Root Node&quot;, game, uctConstant);
+
+        // Expand the root node: Get all executable moves by agent focus
+        rootNode.untriedMoves = game.getCurrentPlayer().getExecutableMovesByAgentFocus(agentFocus);
+
+        // While within computational / time budget: let's go
+        while (Date.now() &lt; endTime) {
+
+            // Set the current node as root node
+            node = rootNode;
+
+            // Create an instance of the root state to be worked with
+            gameState = game.clone();
+
+            gameWorld = gameState.gameWorld;
+
+            // *** Step I: Selection ***
+            // Select a path through the game tree to a leaf node
+            while (node.hasUntriedMoves() === false &amp;&amp; node.hasChildNodes()) {
+
+                node = node.UCTSelectChild();
+
+                if (learn) {
+                    fromState = gameWorld.createBoardSignature();
+                }
+
+                move = node.move;
+                gameState.executeMove(move);
+
+                if (learn) {
+                    toState = gameWorld.createBoardSignature();
+                    QLearner.add(fromState, toState, undefined,
+                        gameState.translateCoordinates(move.targetX, move.targetY), move.moveIndex);
+                }
+            }
+
+            // *** Step II: Expansion ***
+            // If at the final state: expand the game tree with a new node and execute the move
+            if (node.hasUntriedMoves()) {
+
+                execMove = node.getRandomMoveIndexFromUntriedMoves();
+
+                if (learn) {
+                    fromState = gameWorld.createBoardSignature();
+                }
+
+                move = node.untriedMoves[execMove];
+
+                gameState.executeMove(move);
+
+                // Add a child node and descend the tree
+                node.addChild(execMove, gameState, maxDepth, agentFocus);
+
+                if (learn) {
+                    toState = gameWorld.createBoardSignature();
+                    QLearner.add(fromState, toState, undefined,
+                        gameState.translateCoordinates(move.targetX, move.targetY), move.moveIndex);
+                }
+            }
+
+            // *** Step III: Rollout ***
+            // Simulate one game until the end of the game is reached or a number of max rounds
+            // Game has to be cloned here...
+            rolloutResult = Spoooky.AI.UCTrollout(gameState.clone(), maxSteps, agentFocus, curPlayerID, QLearner, learn, endTime);
+
+            node.simulationSteps += rolloutResult.steps;
+            stepCount += rolloutResult.steps;
+
+            // *** Step IV: Backpropagate ***
+            // Backpropagate from the expanded node to the root node
+            var terminalScore = rolloutResult.finalState.evaluateGameState(node.playerToMove);
+
+            // Update each node with visits and playout result
+            // Using negamax variant of minimax search
+            // Cf. Browne et al. (2012): A Survey of Monte Carlo Tree Search Methods [http://www.cameronius.com/cv/mcts-survey-master.pdf]
+            while (node.parent) {
+
+                node.update(terminalScore);
+                terminalScore = terminalScore * -1;
+                node = node.parent;
+            }
+
+            iterations++;
+
+            // Clean up
+            gameState.models.length = 0;
+            gameState.length = 0;
+        }
+
+        // Save monte carlo uct results
+        var allResults = [], cur, curMove,
+            moveTarget, moveSource, moveName,
+            worldRows = game.gameWorld.getRows();
+
+        i = rootNode.childNodes.length;
+
+        // Prepare results
+        for (; i--;) {
+
+            cur = rootNode.childNodes[i];
+            curMove = cur.move;
+
+            moveTarget = (String.fromCharCode(parseInt((97+curMove.targetX) , 10))) +
+            (worldRows - curMove.targetY);
+
+            // Create the name of the move
+            if (curMove.name === &quot;place entity&quot;) {
+
+                moveName = moveTarget;
+            } else if (curMove.name === &quot;Bear off&quot;) {
+
+                moveName = moveSource = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
+                (worldRows - curMove.entity.position.y) + &quot;-out&quot;;
+            } else {
+
+                moveTarget = (String.fromCharCode(parseInt((97+curMove.targetX) , 10))) + (worldRows - curMove.targetY);
+
+                // Free capture move
+                if (curMove.type === &quot;FREE CAPTURE&quot;) {
+                    moveName = moveTarget;
+                } else {
+                    // Entity move
+                    moveSource = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
+                    (worldRows - curMove.entity.position.y);
+
+                    moveName = moveSource + &quot;-&quot; + moveTarget;
+                }
+            }
+
+            if (curMove.type === &quot;DICE&quot;) {
+                moveName += &quot;-&quot; + curMove.diceValue;
+            }
+
+            // Prepare results
+            allResults.push({
+                &quot;wins&quot; : cur.wins,
+                &quot;target&quot; : moveName,
+                &quot;visits&quot; : cur.visits,
+                &quot;moveIndex&quot; : curMove.moveIndex,
+                &quot;simulationSteps&quot; : cur.simulationSteps
+            });
+        }
+
+        var graph = false;
+
+        if (generateMctsGraph) {
+            graph = Spoooky.AI.createMCTSGraph(rootNode, worldRows);
+        }
+
+        rootNode = null;
+        game = null;
+
+        return {
+            &quot;mctsGraph&quot; : graph,
+            &quot;simCount&quot; : iterations,
+            &quot;simSteps&quot; : stepCount,
+            &quot;results&quot; : allResults,
+            &quot;QLearner&quot; : QLearner
+        };
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-createMCTSGraph'>    /**
+</span>     * Creates a graph which represents the monte carlo tree search
+     * To be used with d3.js
+     * Graph / tree Data in form:
+     var treeData = [
+     {
+         &quot;name&quot;: &quot;Top Level&quot;,
+         &quot;parent&quot;: &quot;null&quot;,
+         &quot;children&quot;: [
+             {
+                 &quot;name&quot;: &quot;Level 2: A&quot;,
+                 &quot;parent&quot;: &quot;Top Level&quot;,
+                 &quot;children&quot;: [
+                     {
+                         &quot;name&quot;: &quot;Son of A&quot;,
+                         &quot;parent&quot;: &quot;Level 2: A&quot;
+                     },
+                     {
+                         &quot;name&quot;: &quot;Daughter of A&quot;,
+                         &quot;parent&quot;: &quot;Level 2: A&quot;
+                     }
+                 ]
+             },
+             {
+                 &quot;name&quot;: &quot;Level 2: B&quot;,
+                 &quot;parent&quot;: &quot;Top Level&quot;
+             }
+         ]
+     }
+     ];
+     * @param data
+     * @param worldRows
+     */
+    createMCTSGraph : function(data, worldRows) {
+
+        var mctsGraph = {
+            &quot;ID&quot; : &quot;Root&quot;,
+            &quot;children&quot;: [],
+            &quot;parent&quot;: &quot;null&quot;,
+            &quot;value&quot; : data.visits,
+            &quot;name&quot; : &quot;Entscheidungsknoten (Spieler ID &quot; + data.playerToMove + &quot;, &quot; +
+            data.getWinRate().toFixed(3) + &quot; / &quot; + data.visits + &quot;)&quot;
+        };
+
+        var childNodes = [];
+
+        // Processing can be very intensive so prevent errors
+        try {
+            Spoooky.AI.preProcessChildNodes(data.childNodes, worldRows, childNodes);
+        } catch(err) {
+            childNodes.length = 0;
+        }
+
+        try {
+            mctsGraph.children = Spoooky.AI.createTree(childNodes, &quot;Root&quot;, 0, 10);
+        } catch(err) {
+            mctsGraph.children.length = 0;
+        }
+
+        return mctsGraph;
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-preProcessChildNodes'>    /**
+</span>     * Recursively reduces the monte carlo uct game tree to a one-dimensional array
+     * @param data
+     * @param worldRows
+     * @param outputChildren
+     */
+    preProcessChildNodes : function(data, worldRows, outputChildren) {
+
+        var cur, moveID, moveTarget, moveSource, moveName, curMove;
+
+        for (var i = data.length; i--;) {
+
+            cur = data[i];
+            curMove = cur.move;
+
+            moveID = cur.move.ID.toString();
+            moveTarget = (String.fromCharCode(parseInt((97+curMove.targetX) , 10))) + (worldRows - curMove.targetY);
+
+            if (curMove.name === &quot;place entity&quot;) {
+                moveName = moveTarget;
+            } else if (curMove.name === &quot;Bear off&quot;) {
+
+                moveName = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
+                (worldRows - curMove.entity.position.y) + &quot;-out&quot;;
+            } else {
+
+                // Free capture move
+                if (curMove.type === &quot;FREE CAPTURE&quot;) {
+                    moveName = moveTarget;
+                } else {
+
+                    moveTarget = (String.fromCharCode(parseInt((97 + curMove.targetX), 10))) + (worldRows - curMove.targetY);
+                    moveSource = (String.fromCharCode(parseInt((97 + curMove.entity.position.x), 10))) +
+                    (worldRows - curMove.entity.position.y);
+                    moveName = moveSource + &quot;-&quot; + moveTarget;
+                }
+            }
+
+            if (curMove.type === &quot;DICE&quot;) {
+
+                moveID += &quot;-&quot; + curMove.diceValue;
+                moveName += &quot;-&quot; + curMove.diceValue;
+            }
+
+            // Terminal node
+            if (cur.terminal) {
+
+                var winner;
+                if (cur.winnerID !== false) {
+                    winner = &quot;Spieler ID &quot; + cur.winnerID + &quot; gewinnt. &quot;;
+                } else {
+                    winner = &quot;unentschieden&quot;
+                }
+                moveName = moveName + &quot; (Terminalknoten - &quot; + winner +
+                cur.getWinRate().toFixed(3) + &quot; / &quot; + cur.visits + &quot;)&quot;;
+            } else {
+                moveName = moveName + &quot; (Spieler ID &quot; + cur.playerToMove + &quot;, &quot; +
+                cur.getWinRate().toFixed(3) + &quot; / &quot; + cur.visits + &quot;)&quot;;
+            }
+
+            outputChildren.push({
+                &quot;ID&quot; : cur.nodeID,
+                &quot;value&quot; : cur.visits,
+                &quot;parent&quot; : cur.parent.nodeID,
+                &quot;name&quot; : moveName,
+                &quot;terminal&quot; : cur.terminal
+            });
+
+            if (cur.childNodes.length &gt; 0) {
+                Spoooky.AI.preProcessChildNodes(cur.childNodes, worldRows, outputChildren);
+            }
+        }
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-createTree'>    /**
+</span>     * Create tree structure
+     * cf. http://oskarhane.com/create-a-nested-array-recursively-in-javascript/
+     * @param arr
+     * @param parent
+     * @returns {Array}
+     */
+    createTree : function(arr, parent) {
+
+        var out = [], children;
+
+        for(var i = arr.length; i--;) {
+
+            if(arr[i].parent === parent) {
+
+                children = Spoooky.AI.createTree(arr, arr[i].ID);
+
+                if(children.length) {
+                    arr[i].children = children
+                }
+                out.push(arr[i])
+            }
+        }
+        return out;
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-max'>    /**
+</span>     * Determine the maximum of two parameter values
+     * @param paramA
+     * @param paramB
+     * @returns {*}
+     */
+    max : function(paramA, paramB) {
+
+        if (paramA &gt; paramB) { return paramA; }
+        return paramB;
+    },
+
+<span id='self_MCnode-UCTSelectChild-method-abNegaMax'>    /**
+</span>     * Implementation of the alpha beta pruning algorithm
+     * (cf. Millington, Funge: Artificial Intelligence for Games. 2009. 681-684)
+     * @param game
+     * @param maxDepth
+     * @param currentDepth
+     * @param alpha
+     * @param beta
+     * @param pID
+     * @returns {*}
+     */
+    abNegaMax : function(game, maxDepth, currentDepth, alpha, beta, pID) {
+
+        if (game.models.gameState === &quot;END&quot; || currentDepth === maxDepth) {
+
+            var score = -1000;
+
+            // Best score: Player with pID wins the game
+            if (game.models.winnerID === false) {
+                score = 0;
+            } else if (game.models.winnerID === pID) {
+                score = 1000;
+            }
+
+            return {
+                &quot;score&quot; : score + currentDepth,
+                &quot;move&quot; : null, &quot;moveIndex&quot; : false };
+        }
+
+        var bestMove = &quot;none&quot;,
+            bestScore = -99999, allMoves, gameCopy,
+            result, currentScore, recursedScore, move;
+
+        allMoves = game.getCurrentPlayer().getAllEntityMoves();
+
+        for (var counter = allMoves.length; counter--;) {
+
+            move = allMoves[counter];
+
+            // Execute a virtual move
+            gameCopy = game.clone();
+
+            gameCopy.executeMove(move);
+
+            result = Spoooky.AI.abNegaMax(gameCopy, maxDepth, currentDepth+1,
+                beta * -1, Spoooky.AI.max(alpha, bestScore) * -1, pID);
+
+            recursedScore = result.score;
+            currentScore = recursedScore * -1;
+
+            gameCopy = null;
+
+            // Update the best score
+            if (currentScore &gt; bestScore) {
+
+                bestMove = move;
+                bestScore = currentScore;
+
+                // Prune if outside the bounds
+                if (bestScore &gt;= beta) {
+                    return { score: bestScore, move : bestMove, &quot;moveIndex&quot; : bestMove.moveIndex };
+                }
+            }
+        }
+
+        if (bestMove === &quot;none&quot;) {
+            return { score: -1 };
+        } else {
+            return { score: bestScore, move : bestMove, &quot;moveIndex&quot; : bestMove.moveIndex };
+        }
+    }
+};
+
+<span id='Spoooky-QLearner-method-constructor'><span id='Spoooky-QLearner'>/**
+</span></span> * Q-Learning Module
+ *
+ * This algorithm is loosely based on the javascript q-learning implementation
+ * https://github.com/nrox/q-learning.js
+ *
+ * Based on
+ * - Millington, Funge: Artificial Intelligence for Games. 2009.
+ * - cf. https://github.com/nrox/q-learning.js
+ * - cf. https://github.com/karpathy/convnetjs
+ *
+ * @param gamma
+ * @constructor
+ */
+Spoooky.QLearner = function(gamma) {
+
+    var self_QLearner = this;
+
+    self_QLearner.alpha = 0;
+    self_QLearner.gamma = gamma || 0.8;
+    self_QLearner.rho = 0.2;
+    self_QLearner.nu = 0;
+
+    self_QLearner.rewards = {};
+    self_QLearner.gameStates = {};
+    self_QLearner.currentState = null;
+
+    self_QLearner.add = function(from, to, reward, actionName, moveIndex) {
+
+        // Limit the savable state space to a number of n states
+        // if (_.size(self_QLearner.gameStates) &lt; 1000) {
+
+        if (!self_QLearner.gameStates[from]) {
+            self_QLearner.addState(from);
+        }
+        if (!self_QLearner.gameStates[to]) {
+            self_QLearner.addState(to);
+        }
+        self_QLearner.gameStates[from].addAction(to, reward, actionName, moveIndex);
+        // }
+    };
+
+    self_QLearner.addState = function (name) {
+
+        var state = new Spoooky.GameState(name);
+        self_QLearner.gameStates[name] = state;
+        return state;
+    };
+
+    self_QLearner.setState = function (name) {
+
+        self_QLearner.currentState = self_QLearner.gameStates[name];
+        return self_QLearner.currentState;
+    };
+
+    self_QLearner.getState = function () {
+
+        return self_QLearner.currentState &amp;&amp; self_QLearner.currentState.name;
+    };
+
+    self_QLearner.randomState = function() {
+
+        var gameStates = _.toArray(self_QLearner.gameStates);
+        return gameStates[_.random(0, gameStates.length-1)];
+    };
+
+    self_QLearner.optimalFutureValue = function(state) {
+
+        var max = 0, stateRewards = self_QLearner.rewards[state];
+
+        _.each(stateRewards, function(action) {
+            if (stateRewards.hasOwnProperty(action)){
+                max = Math.max(max, stateRewards[action] || 0);
+            }
+        });
+        return max;
+    };
+
+    self_QLearner.step = function() {
+
+        self_QLearner.currentState || (self_QLearner.currentState = self_QLearner.randomState());
+        var actions = _.toArray(self_QLearner.currentState.actions), action;
+
+        if (_.random(0, 1) &lt; self_QLearner.rho) {
+            // Randomly pick an action
+            // Previous standard
+            action = actions[_.random(0, actions.length-1)];
+        } else {
+            // Pick the best action
+            //action = self_QLearner.getBestAction(self_QLearner.currentState.name);
+            action = actions[_.random(0, actions.length-1)];
+        }
+
+        if (!action) return null;
+        self_QLearner.rewards[self_QLearner.currentState.name] || (self_QLearner.rewards[self_QLearner.currentState.name] = {});
+        self_QLearner.rewards[self_QLearner.currentState.name][action.name] = (action.reward || 0) + self_QLearner.gamma * self_QLearner.optimalFutureValue(action.nextState);
+        return self_QLearner.currentState = self_QLearner.gameStates[action.nextState];
+    };
+
+    self_QLearner.learn = function(steps) {
+
+        steps = Math.max(1, steps || 0);
+
+        while (steps--) {
+            self_QLearner.currentState = self_QLearner.randomState();
+            self_QLearner.step();
+        }
+    };
+
+    self_QLearner.getBestAction = function(state) {
+
+        var stateRewards = self_QLearner.rewards[state] || {},
+            bestAction = null, action,
+            keys = _.keys(stateRewards),
+            len = keys.length;
+
+        for (var i = 0; i &lt; len; ++i) {
+
+            action = keys[i];
+            if (stateRewards.hasOwnProperty(action)){
+
+                if (!bestAction) {
+                    bestAction = action;
+                    //} else if ((stateRewards[action] === stateRewards[bestAction]) &amp;&amp; (Math.random() &gt; 0.5)){
+                } else if ((stateRewards[action] === stateRewards[bestAction])) {
+                    bestAction = action;
+                } else if (stateRewards[action] &gt; stateRewards[bestAction]) {
+                    bestAction = action;
+                }
+            } else {
+                //console.log(&quot;No reward for action&quot;, action);
+                return false;
+            }
+        }
+        return bestAction;
+    };
+};
+
+<span id='Spoooky-GameState-method-constructor'><span id='Spoooky-GameState'>/**
+</span></span> * Representation of a game state
+ * Includes game state signatures and possible moves / actions
+ * @param name
+ * @constructor
+ */
+Spoooky.GameState = function(name) {
+
+    var self_GameState = this;
+
+    self_GameState.name = name;
+    self_GameState.actions = {};
+
+    self_GameState.addAction = function(nextState, reward, actionName, moveIndex) {
+
+        var action =  {
+            name: actionName === undefined ? nextState : actionName,
+            nextState: nextState,
+            reward: reward,
+            moveIndex : moveIndex
+        };
+        self_GameState.actions[action.name] = action;
+    };
+};</pre>
+</body>
+</html>

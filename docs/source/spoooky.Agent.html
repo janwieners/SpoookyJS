@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
+ *
+ * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
+ *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ **/
+
+<span id='Spoooky-Agent-method-constructor'><span id='Spoooky-Agent'>/**
+</span></span> * Spoooky.Agent
+ * Associated to a meta agent, every agent thinks about best moves in the current game state
+ *
+ * @param metaAgent
+ * @param agentID
+ * @constructor
+ */
+Spoooky.Agent = function(metaAgent, agentID) {
+
+    var self_Agent = this;
+
+<span id='self_Agent-ID'>    /**
+</span>     * Unique agent identifier
+     */
+    self_Agent.ID = agentID;
+
+<span id='self_Agent-ID-property-metaAgentID'>    /**
+</span>     * Connection to the meta agent
+     * @type {*}
+     */
+    self_Agent.metaAgentID = metaAgent;
+
+<span id='self_Agent-ID-property-role'>    /**
+</span>     * Agents are divided in different roles
+     * Possible / allowed constants:
+     * - ANALYZE POSSIBLE MOVES (standard value)
+     *      - agent.focus: { ALL, FIRST HALF, SECOND HALF }
+     * @type {string}
+     */
+    self_Agent.role = &quot;ANALYZE POSSIBLE MOVES&quot;;
+
+<span id='self_Agent-ID-property-focus'>    /**
+</span>     * Agents focus different aspects of the game
+     * Constants:
+     * - FIRST HALF OF POSSIBLE MOVES
+     * - SECOND HALF OF POSSIBLE MOVES
+     * - MOVES NEAR OPPONENT FIELDS
+     * - MOVES NEAR OPPONENT OR OWN FIELDS
+     *
+     * Executable / possible moves are coordinated by the meta agent
+     * cf. self_MetaAgent.getExecutableMovesByAgentFocus(*)
+     *
+     * @type {string}
+     */
+    self_Agent.focus = &quot;ALL&quot;;
+
+<span id='self_Agent-ID-property-fitness'>    /**
+</span>     * Fitness of the agent
+     * Used by the meta agent to describe the individual relevance of the agent for a specific game
+     * @type {number}
+     */
+    self_Agent.fitness = 1.0;
+
+<span id='self_Agent-ID-property-thinkingTime'>    /**
+</span>     * Computing time of the agent in milliseconds (10000 = 10 seconds)
+     * @type {number}
+     */
+    self_Agent.thinkingTime = 10000;
+
+<span id='self_Agent-ID-property-maximumSteps'>    /**
+</span>     * Maximum monte carlo rollout steps
+     * @type {number}
+     */
+    self_Agent.maximumSteps = 10000;
+
+<span id='self_Agent-ID-property-uctConstant'>    /**
+</span>     * Constant UCT value
+     * @type {number}
+     */
+    self_Agent.uctConstant = 0.9;
+
+<span id='self_Agent-ID-method-proposeBestMove'>    /**
+</span>     * AI driver of the individual agent
+     */
+    self_Agent.proposeBestMove = function() {
+
+        var graph = false,
+            id = self_Agent.ID,
+            role = self_Agent.role,
+            focus = self_Agent.focus,
+            steps = self_Agent.maximumSteps,
+            brain = self_Agent.createBrain(),
+            uctConstant = self_Agent.uctConstant,
+            thinkingTime = self_Agent.thinkingTime,
+            performLearning = Spoooky.AI.game.getPlayerWithID(self_Agent.metaAgentID).learningEnabled;
+
+        // Only generate the mcts graph if interface is activated / visible
+        if (localStorage[&quot;#mctsgraph&quot;]) { graph = true; }
+
+        switch (role) {
+
+            // An agent with this role analyzes executable moves by using monte carlo tree search
+            case &quot;ANALYZE POSSIBLE MOVES&quot;:
+                // Start the web worker
+                brain.postMessage({
+                    &quot;agentID&quot; : id,
+                    &quot;agentRole&quot; : role,
+                    &quot;agentFocus&quot; : focus,
+                    &quot;maxSteps&quot; : steps,
+                    &quot;maxTime&quot; : thinkingTime,
+                    &quot;learn&quot; : performLearning,
+                    &quot;uctConstant&quot; : uctConstant,
+                    &quot;command&quot; : &quot;monte carlo tree search with uct&quot;,
+                    &quot;gameModel&quot; : Spoooky.AI.game.stringifyModels(),
+                    &quot;generateMctsGraph&quot; : graph
+                });
+                break;
+
+            // An agent with this role searches for immediate threats by using
+            // the alpha beta negamax algorithm with a narrow search window
+            // not really usable in games with complex game trees
+            case &quot;SEARCH FOR IMMEDIATE THREATS&quot;:
+                brain.postMessage({
+                    &quot;agentID&quot; : id,
+                    &quot;agentRole&quot; : role,
+                    &quot;agentFocus&quot; : focus,
+                    &quot;command&quot; : &quot;alpha beta negamax&quot;,
+                    &quot;maxDepth&quot; : 3,
+                    &quot;gameModel&quot; : Spoooky.AI.game.stringifyModels()
+                });
+                break;
+
+            default:
+                console.log(&quot;Unknown Agent Role.&quot;)
+        }
+    };
+
+<span id='self_Agent-ID-method-createBrain'>    /**
+</span>     * Create a web worker for the agent
+     * @returns {Worker}
+     */
+    self_Agent.createBrain = function() {
+
+        // Create a web worker for this agent
+        var agentWorker = new Worker(&quot;../../js/spoooky.Worker.min.js&quot;),
+            player = Spoooky.AI.game.getPlayerWithID(self_Agent.metaAgentID);
+
+        // Create worker's behaviour
+        agentWorker.addEventListener(&quot;message&quot;, function(event) {
+
+            switch(event.data.type){
+
+                case &quot;starting&quot;:
+                    break;
+
+                // Things to do if the worker / agent has found a best move
+                case &quot;decision&quot;:
+                    // Execute the best found artificial move
+                    player.coordinateAgentDecisions(event.data);
+                    break;
+
+                // No best move has been found
+                case &quot;random&quot;:
+                    player.coordinateAgentDecisions(event.data);
+                    break;
+
+                default:
+                //console.log(e.data);
+            }
+        });
+        return agentWorker;
+    }
+};</pre>
+</body>
+</html>

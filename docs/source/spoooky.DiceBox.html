@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
+ *
+ * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
+ *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ **/
+
+<span id='Spoooky-DiceBox-method-constructor'><span id='Spoooky-DiceBox'>/**
+</span></span> * Spoooky.DiceBox
+ * Controller for Spoooky.Models.DiceBox
+ *
+ * @param game
+ * @constructor
+ */
+Spoooky.DiceBox = function(game) {
+
+    var self_DiceBox = this,
+        myGame = game;
+
+<span id='Spoooky-DiceBox-method-enable'>    /**
+</span>     * Enable the dice box
+     */
+    self_DiceBox.enable = function() {
+        myGame.models.DiceBox.isEnabled = true;
+    };
+
+<span id='Spoooky-DiceBox-method-isEnabled'>    /**
+</span>     * Get the activation state of the dice box
+     * @returns {boolean|Function}
+     */
+    self_DiceBox.isEnabled = function() {
+        return myGame.models.DiceBox.isEnabled;
+    };
+
+<span id='Spoooky-DiceBox-method-createDice'>    /**
+</span>     * Create a new Dice in the dice box
+     */
+    self_DiceBox.createDice = function(rangeStart, rangeEnd) {
+        myGame.models.DiceBox.dices.push({
+            start : rangeStart,
+            end : rangeEnd });
+    };
+
+<span id='Spoooky-DiceBox-method-countDices'>    /**
+</span>     * Count dices in dice box
+     * @returns {Number} Number of Dices in Dice Box
+     */
+    self_DiceBox.countDices = function() {
+        return myGame.models.DiceBox.dices.length;
+    };
+
+<span id='Spoooky-DiceBox-method-getDice'>    /**
+</span>     * Get a dice from the dice box array
+     * @param diceID
+     * @returns {*}
+     */
+    self_DiceBox.getDice = function(diceID) {
+
+        if (diceID &gt;= 0 &amp;&amp; diceID &lt; self_DiceBox.countDices()) {
+            return myGame.models.DiceBox.dices[diceID];
+        }
+        return false;
+    };
+
+<span id='Spoooky-DiceBox-method-rollDice'>    /**
+</span>     * Roll a dice
+     *
+     * @param diceID {Number} ID of the dice which will be rolled
+     * @returns {Number} Random value of rolled dice
+     */
+    self_DiceBox.rollDice = function(diceID) {
+
+        if (self_DiceBox.getDice(diceID) !== false) {
+            return parseInt(_.random(self_DiceBox.getDice(diceID).start,
+                self_DiceBox.getDice(diceID).end), 10);
+        }
+        return false;
+    };
+
+<span id='Spoooky-DiceBox-method-rollAllDices'>    /**
+</span>     * Rolls all dices in dice box
+     *
+     * @returns {Object} Array of random values
+     */
+    self_DiceBox.rollAllDices = function() {
+
+        var returnValues = [];
+
+        for (var counter = self_DiceBox.countDices(); counter--;) {
+            returnValues.push(self_DiceBox.rollDice(counter));
+        }
+
+        myGame.models.DiceBox.diceValues = returnValues;
+        return returnValues;
+    };
+
+<span id='Spoooky-DiceBox-method-getMoveIDForDiceID'>    /**
+</span>     * Get associated move id for a dice identifier
+     * @param diceID
+     * @returns {*}
+     */
+    self_DiceBox.getMoveIDForDiceID = function(diceID) {
+
+        var db = myGame.models.DiceBox;
+
+        for (var counter = db.attachedMoveIDs.length; counter--;) {
+            if (db.attachedMoveIDs[counter].diceValueID === diceID) {
+                return db.attachedMoveIDs[counter].moveID;
+            }
+        }
+        return false;
+    };
+
+<span id='Spoooky-DiceBox-method-connectMoveIDWithDiceValue'>    /**
+</span>     * Connect move identifier with dice value
+     * @param setMoveID
+     * @param setDiceValueID
+     * @param setTarget
+     */
+    self_DiceBox.connectMoveIDWithDiceValue = function(setMoveID, setDiceValueID, setTarget) {
+
+        myGame.models.DiceBox.attachedMoveIDs.push({
+            diceValueID : setDiceValueID,
+            moveID : setMoveID,
+            target : setTarget });
+    };
+
+<span id='Spoooky-DiceBox-method-getConnectedDiceValue'>    /**
+</span>     * Get dice value connected with move identifier
+     * @param moveID
+     * @returns {*}
+     */
+    self_DiceBox.getConnectedDiceValue = function(moveID) {
+
+        var db = myGame.models.DiceBox;
+        for (var counter = db.attachedMoveIDs.length; counter--;) {
+
+            if (db.attachedMoveIDs[counter].moveID === moveID) {
+                return db.attachedMoveIDs[counter];
+            }
+        }
+        return false;
+    };
+
+<span id='Spoooky-DiceBox-method-flushAttachedMoveIDs'>    /**
+</span>     * Reset all attached move identifiers
+     */
+    self_DiceBox.flushAttachedMoveIDs = function() {
+        myGame.models.DiceBox.attachedMoveIDs.length = 0;
+    };
+
+<span id='Spoooky-DiceBox-method-getDiceValues'>    /**
+</span>     * Returns diced values
+     * @returns {Object} Values of dices
+     */
+    self_DiceBox.getDiceValues = function() {
+        return myGame.models.DiceBox.diceValues;
+    };
+
+<span id='Spoooky-DiceBox-method-gotNoDiceValues'>    /**
+</span>     * Check for empty dice box
+     * @returns {boolean}
+     */
+    self_DiceBox.gotNoDiceValues = function() {
+        return (!myGame.models.DiceBox.diceValues[0]);
+    };
+
+<span id='Spoooky-DiceBox-method-deleteDiceValue'>    /**
+</span>     * Deletes a dice value from array diceValues
+     * @param {Number} indexOfValue Index of dice value which will be deleted
+     */
+    self_DiceBox.deleteDiceValue = function(indexOfValue) {
+        myGame.models.DiceBox.diceValues.splice(indexOfValue, 1);
+    };
+
+<span id='Spoooky-DiceBox-method-deleteAllDiceValues'>    /**
+</span>     * Deletes all dice values
+     */
+    self_DiceBox.deleteAllDiceValues = function() {
+        //myGame.models.DiceBox.diceValues = [];
+        myGame.models.DiceBox.diceValues.length = 0;
+    };
+};</pre>
+</body>
+</html>
