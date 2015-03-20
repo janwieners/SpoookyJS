@@ -2719,26 +2719,39 @@ Spoooky.Game = function() {
                 }
             } else {
 
+                // Capture move for a game without dice(s)
                 var preArrangeEntity = [];
 
                 entityPosition = entity.position;
 
-                // Goal move for a game without dice(s)
-                preArrangeEntity.x = entityPosition.x;
-                preArrangeEntity.y = entityPosition.y;
+                // Capture move is a free capture move
+                if (move.type === "FREE CAPTURE") {
 
-                self_Game.doVirtualMove(entityPosition.x, entityPosition.y,
-                    move.preArrangeX, move.preArrangeY);
+                    // The target of a goal move is highlighted
+                    // Therefore: Use the highlighted coordinates to ensure correct target coordinates
+                    // Expect: There is only one highlighted destination cell
+                    move.targetX = self_Game.models.HighlightTable[0].x;
+                    move.targetY = self_Game.models.HighlightTable[0].y;
 
-                self_Game.executeGoalConsequences(move.name, entity, preArrangeEntity);
+                } else {
 
-                self_Game.undoVirtualMove();
+                    // Capture move bound to an entity;
+                    preArrangeEntity.x = entityPosition.x;
+                    preArrangeEntity.y = entityPosition.y;
 
-                // The target of a goal move is highlighted
-                // Therefore: Use the highlighted coordinates to ensure correct target coordinates
-                // Expect: There"s only one highlighted destination cell
-                move.targetX = self_Game.models.HighlightTable[0].x;
-                move.targetY = self_Game.models.HighlightTable[0].y;
+                    self_Game.doVirtualMove(entityPosition.x, entityPosition.y,
+                        move.preArrangeX, move.preArrangeY);
+
+                    self_Game.executeGoalConsequences(move.name, entity, preArrangeEntity);
+
+                    self_Game.undoVirtualMove();
+
+                    // The target of a goal move is highlighted
+                    // Therefore: Use the highlighted coordinates to ensure correct target coordinates
+                    // Expect: There"s only one highlighted destination cell
+                    move.targetX = self_Game.models.HighlightTable[0].x;
+                    move.targetY = self_Game.models.HighlightTable[0].y;
+                }
             }
         } else {
 

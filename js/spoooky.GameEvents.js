@@ -21,34 +21,6 @@ Spoooky.GameEvents = {
     events : {
 
         /**
-         * Highlight opponent entities which are not connected to other opponent entities
-         * Used in the game of nine men's morris
-         * @param gameEvent
-         * @param game
-         */
-        "Capture Unassociated Opponent Entities" : function(gameEvent, game) {
-
-            var op, i, opPositions = game.getAssociatedOpponentEntities(gameEvent.jobArguments.associations);
-
-            // Highlight non-associated entities
-            for (i in opPositions) {
-
-                op = opPositions[i];
-
-                if (!op.associated) {
-
-                    // Create a capture move for the current meta agent / player
-                    game.getCurrentPlayer().captureMoveStorage.push({
-                        initialMode : game.models.gameMode,
-                        x : op.x,
-                        y : op.y }
-                    );
-
-                }
-            }
-        },
-
-        /**
          * Reset Highlighted Moves
          * @param gameEvent
          * @param game

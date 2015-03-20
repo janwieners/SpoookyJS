@@ -596,6 +596,20 @@ Spoooky.MetaAgent = function(game) {
     };
 
     /**
+     * Connections of cells.
+     * Used for example in the game of nine mens morris to search for three opponents in a line.
+     */
+    self_MetaAgent.cellConnections;
+
+    /**
+     * Set cell connections to check for opponent patterns.
+     * @param connections
+     */
+    self_MetaAgent.setCellConnections = function(connections) {
+        self_MetaAgent.cellConnections = connections;
+    };
+
+    /**
      * Returns every possible standard and goal move of all associated entities
      * @returns {*}
      */
@@ -806,29 +820,33 @@ Spoooky.MetaAgent = function(game) {
             // i.e. for the game of nine mens morris
             case "FREE CAPTURE":
 
-                var captureMoves = [], cptStorage = self_MetaAgent.captureMoveStorage,
-                    i = cptStorage.length, moveID;
+                // Currently: Check for patterns of opponent entities
+                // TODO: Generalize to enable other free capture moves likes capturing any opponent entity
+                var op, i, captureMoves = [], moveID,
+                    opPositions = game.getAssociatedOpponentEntities(self_MetaAgent.cellConnections);
 
-                for (; i--;) {
+                // Highlight non-associated entities
+                for (i in opPositions) {
 
-                    // Add a capture move
-                    moveID = game.getUniqueMoveID("free-capture", "opponent",
-                        cptStorage[i].x, cptStorage[i].y);
+                    op = opPositions[i];
 
-                    captureMoves.push({
-                        ID : moveID,
-                        type : "FREE CAPTURE",
-                        entity : false,
-                        name : "Capture Opponent",
-                        targetX : cptStorage[i].x,
-                        targetY : cptStorage[i].y,
-                        moveClass : "move_goal"
-                    });
+                    if (!op.associated) {
 
+                        // Add a capture move
+                        moveID = game.getUniqueMoveID("free-capture", "opponent",
+                            op.x, op.y);
+
+                        captureMoves.push({
+                            ID : moveID,
+                            type : "FREE CAPTURE",
+                            entity : false,
+                            name : "Capture Opponent",
+                            targetX : op.x,
+                            targetY : op.y,
+                            moveClass : "move_goal"
+                        });
+                    }
                 }
-
-                // Reset stored capture moves
-                self_MetaAgent.captureMoveStorage.length = 0;
 
                 return captureMoves;
 
@@ -839,12 +857,6 @@ Spoooky.MetaAgent = function(game) {
                 break;
         }
     };
-
-    /**
-     * Temporary save capture moves
-     * @type {Array}
-     */
-    self_MetaAgent.captureMoveStorage = [];
 
     /**
      * Reduce the list of all executable moves by agent focus
@@ -1207,7 +1219,7 @@ Spoooky.MetaAgent = function(game) {
     self_MetaAgent.askAgentsForDecision = function() {
 
         //TESTGAME
-        //var uctResults = Spoooky.AI.UCT(self_MetaAgent.getGame(), "ALL", 15000, 1000, false, 0.9, true);
+        //var uctResults = Spoooky.AI.UCT(self_MetaAgent.getGame(), "ALL", 15000, 100, false, 0.9, true);
 
         // Set the number of workers to be used.
         // MUST be identical with the numbers of workers actually used!

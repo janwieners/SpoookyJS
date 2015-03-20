@@ -236,9 +236,6 @@ Spoooky.AI = {
 
             if (state.models.gameState !== "END" && newNode.depth < maxDepth) {
                 newNode.untriedMoves = state.getCurrentPlayer().getExecutableMovesByAgentFocus("ALL");
-
-                // ToDo later
-                //newNode.untriedMoves = state.getCurrentPlayer().getExecutableMovesByAgentFocus(agentFocus);
             }
 
             if (state.models.gameState === "END") {
@@ -321,16 +318,8 @@ Spoooky.AI = {
                 }
             }
 
-            // Retrieve all executable moves by agent focus
-            // ToDo later
-            //allMoves = game.getCurrentPlayer().getExecutableMovesByAgentFocus(agentFocus);
-            /*
-            if (allMoves.length === 0) {
-                allMoves = game.getCurrentPlayer().getAllEntityMoves();
-            }
-            */
-
             allMoves = game.getCurrentPlayer().getAllEntityMoves();
+            //console.log(allMoves)
 
             // Execute move in virtual game
             if (allMoves.length > 0) {
@@ -477,6 +466,7 @@ Spoooky.AI = {
                 }
 
                 move = node.untriedMoves[execMove];
+
                 gameState.executeMove(move);
 
                 // Add a child node and descend the tree
@@ -488,31 +478,6 @@ Spoooky.AI = {
                         gameState.translateCoordinates(move.targetX, move.targetY), move.moveIndex);
                 }
             }
-
-            /*
-            // ToDo: Implement later
-            else if (node.type === "CHANCE NODE") {
-
-                Spoooky.GameEvents.fireEvent({ job : "Roll Backgammon Dices" }, gameState);
-
-                // If the game state is the same after the fired event then the meta agent can't move
-                if (gameState.models.gameState === "WAITINGFORDICEROLL") {
-                    // Perform a pseudo loop
-                    gameState.loop(false, null, null);
-                    //continue;
-                }
-
-                node.untriedMoves = gameState.getCurrentPlayer().getExecutableMovesByAgentFocus("ALL");
-
-                execMove = node.getRandomMoveIndexFromUntriedMoves();
-
-                move = node.untriedMoves[execMove];
-                gameState.executeMove(move);
-
-                // Add a child node and descend the tree
-                node.addChild(execMove, gameState, maxDepth);
-            }
-            */
 
             // *** Step III: Rollout ***
             // Simulate one game until the end of the game is reached or a number of max rounds
@@ -545,12 +510,13 @@ Spoooky.AI = {
 
         // Save monte carlo uct results
         var allResults = [], cur, curMove,
-            count = rootNode.childNodes.length,
             moveTarget, moveSource, moveName,
             worldRows = game.gameWorld.getRows();
 
+        i = rootNode.childNodes.length;
+
         // Prepare results
-        for (i = count; i--;) {
+        for (; i--;) {
 
             cur = rootNode.childNodes[i];
             curMove = cur.move;
@@ -569,9 +535,17 @@ Spoooky.AI = {
             } else {
 
                 moveTarget = (String.fromCharCode(parseInt((97+curMove.targetX) , 10))) + (worldRows - curMove.targetY);
-                moveSource = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
-                (worldRows - curMove.entity.position.y);
-                moveName = moveSource + "-" + moveTarget;
+
+                // Free capture move
+                if (curMove.type === "FREE CAPTURE") {
+                    moveName = moveTarget;
+                } else {
+                    // Entity move
+                    moveSource = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
+                    (worldRows - curMove.entity.position.y);
+
+                    moveName = moveSource + "-" + moveTarget;
+                }
             }
 
             if (curMove.type === "DICE") {
@@ -694,10 +668,16 @@ Spoooky.AI = {
                 (worldRows - curMove.entity.position.y) + "-out";
             } else {
 
-                moveTarget = (String.fromCharCode(parseInt((97+curMove.targetX), 10))) + (worldRows - curMove.targetY);
-                moveSource = (String.fromCharCode(parseInt((97+curMove.entity.position.x) , 10))) +
-                (worldRows - curMove.entity.position.y);
-                moveName = moveSource + "-" + moveTarget;
+                // Free capture move
+                if (curMove.type === "FREE CAPTURE") {
+                    moveName = moveTarget;
+                } else {
+
+                    moveTarget = (String.fromCharCode(parseInt((97 + curMove.targetX), 10))) + (worldRows - curMove.targetY);
+                    moveSource = (String.fromCharCode(parseInt((97 + curMove.entity.position.x), 10))) +
+                    (worldRows - curMove.entity.position.y);
+                    moveName = moveSource + "-" + moveTarget;
+                }
             }
 
             if (curMove.type === "DICE") {

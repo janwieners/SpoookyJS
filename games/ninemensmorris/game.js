@@ -33,9 +33,10 @@ var player1 = game.createPlayer({
 // Artifiziellen Gegner erstellen
 var player2 = game.createPlayer({
     name: "Scully",
-    type: "HUMAN"
+    type: "ARTIFICIAL"
 });
 
+// Set the start player
 game.setPlayer(player1);
 
 // The game of nine men's morris starts with the placing of entities
@@ -154,6 +155,7 @@ var whiteStone = {
     }]
 };
 
+// Add nine entities for each player to the game
 var quantity = 9;
 var white = game.addBlueprint(player1, whiteStone, quantity),
     black = game.addBlueprint(player2, blackStone, quantity);
@@ -161,17 +163,17 @@ var white = game.addBlueprint(player1, whiteStone, quantity),
 // Test setup
 /*
 game.addEntitiesToGameBoard([
-    white,0,0,0,0,0,0,0,0,0,0,0,0,
+    white,0,0,0,0,0,black,0,0,0,0,0,black,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,black,0,0,0,black,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,white,0,black,0,black,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,white,0,0,0,0,0,0,0,0,
+    white,0,0,0,black,0,0,0,black,0,white,0,black,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    white,0,white,0,0,0,0,0,0,0,0,0,black,
+    0,0,0,0,white,0,black,0,black,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,black,0,0,0,black,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     black,0,0,0,0,0,black,0,0,0,0,0,0]);
 
@@ -199,6 +201,10 @@ var cellConnections = [
     [6, 14, 21],
     [3, 15, 24]
 ];
+
+// Set the cell connections to let the players recognize patterns of enemy entities
+player1.setCellConnections(cellConnections);
+player2.setCellConnections(cellConnections);
 
 // Take an opponent entity from the game board if the last move
 // of the current player led to a mill
@@ -232,40 +238,11 @@ game.connectGameRuleConsequences({
             jobFunction: "Print Game Process",
             jobArguments: "Mühle."
         }, {
-            jobName: "Add unassociated opponent entities to the meta agents capture moves",
-            jobFunction: "Capture Unassociated Opponent Entities",
-            jobArguments : {
-                associations : cellConnections
-            }
-        }, {
             jobName: "Restrict Moves To Capture Moves",
             jobFunction: "Change Game Mode",
-            jobArguments: { mode: "FREE CAPTURE" }
+            jobArguments: {  mode : "FREE CAPTURE" }
         }]
     });
-
-// Release capture game state
-game.addGameRuleAtom({
-    atomName : "Game State Is CAPTURE",
-    atomFunction : "Game State Is",
-    atomArguments : "CAPTURE"
-});
-
-game.assembleGameRule({
-    name     : "Delete opponent entity",
-    atoms    : ["Game State Is CAPTURE"]
-});
-
-game.connectGameRuleConsequences({
-    ruleName     : "Delete opponent entity",
-    consequences : [{
-        jobName: "Highlight opponent entities which can be captured",
-        jobFunction: "Highlight Unassociated Opponent Entities",
-        jobArguments : {
-            associations : cellConnections
-        }
-    }]});
-
 
 // Change game mode to "MOVING" if every entity of the players has been placed
 // on the game board
