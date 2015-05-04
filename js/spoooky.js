@@ -12,12 +12,11 @@
  *  - jQuery 2.1.3
  *  - Bootstrap 3.3.4
  *  - AngularJS 1.3.15
- *  - Angular UI Bootstrap 0.12.1
+ *  - Angular UI Bootstrap 0.13.0
  *  - Underscore.js 1.8.3
  *  - D3.js 3.5.5
  *  - C3.js 0.4.10
  **/
 
 "use strict";
-
 var Spoooky = Spoooky || {};
