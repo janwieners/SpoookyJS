@@ -29,9 +29,14 @@ Spoooky.AngularWrapper = function(arguments) {
      */
     function catchError(errorMessage, errorFile, errorLine) {
 
-        //console.log(errorMessage, errorFile, errorLine)
+        // Error output in console
+        console.log(errorMessage, errorFile, errorLine)
+
+        // Notify user
         alert("Es ist ein Fehler im Programmfluss aufgetreten. Ich versuche, den Fehler zu beheben. " +
         "Bitte haben Sie einen Moment Geduld.");
+
+        // Try to fix the error autonomously
         self_AngularWrapper.game.pseudoLoop();
 
         return true;
