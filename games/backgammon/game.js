@@ -554,3 +554,9 @@ SpoookyGame.controller("OffBoardCtrl", function($scope, globals) {
         }
     };
 });
+
+// Set height of interaction container
+$(document).ready(function() {
+    var height = $("#gameGrid").height();
+    $("#gameInteraction").css("height", height);
+});
