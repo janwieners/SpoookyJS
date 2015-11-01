@@ -1,9 +1,11 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    minifyCSS = require('gulp-minify-css');
 
 var path = {
+    css: "css/",
     src: "js/",
     lib: "js/libs/"
 };
@@ -64,4 +66,15 @@ gulp.task('compress-deps', function() {
             path.lib + 'c3.min.js']
     ).pipe(concat('deps.min.js'))
         .pipe(gulp.dest(path.lib));
+});
+
+gulp.task('minify-css', function(){
+
+    gulp.src([
+            path.css + 'bootstrap.min.css',
+            path.css + 'c3.min.css',
+            path.css + 'spoookystyle.css']
+    ).pipe(minifyCSS())
+        .pipe(rename('style.min.css'))
+        .pipe(gulp.dest(path.css))
 });
