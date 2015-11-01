@@ -70,11 +70,12 @@ gulp.task('compress-deps', function() {
 
 gulp.task('minify-css', function(){
 
-    gulp.src([
-            path.css + 'bootstrap.min.css',
-            path.css + 'c3.min.css',
-            path.css + 'spoookystyle.css']
-    ).pipe(minifyCSS())
-        .pipe(rename('style.min.css'))
+    return gulp.src([
+            path.css + 'bootstrap.css',
+            path.css + 'spoookystyle.css',
+            path.css + 'c3.css']
+    )
+        .pipe(minifyCSS())
+        .pipe(concat('style.min.css'))
         .pipe(gulp.dest(path.css))
 });
