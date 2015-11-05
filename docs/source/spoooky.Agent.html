@@ -159,6 +159,8 @@ Spoooky.Agent = function(metaAgent, agentID) {
      */
     self_Agent.createBrain = function() {
 
+        // ToDo: Add DEBUG flag
+
         // Create a web worker for this agent
         var agentWorker = new Worker(&quot;../../js/spoooky.Worker.min.js&quot;),
             player = Spoooky.AI.game.getPlayerWithID(self_Agent.metaAgentID);
