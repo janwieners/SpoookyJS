@@ -1,0 +1,80 @@
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.js:1: Global property: use strict
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.DiceBox.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GridWelt.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.OffBoard.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GameEvents.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.JobQueue.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Areas.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Agent.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.MetaAgent.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Entity.js:1: Global property: 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:3: Global property: AMAZONS
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:288: Global property: TICTACTOE
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:318: Global property: GOMOKU
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:345: Global property: CHECKERS
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:1073: Global property: BACKGAMMON
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Blueprints.js:1290: Global property: CHESS
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:111: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:220: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:443: Unnamed method
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.MetaAgent.js:598: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.AI.js:78: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:40: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:50: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:58: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:65: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:72: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:251: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:307: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:322: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:337: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:597: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:614: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:765: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.DiceBox.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GridWelt.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.OffBoard.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GameEvents.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.JobQueue.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Areas.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Agent.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.MetaAgent.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Entity.js:1: Unnamed property
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:143: Duplicate property name isEnabled
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:168: Duplicate property name isEnabled
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:40: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:50: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:58: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:65: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:72: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:251: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:307: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:322: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:337: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:597: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:614: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:765: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.DiceBox.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GridWelt.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.OffBoard.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GameEvents.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.JobQueue.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Areas.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Agent.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.MetaAgent.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Entity.js:1: Duplicate property name 
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Models.js:179: Incorrect type syntax {}
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Game.js:1129: Incorrect type syntax {}
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GridWelt.js:23: Unknown type number|SQLResultSetRowList|Number|HTMLCollection|string|*
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.GridWelt.js:39: Unknown type *|AbstractView
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Agent.js:139: Unknown type Worker
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.MetaAgent.js:113: Incorrect type syntax {}
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Entity.js:311: Incorrect type syntax {}
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.AI.js:222: Unknown type Spoooky.AI.MCnode
+Warning: D:\owncloud\Dissertation\developing\SpoookyJS\js\spoooky.Modules.js:823: Unknown type *|AbstractView|*
