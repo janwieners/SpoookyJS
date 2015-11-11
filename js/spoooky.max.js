@@ -14,7 +14,7 @@
  *  - AngularJS 1.4.7
  *  - Angular UI Bootstrap 0.14.1
  *  - Underscore.js 1.8.3
- *  - D3.js 3.5.6
+ *  - D3.js 3.5.8
  *  - C3.js 0.4.10
  **/
 
@@ -528,7 +528,7 @@ Spoooky.Game = function() {
     /**
      * Connection to the game model
      */
-    self_Game.models;
+    self_Game.models = null;
 
     /**
      * Helper function: Reset an array"s content
@@ -746,7 +746,7 @@ Spoooky.Game = function() {
      */
     self_Game.getDescription = function() {
         return self_Game.models.description;
-    }
+    };
 
     /**
      * Set the move ID
@@ -1449,7 +1449,7 @@ Spoooky.Game = function() {
         // Get all opponent entities
         // currently implemented for two player games
         var opponents = self_Game.getCurrentPlayer().getNextOpponentPlayer().getOnBoardEntities(),
-            opCount = opponents.length, position, fieldID, connected;
+            opCount = opponents.length, position, fieldID;
 
         // Process all opponent entities; save the fieldIDs of opponent entities on the game board
         for (; opCount--;) {
@@ -1637,8 +1637,7 @@ Spoooky.Game = function() {
             }
 
             var cellCluster = currentRuleAtom.atomArguments,
-                world = self_Game.gameWorld, cell, content,
-                rcntPosition = self_Game.getrecentlyMovedEntity().position, success,
+                world = self_Game.gameWorld, cell, content, success,
                 cells, j, k, playerID = self_Game.models.recentlyMovedEntity.playerID,
                 rcntCellID = self_Game.models.GameGrid[rcntPosition.y][rcntPosition.x].cellID;
 
@@ -1691,7 +1690,7 @@ Spoooky.Game = function() {
 
         "Non-associated Opponent Entities": function(currentRuleAtom) {
 
-            var opPositions = self_Game.getAssociatedOpponentEntities(currentRuleAtom.atomArguments);
+            var opPositions = self_Game.getAssociatedOpponentEntities(currentRuleAtom.atomArguments), i, op;
 
             // Search for non-associated entities
             for (i in opPositions) {
@@ -1922,7 +1921,7 @@ Spoooky.Game = function() {
             self_Game.getCurrentPlayerID());
         },
 
-        "Print Debug Message": function(currentRuleAtom) {
+        "Print Debug Message": function() {
             return true;
         },
 
@@ -1943,6 +1942,7 @@ Spoooky.Game = function() {
         },
 
         "Every Entity Of Player Is In Target Area": function(currentRuleAtom) {
+
             // returns true if no entity, owned by player, can move
             var currentPlayer = self_Game.getPlayerWithID(currentRuleAtom.atomArguments.player),
                 entityCount = currentPlayer.countEntities(),
@@ -1954,6 +1954,7 @@ Spoooky.Game = function() {
             if (entityCount === 0) {
                 return false;
             } else {
+
                 // See if every entity is on one of the target fields
                 for (fieldCounter = 0; fieldCounter < targetFieldCnt; fieldCounter += 1) {
                     onField = false;
@@ -2859,6 +2860,7 @@ Spoooky.Game = function() {
             if(entityCount === 0) {
                 return true;
             } else {
+
                 var curOpponentEntity,
                     curGoalID,
                     currentGoal,
@@ -3063,8 +3065,6 @@ Spoooky.Game = function() {
             }
         } else {
 
-            entityPosition = move.entity.position;
-
             self_Game.models.MoveTable.push({
                 entity: move.entity,
                 xPosition : move.targetX,
@@ -3080,20 +3080,16 @@ Spoooky.Game = function() {
                 //self_Game.showEntityMoves(move.entity.position.x, move.entity.position.y)
 
                 // Create jobs for this move
-                var tmpFieldExists = false, curFieldID,
+                var tmpFieldExists = false,
                     destX = move.targetX, destY = move.targetY;
 
                 entity = move.entity;
-                entityPosition = entity.position;
 
                 // Backgammon specific: If an entity has got a fieldID then the
                 // entity is in the bear off area and must re-enter the game
                 if (_.isUndefined(entity.tmp.fieldID) === false) {
 
-                    curFieldID = entity.tmp.fieldID;
                     tmpFieldExists = true;
-                } else {
-                    curFieldID = entity.getWorld().getFieldID(entityPosition.x, entityPosition.y);
                 }
 
                 if (tmpFieldExists === true) {
@@ -3209,7 +3205,7 @@ Spoooky.Game = function() {
      */
     self_Game.addJobs = function(jobsToAdd) {
 
-        var currentJob, curJob, moveID;
+        var currentJob, curJob;
 
         for (var i = 0; i < jobsToAdd.length; i++) {
 
