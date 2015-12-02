@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
+ *
+ * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
+ *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ **/
+
+<span id='Spoooky-Models-method-constructor'><span id='Spoooky-Models'>/**
+</span></span> * Spoooky.Models
+ * Game Models; Class holds all relevant game data, represents the current game state of a game
+ * Other Spoooky.JS classes are implemented as controllers for the game model
+ *
+ * @constructor
+ */
+Spoooky.Models = function() {
+
+    var self_Models = this;
+
+<span id='Spoooky-Models-property-HighlightTable'>    /**
+</span>     * Holds the currently highlighted moves / move options
+     * @type {Array}
+     */
+    self_Models.HighlightTable = [];
+
+<span id='Spoooky-Models-property-JobQueue'>    /**
+</span>     * Job queue jobs
+     * Controller: Spoooky.JobQueue
+     * @type {Array}
+     */
+    self_Models.JobQueue = [];
+
+<span id='Spoooky-Models-property-MovableEntities'>    /**
+</span>     * Movable entities
+     * Controller: Spoooky.MovableEntities
+     * @type {Array}
+     */
+    self_Models.MovableEntities = [];
+
+<span id='Spoooky-Models-property-MoveTable'>    /**
+</span>     * Holds all legal moves
+     * Controller: Spoooky.MoveTable
+     * @type {Array}
+     */
+    self_Models.MoveTable = [];
+
+<span id='Spoooky-Models-property-GoalMoves'>    /**
+</span>     * Holds all goal moves
+     * @type {Array}
+     */
+    self_Models.GoalMoves = [];
+
+<span id='Spoooky-Models-property-MetaAgents'>    /**
+</span>     * Meta entities - the players of the game
+     * @type {Array}
+     */
+    self_Models.MetaAgents = [];
+
+<span id='Spoooky-Models-property-Entities'>    /**
+</span>     * Entities associated with players
+     * [playerID][entity of player with playerID]
+     * @type {Array}
+     */
+    self_Models.Entities = [];
+
+<span id='Spoooky-Models-property-GameRuleAtoms'>    /**
+</span>     * Game rule atoms
+     * Sub rules can be assembled to game rules
+     * @type {Array}
+     */
+    self_Models.GameRuleAtoms = [];
+
+<span id='Spoooky-Models-property-GameRules'>    /**
+</span>     * Global game rules
+     * @type {Array}
+     */
+    self_Models.GameRules = [];
+
+<span id='Spoooky-Models-property-GameRuleConsequences'>    /**
+</span>     * Activated consequences if a game rule is fulfilled
+     * @type {Array}
+     */
+    self_Models.GameRuleConsequences = [];
+
+<span id='Spoooky-Models-property-EntityGoalConsequences'>    /**
+</span>     * Consequences of fulfilled entity goals
+     * @type {Array}
+     */
+    self_Models.EntityGoalConsequences = [];
+
+<span id='Spoooky-Models-property-GameGrid'>    /**
+</span>     * Game Grid
+     * @type {Array}
+     *
+     * A game grid cell consists of:
+     * { cellID : {number},
+         *      contains : {
+         *          entityID : entity ID,
+         *          playerID : ID of the associated player,
+         *          typeID : type ID of the entity
+         *      }
+         *      position : { x : {number}, y : {number} },
+         *      view : { baseClass : {string}, cellClass : {string}
+         *      enabled : {boolean}
+         * }
+         */
+    self_Models.GameGrid = [];
+
+<span id='Spoooky-Models-property-'>    /**
+</span>     * Represents the connections of game grid cells
+     */
+    self_Models.CellConnections;
+
+<span id='Spoooky-Models-property-SelectRestrictions'>    /**
+</span>     * Restricts to movable and selectable entities
+     * @type {{entities: string, moves: string}}
+     */
+    self_Models.SelectRestrictions = {
+        entities : &quot;&quot;,
+        moves : &quot;&quot;
+    };
+
+<span id='Spoooky-Models-property-OffBoardContent'>    /**
+</span>     * Off board area
+     * Structure for saving temporary objects
+     * Used in games like backgammon
+     * @type {Array}
+     * Content: {eID : entity ID,
+         *      eName : Name of the entity,
+         *      playerID : ID of the associated player}
+     */
+    self_Models.OffBoardContent = [];
+
+<span id='Spoooky-Models-property-DiceBox'>    /**
+</span>     * Holds dices, current dice values and
+     * move identifier attached to dice values
+     * @type {{isEnabled: boolean, dices: Array, diceValues: Array, attachedMoveIDs: Array}}
+     */
+    self_Models.DiceBox = {
+
+<span id='Spoooky-Models-property-isEnabled'>        // Dice Box has to be activated for board games
+</span>        // with chance
+        isEnabled : false,
+
+<span id='Spoooky-Models-property-dices'>        // Dices of the game
+</span>        dices : [],
+
+<span id='Spoooky-Models-property-diceValues'>        // The current dice values
+</span>        diceValues : [],
+
+<span id='Spoooky-Models-property-attachedMoveIDs'>        // Connects dice values with move IDs
+</span>        // Important for capture moves (i.e. backgammon)
+        // { diceValueID : setDiceValueID,
+        //   moveID : setMoveID,
+        //   target : setTarget }
+        attachedMoveIDs : []
+    };
+
+<span id='Spoooky-Models-property-Areas'>    /**
+</span>     * Models for game areas
+     * for example off board areas in backgammon
+     * @type {{isEnabled: boolean, content: Array}}
+     */
+    self_Models.Areas = {
+
+<span id='Spoooky-Models-property-isEnabled'>        // Areas structure has to be enabled for
+</span>        // games with areas (like backgammon)
+        isEnabled : false,
+
+<span id='Spoooky-Models-property-content'>        // Areas connected with the game
+</span>        // Holds single areas in form:
+        // { name : {string}, display : {string},
+        //      elementCounter : {number}, moveID : {number} }
+        content : []
+    };
+
+<span id='Spoooky-Models-property-Blueprints'>    /**
+</span>     * Blueprints used in the game
+     * @type {{}}
+     */
+    self_Models.Blueprints = {};
+
+    // =========
+    // Variables
+    // =========
+
+<span id='Spoooky-Models-property-gameName'>    /**
+</span>     * The name of the game
+     * @type {string}
+     */
+    self_Models.gameName = &quot;&quot;;
+
+<span id='Spoooky-Models-property-recentlyMovedEntity'>    /**
+</span>     * Holds the recently moved entity
+     * {entityID : entity ID, playerID : ID of the associated player}
+     * @type {Object}
+     */
+    self_Models.recentlyMovedEntity = false;
+
+<span id='Spoooky-Models-property-gameState'>    /**
+</span>     * State of the game
+     * Initialize with start game state &quot;INGAME&quot;
+     * @type {String}
+     */
+    self_Models.gameState = &quot;INGAME&quot;;
+
+<span id='Spoooky-Models-property-moveCounter'>    /**
+</span>     * Total number of moves made in the game
+     * @type {number}
+     */
+    self_Models.moveCounter = 0;
+
+<span id='Spoooky-Models-property-currentPlayerID'>    /**
+</span>     * ID of the current player
+     * @type {number}
+     */
+    self_Models.currentPlayerID = -1;
+
+<span id='Spoooky-Models-property-description'>    /**
+</span>     * Description of the game
+     * @type {string}
+     */
+    self_Models.description = &quot;&quot;;
+
+<span id='Spoooky-Models-property-moveID'>    /**
+</span>     * Unique identifier of a move
+     * @type {number}
+     */
+    self_Models.moveID = 0;
+
+<span id='Spoooky-Models-property-lastMoveID'>    /**
+</span>     * ID of the last executed move
+     * @type {number}
+     */
+    self_Models.lastMoveID = 0;
+
+<span id='Spoooky-Models-property-worldDimensions'>    /**
+</span>     * Size of the game world
+     * @type {{rows: number, columns: number}}
+     */
+    self_Models.worldDimensions = {
+        rows : 0,
+        columns : 0
+    };
+
+<span id='Spoooky-Models-property-winnerID'>    /**
+</span>     * ID of the meta agent who won the game
+     * @type {boolean|number}
+     */
+    self_Models.winnerID = false;
+
+<span id='Spoooky-Models-property-playVirtual'>    /**
+</span>     * If flag is true, the game is played virtually
+     * @type {boolean}
+     */
+    self_Models.playVirtual = false;
+
+<span id='Spoooky-Models-property-playerChange'>    /**
+</span>     * Helper flag to enable
+     * @type {boolean}
+     */
+    self_Models.playerChange = true;
+
+<span id='Spoooky-Models-property-gameMode'>    /**
+</span>     * Type of the game
+     * Allowed string values: { MOVING, PLACING }
+     * Games like checkers, chess are games in which entities are moved
+     * Games like tic tac toe or nine men's morris are games in which entities are placed
+     * @type {string}
+     */
+    self_Models.gameMode = &quot;MOVING&quot;;
+
+<span id='Spoooky-Models-property-tmpGameMode'>    /**
+</span>     * Temporary save the game mode
+     * @type {string}
+     */
+    self_Models.tmpGameMode = &quot;&quot;;
+
+<span id='Spoooky-Models-property-gameRounds'>    /**
+</span>     * Numbers of rounds played
+     * @type {number}
+     */
+    self_Models.gameRounds = 0;
+};</pre>
+</body>
+</html>
