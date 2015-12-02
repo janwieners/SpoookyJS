@@ -1,0 +1,35 @@
+{
+  "name": "SpoookyJS",
+  "description": "A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods.",
+  "homepage": "http://www.spoookyjs.de",
+  "keywords": [
+    "monte carlo simulation",
+    "monte carlo tree search",
+    "board games",
+    "artificial intelligence",
+    "multiagent system"
+  ],
+  "authors": [
+    "Jan Gerrit Wieners"
+  ],
+  "licence": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/janwieners/SpoookyJS.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "angular-bootstrap": "~0.14.3",
+    "bootstrap": "~3.3.6",
+    "c3": "~0.4.10",
+    "d3": "~3.5.10",
+    "filesaver": "https://github.com/eligrey/FileSaver.js.git",
+    "jquery": "~2.1.4",
+    "underscore": "~1.8.3"
+  }
+}

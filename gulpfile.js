@@ -2,15 +2,35 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
-    minifyCSS = require('gulp-minify-css');
+    minifyCSS = require('gulp-minify-css'),
+    browserSync = require('browser-sync').create(),
+    runSequence = require('run-sequence');
 
 var path = {
     css: "css/",
     src: "js/",
-    lib: "js/libs/"
+    components: "bower_components/"
 };
 
+gulp.task('build', function() {
+
+    runSequence(
+        'compress-spoooky',
+        'compress-worker',
+        'compress-blueprints',
+        'compress-deps',
+        'compress-deps-worker',
+        'compress-deps-frontpage',
+        'minify-css',
+        'minify-frontpage-css'
+    );
+});
+
 gulp.task('default', function() {
+
+    runSequence(
+        'build'
+    );
 
 });
 
@@ -56,26 +76,65 @@ gulp.task('compress-blueprints', function() {
 gulp.task('compress-deps', function() {
 
     return gulp.src([
-            path.lib + 'jquery.min.js',
-            path.lib + 'angular.min.js',
-            path.lib + 'underscore-min.js',
-            path.lib + 'bootstrap.min.js',
-            path.lib + 'ui-bootstrap-tpls.min.js',
-            path.lib + 'FileSaver.js',
-            path.lib + 'd3.min.js',
-            path.lib + 'c3.min.js']
+        path.components + 'jquery/dist/jquery.min.js',
+        path.components + 'angular/angular.min.js',
+        path.components + 'angular-bootstrap/ui-bootstrap-tpls.min.js',
+        path.components + 'bootstrap/dist/js/bootstrap.min.js',
+        path.components + 'c3/c3.min.js',
+        path.components + 'd3/d3.min.js',
+        path.components + 'filesaver/FileSaver.min.js',
+        path.components + 'underscore/underscore-min.js']
     ).pipe(concat('deps.min.js'))
-        .pipe(gulp.dest(path.lib));
+        .pipe(gulp.dest(path.src));
+});
+
+gulp.task('compress-deps-worker', function() {
+
+    return gulp.src([
+        path.components + 'underscore/underscore-min.js']
+    ).pipe(concat('deps-worker.min.js'))
+        .pipe(gulp.dest(path.src));
+});
+
+gulp.task('compress-deps-frontpage', function() {
+
+    return gulp.src([
+        path.components + 'jquery/dist/jquery.min.js',
+        path.components + 'bootstrap/dist/js/bootstrap.min.js']
+    ).pipe(concat('deps-frontpage.min.js'))
+        .pipe(gulp.dest(path.src));
 });
 
 gulp.task('minify-css', function(){
 
     return gulp.src([
-            path.css + 'bootstrap.css',
+            path.components + 'bootstrap/dist/css/bootstrap.css',
             path.css + 'spoookystyle.css',
-            path.css + 'c3.css']
+            path.components + 'c3/c3.css']
     )
         .pipe(minifyCSS())
         .pipe(concat('style.min.css'))
         .pipe(gulp.dest(path.css))
+});
+
+gulp.task('minify-frontpage-css', function(){
+
+    return gulp.src([
+            path.components + 'bootstrap/dist/css/bootstrap.css',
+            path.css + 'startstyle.css',
+            path.css + 'prettify.css']
+        )
+        .pipe(minifyCSS())
+        .pipe(concat('style-frontpage.min.css'))
+        .pipe(gulp.dest(path.css))
+});
+
+gulp.task('serve', function() {
+
+    browserSync.init({
+        server: {
+            baseDir: './'
+        },
+        port: 1503
+    });
 });
