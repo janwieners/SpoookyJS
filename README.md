@@ -3,7 +3,7 @@
 A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods.
 German: "Ein multiagentenbasiertes JavaScript-Framework zur flexiblen Implementation digitaler browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz."
 
-I developed SpoookyJS as part of my PhD thesis at the University of Cologne [http://www.hki.uni-koeln.de](http://www.hki.uni-koeln.de.de "Historisch-Kulturwissenschaftliche Informationsverarbeitung").
+I developed SpoookyJS as part of my PhD thesis at the University of Cologne [http://www.hki.uni-koeln.de](http://www.hki.uni-koeln.de "Historisch-Kulturwissenschaftliche Informationsverarbeitung").
 You can find my PhD thesis at [http://www.jan-wieners.de/dissertation](http://www.jan-wieners.de/dissertation "http://www.jan-wieners.de/dissertation").
 
 ## Development
