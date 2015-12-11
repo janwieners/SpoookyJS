@@ -15,7 +15,7 @@ Spoooky.AngularWrapper = function(arguments) {
     self_AngularWrapper.cellWidth = arguments.cellWidth;
     self_AngularWrapper.cellHeight = arguments.cellHeight;
 
-    self_AngularWrapper.module = angular.module("SpoookyGame", ['ui.bootstrap']);
+    self_AngularWrapper.module = angular.module("SpoookyGame", ['ui.bootstrap', 'spoooky.templates']);
 
     // Catch errors
     window.onerror = catchError;
@@ -78,7 +78,7 @@ Spoooky.AngularWrapper = function(arguments) {
      * Controller for the game settings element
      * :O Uuuh, I'm ugly, please refactor me!
      */
-    self_AngularWrapper.module.controller("GameSettingsCtrl", function($scope, $modal, $rootScope) {
+    self_AngularWrapper.module.controller("GameSettingsCtrl", function($scope, $uibModal, $rootScope) {
 
         // Prepare player types
         $scope.playerTypes1 = {
@@ -119,8 +119,8 @@ Spoooky.AngularWrapper = function(arguments) {
         // Show a dialog to get the user name at first start of SpoookyJS
         if (!localStorage["initialized"]) {
 
-            $scope.userDialog = $modal.open({
-                templateUrl: "../../templates/userdialog.htm",
+            $scope.userDialog = $uibModal.open({
+                templateUrl: "templates/userdialog.htm",
                 scope: $scope
             });
         } else {

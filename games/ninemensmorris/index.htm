@@ -19,30 +19,30 @@
         <div id="wrap">
 
             <!-- Container for top navigation -->
-            <div id="topnavigation" ng-include="'../../templates/topnavigation.htm'"></div>
+            <div id="topnavigation" ng-include="'templates/topnavigation.htm'"></div>
 
             <div class="container">
 
                 <div class="row">
                     <div class="col-md-11 col-lg-11">
-                        <div id="gameheader" ng-include="'../../templates/gameheader.htm'" ng-controller="HeadingCtrl"></div>
+                        <div id="gameheader" ng-include="'templates/gameheader.htm'" ng-controller="HeadingCtrl"></div>
                     </div>
                 </div>
 
                 <div class="row">
                     <!-- GridWelt -->
                     <div class="col-md-7 col-lg-6">
-                        <div id="gameGrid" ng-include="'../../templates/gridwelt.htm'"></div>
+                        <div id="gameGrid" ng-include="'templates/gridwelt.htm'"></div>
                     </div>
 
                     <!-- Game Process -->
                     <div class="col-md-4 col-lg-5">
-                        <div id="gameProcess" ng-include="'../../templates/gameprocess.htm'"></div>
+                        <div id="gameProcess" ng-include="'templates/gameprocess.htm'"></div>
                     </div>
 
                     <!-- Agent Log -->
                     <div class="col-md-4 col-lg-5">
-                        <div id="agentLog" ng-include="'../../templates/agentlog.htm'"></div>
+                        <div id="agentLog" ng-include="'templates/agentlog.htm'"></div>
                     </div>
 
                 </div>
@@ -51,7 +51,7 @@
 
                     <!-- Agent Ensemble -->
                     <div class="col-md-11 col-lg-11">
-                        <div id="agentEnsemble" ng-include="'../../templates/agentensemble.htm'"></div>
+                        <div id="agentEnsemble" ng-include="'templates/agentensemble.htm'"></div>
                     </div>
 
                 </div>
@@ -61,12 +61,13 @@
         </div>
 
         <!-- Footer -->
-        <div id="footer" ng-include="'../../templates/footer.htm'"></div>
+        <div id="footer" ng-include="'templates/footer.htm'"></div>
 
         <!-- Compiled Dependencies for Spoooky.js -->
         <script src="../../js/deps.min.js"></script>
 
         <!-- Spoooky.js -->
+        <script src="../../js/spoooky.tpls.js"></script>
         <script src="../../js/spoooky.min.js"></script>
         <script src="../../js/spoooky.Modules.js"></script>
         <script src="../../js/spoooky.Blueprints.min.js"></script>

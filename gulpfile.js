@@ -129,6 +129,19 @@ gulp.task('minify-frontpage-css', function(){
         .pipe(gulp.dest(path.css))
 });
 
+// converts, minifies and concatenates html templates to a single js file in build dir
+var ngHtml2Js = require("gulp-ng-html2js");
+var minifyHtml = require("gulp-minify-html");
+
+gulp.task('html2js', function() {
+
+    return gulp.src('templates/**/*.htm')
+        .pipe(minifyHtml())
+        .pipe(ngHtml2Js({ moduleName: 'spoooky.templates', prefix: 'templates/' }))
+        .pipe(concat('spoooky.tpls.js'))
+        .pipe(gulp.dest('js'));
+});
+
 gulp.task('serve', function() {
 
     browserSync.init({
