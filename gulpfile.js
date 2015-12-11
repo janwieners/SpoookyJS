@@ -7,9 +7,9 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence');
 
 var path = {
-    css: "css/",
-    src: "js/",
-    components: "bower_components/"
+    css: 'css/',
+    src: 'js/',
+    components: 'bower_components/'
 };
 
 gulp.task('build', function() {
@@ -22,7 +22,8 @@ gulp.task('build', function() {
         'compress-deps-worker',
         'compress-deps-frontpage',
         'minify-css',
-        'minify-frontpage-css'
+        'minify-frontpage-css',
+        'html2js'
     );
 });
 
@@ -31,7 +32,6 @@ gulp.task('default', function() {
     runSequence(
         'build'
     );
-
 });
 
 gulp.task('compress-spoooky', function() {
@@ -130,8 +130,8 @@ gulp.task('minify-frontpage-css', function(){
 });
 
 // converts, minifies and concatenates html templates to a single js file in build dir
-var ngHtml2Js = require("gulp-ng-html2js");
-var minifyHtml = require("gulp-minify-html");
+var ngHtml2Js = require('gulp-ng-html2js');
+var minifyHtml = require('gulp-minify-html');
 
 gulp.task('html2js', function() {
 
@@ -142,7 +142,7 @@ gulp.task('html2js', function() {
         .pipe(gulp.dest('js'));
 });
 
-gulp.task('serve', function() {
+gulp.task('serve', ['compress-spoooky', 'compress-worker', 'compress-blueprints', 'html2js'], function() {
 
     browserSync.init({
         server: {
@@ -150,4 +150,29 @@ gulp.task('serve', function() {
         },
         port: 1503
     });
+
+    gulp.watch(['js/spoooky.js',
+        'js/spoooky.Models.js',
+        'js/spoooky.Game.js',
+        'js/spoooky.DiceBox.js',
+        'js/spoooky.GridWelt.js',
+        'js/spoooky.OffBoard.js',
+        'js/spoooky.GameEvents.js',
+        'js/spoooky.JobQueue.js',
+        'js/spoooky.Areas.js',
+        'js/spoooky.Agent.js',
+        'js/spoooky.MetaAgent.js',
+        'js/spoooky.Entity.js',
+        'js/spoooky.AI.js'], ['compress-spoooky']);
+
+    gulp.watch('js/spoooky.Worker.js', ['compress-worker']);
+    gulp.watch('js/spoooky.Blueprints.js', ['compress-blueprints']);
+
+    gulp.watch('templates/**/*.htm', ['html2js']);
+
+    gulp.watch(['index.htm',
+        'templates/*.htm',
+        'games/**/index.htm',
+        'games/**/game.js',
+        'js/*.js'], browserSync.reload);
 });
