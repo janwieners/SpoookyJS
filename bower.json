@@ -27,7 +27,7 @@
     "angular-bootstrap": "~0.14.3",
     "bootstrap": "~3.3.6",
     "c3": "~0.4.10",
-    "d3": "~3.5.10",
+    "d3": "~3.5.12",
     "filesaver": "https://github.com/eligrey/FileSaver.js.git",
     "jquery": "~2.1.4",
     "underscore": "~1.8.3"
