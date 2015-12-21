@@ -67,9 +67,12 @@ gulp.task('compress-worker', function() {
 
 gulp.task('compress-blueprints', function() {
 
-    return gulp.src(path.src + 'spoooky.Blueprints.js')
+    return gulp.src([path.src + '/blueprints/*.js', '!' + path.src + '/blueprints/*.min.js'])
         .pipe(uglify())
-        .pipe(rename('spoooky.Blueprints.min.js'))
+        .pipe(rename({
+            dirname: 'blueprints/',
+            extname: '.min.js'
+        }))
         .pipe(gulp.dest(path.src));
 });
 
@@ -166,7 +169,7 @@ gulp.task('serve', ['compress-spoooky', 'compress-worker', 'compress-blueprints'
         'js/spoooky.AI.js'], ['compress-spoooky']);
 
     gulp.watch('js/spoooky.Worker.js', ['compress-worker']);
-    gulp.watch('js/spoooky.Blueprints.js', ['compress-blueprints']);
+    gulp.watch('js/blueprints/*.js', ['compress-blueprints']);
 
     gulp.watch('templates/**/*.htm', ['html2js']);
 

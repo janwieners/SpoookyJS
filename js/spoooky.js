@@ -2,7 +2,7 @@
  * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
  *
  * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- * Version 0.4.1 "Little Green Men" (March 2015)
+ * Version 0.5.1 "Little Green Men" (December 2015)
  *
  * Copyright (c) Jan G. Wieners; Licensed under the MIT License
  *

@@ -111,7 +111,7 @@ Spoooky.Models = function() {
     /**
      * Represents the connections of game grid cells
      */
-    self_Models.CellConnections;
+    self_Models.CellConnections = {};
 
     /**
      * Restricts to movable and selectable entities

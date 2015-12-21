@@ -30,7 +30,7 @@ Spoooky.AngularWrapper = function(arguments) {
     function catchError(errorMessage, errorFile, errorLine) {
 
         // Error output in console
-        console.log(errorMessage, errorFile, errorLine)
+        console.log(errorMessage, errorFile, errorLine);
 
         // Notify user
         alert("Es ist ein Fehler im Programmfluss aufgetreten. Ich versuche, den Fehler zu beheben. " +
@@ -840,6 +840,7 @@ Spoooky.AngularWrapper = function(arguments) {
          * Controles the click event
          * @param xPos
          * @param yPos
+         * @param cellIsEnabled
          */
         $scope.cellClicked = function(xPos, yPos, cellIsEnabled) {
 
@@ -861,8 +862,8 @@ Spoooky.AngularWrapper = function(arguments) {
             window.onbeforeunload = function(e) {
 
                 if ($scope.game.getGameState() !== "END" && $scope.game.getCurrentPlayerType() === "ARTIFICIAL") {
-                    var message = "Bitte haben Sie noch ein wenig Geduld, bis der KI-Spieler seine Arbeit abgeschlossen hat, um Probleme zu vermeiden.";
-                    return message;
+
+                    return "Bitte haben Sie noch ein wenig Geduld, bis der KI-Spieler seine Arbeit abgeschlossen hat, um Probleme zu vermeiden.";
                 }
             };
 

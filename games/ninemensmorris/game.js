@@ -97,68 +97,16 @@ game.getGameWorld().connectCells({
     23: [20, 22, 24],
     24: [15, 23] });
 
-// Blueprints of the game entities
-var blackStone = {
-    entityType : "Black",
-    typeID : "B",
-    representation : { type : "image", texture : "assets/black.png" },
-    mode : "PLACE",
-    placeTo : "ANY",
-
-    // Moves are getting automatically enabled when player is in mode "MOVING"
-    // Move to connected fields if player has got more than 3 entities
-    moves : [{
-        name : "Move to connected field",
-        type : "By Connected Field IDs",
-        conditions : [
-            { condition : "Is Empty", state : true },
-            { condition : "Player Owns > n Entities",
-                playerID : player2.getID(),
-                value : 3,
-                state : true }]
-    }, {
-        name : "Jump",
-        type : "Jump To Free Field",
-        conditions : [{
-            condition : "Player Owns n Entities",
-            playerID : player2.getID(),
-            value : 3,
-            state : true }]
-    }]
-};
-
-var whiteStone = {
-    entityType : "White",
-    typeID : "W",
-    representation : { type : "image", texture : "assets/white.png" },
-    mode : "PLACE",
-    placeTo : "ANY",
-
-    // Move to connected fields if player has got more than 3 entities
-    moves : [{
-        name : "Move to connected field",
-        type : "By Connected Field IDs",
-        conditions : [
-            { condition : "Is Empty", state : true },
-            { condition : "Player Owns > n Entities",
-                playerID : player1.getID(),
-                value : 3,
-                state : true }]
-    }, {
-        name : "Jump",
-        type : "Jump To Free Field",
-        conditions : [{
-            condition : "Player Owns n Entities",
-            playerID : player1.getID(),
-            value : 3,
-            state : true }]
-    }]
-};
-
 // Add nine entities for each player to the game
-var quantity = 9;
-var white = game.addBlueprint(player1, whiteStone, quantity),
-    black = game.addBlueprint(player2, blackStone, quantity);
+var quantity = 4;
+
+// Manually set player IDs
+player1.setID(0);
+player2.setID(1);
+
+// Blueprints use player IDs from above (player1 => 0, player 2 => 1)
+var white = game.addBlueprint(player1, Spoooky.Blueprints.NINEMENSMORRIS.entities.white, quantity),
+    black = game.addBlueprint(player2, Spoooky.Blueprints.NINEMENSMORRIS.entities.black, quantity);
 
 // Test setup
 /*
