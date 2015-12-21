@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Spoooky.Blueprints = {
+
+<span id='global-property-CHECKERS'>    /**
+</span>     * Blueprints for the game of checkers
+     */
+    CHECKERS : {
+
+        entities : {
+
+            // Blueprint of standard entity for player 2
+            topStandardEntity : {
+
+                entityType : &quot;topStandardEntity&quot;,
+
+                // Unique type identifier
+                // necessary to create game state signatures
+                typeID : &quot;AA&quot;,
+
+                // Holds the unique identifier of the associated meta entity
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black_01.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;southeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Is Not The Last Row&quot; }]
+                }, {
+                    name : &quot;southwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Is Not The Last Row&quot; }]
+                }],
+
+                // Sub Goals
+                goalAtoms : [{
+                    atomName : &quot;opponent southwest&quot;,
+                    atomFunction : &quot;Is Opponent&quot;,
+                    atomArguments : &quot;southwest&quot;
+                }, {
+                    atomName : &quot;opponent southeast&quot;,
+                    atomFunction : &quot;Is Opponent&quot;,
+                    atomArguments : &quot;southeast&quot;
+                }, {
+                    atomName : &quot;empty field southeast&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : &quot;southeast&quot;
+                }, {
+                    atomName : &quot;empty field southwest&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : &quot;southwest&quot;
+                }, {
+                    atomName : &quot;empty field two fields southwest&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : [ -2, +2 ]
+                }, {
+                    atomName : &quot;empty field two fields southeast&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : [ +2, +2 ]
+                }, {
+                    atomName : &quot;entity can reach the last row with southwest move&quot;,
+                    atomFunction : &quot;Entity Is Able To Reach A Specific Row&quot;,
+                    atomArguments : [ &quot;last&quot;, &quot;southwest&quot; ]
+                }, {
+                    atomName : &quot;entity can reach the last row with southeast move&quot;,
+                    atomFunction : &quot;Entity Is Able To Reach A Specific Row&quot;,
+                    atomArguments : [ &quot;last&quot;, &quot;southeast&quot; ]
+                }],
+
+                // Assemble sub goals / goal atoms to game goals of the entity
+                goals : [{
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;capture opponent southwest&quot;,
+                    atoms    : [&quot;opponent southwest&quot;, &quot;empty field two fields southwest&quot;],
+                    move     : &quot;southwest&quot;
+                }, {
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;capture opponent southeast&quot;,
+                    atoms    : [&quot;opponent southeast&quot;, &quot;empty field two fields southeast&quot;],
+                    move     : &quot;southeast&quot;
+                }, {
+                    type     : &quot;GOALMOVE&quot;,
+                    name     : &quot;reach the last row with southwest move&quot;,
+                    atoms    : [&quot;empty field southwest&quot;,
+                        &quot;entity can reach the last row with southwest move&quot;],
+                    move     : &quot;southwest&quot;
+                }, {
+                    type     : &quot;GOALMOVE&quot;,
+                    name     : &quot;reach the last row with southeast move&quot;,
+                    atoms    : [&quot;empty field southeast&quot;,
+                        &quot;entity can reach the last row with southeast move&quot;],
+                    move     : &quot;southeast&quot;
+                }]
+            },
+
+            // Blueprint of advanced entity for player 2
+            topKingEntity : {
+
+                entityType : &quot;topKingEntity&quot;,
+
+                typeID : &quot;AB&quot;,
+
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black_02.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;northeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;southeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;southwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;northwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }],
+
+                // Sub Goals
+                goalAtoms : [
+                    {
+                        atomName : &quot;opponent northeast&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;northeast&quot;
+                    },
+                    {
+                        atomName : &quot;opponent northwest&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;northwest&quot;
+                    }, {
+                        atomName : &quot;opponent southwest&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;southwest&quot;
+                    }, {
+                        atomName : &quot;opponent southeast&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;southeast&quot;
+                    }, {
+                        atomName : &quot;empty field two fields northwest&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ -2, -2 ]
+                    }, {
+                        atomName : &quot;empty field two fields northeast&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ +2, -2 ]
+                    }, {
+                        atomName : &quot;empty field two fields southwest&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ -2, +2 ]
+                    }, {
+                        atomName : &quot;empty field two fields southeast&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ +2, +2 ]
+                    }],
+
+                // Assemble sub goals / goal atoms to game goals of the entity
+                goals : [
+                    {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent northwest&quot;,
+                        atoms    : [&quot;opponent northwest&quot;, &quot;empty field two fields northwest&quot;],
+                        move     : &quot;northwest&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent northeast&quot;,
+                        atoms    : [&quot;opponent northeast&quot;, &quot;empty field two fields northeast&quot;],
+                        move     : &quot;northeast&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent southwest&quot;,
+                        atoms    : [&quot;opponent southwest&quot;, &quot;empty field two fields southwest&quot;],
+                        move     : &quot;southwest&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent southeast&quot;,
+                        atoms    : [&quot;opponent southeast&quot;, &quot;empty field two fields southeast&quot;],
+                        move     : &quot;southeast&quot;
+                    }]
+            },
+
+            // Blueprint of standard entity for player 1
+            bottomStandardEntity : {
+
+                entityType : &quot;bottomStandardEntity&quot;,
+
+                typeID : &quot;BA&quot;,
+
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white_01.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;northeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Is Not The First Row&quot; }]
+                }, {
+                    name : &quot;northwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Is Not The First Row&quot; }]
+                }],
+
+                // Sub Goals
+                goalAtoms : [{
+                    atomName : &quot;opponent northwest&quot;,
+                    atomFunction : &quot;Is Opponent&quot;,
+                    atomArguments : &quot;northwest&quot;
+                }, {
+                    atomName : &quot;opponent northeast&quot;,
+                    atomFunction : &quot;Is Opponent&quot;,
+                    atomArguments : &quot;northeast&quot;
+                }, {
+                    atomName : &quot;empty field northeast&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : &quot;northeast&quot;
+                }, {
+                    atomName : &quot;empty field northwest&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : &quot;northwest&quot;
+                }, {
+                    atomName : &quot;empty field two fields northwest&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : [ -2, -2 ]
+                }, {
+                    atomName : &quot;empty field two fields northeast&quot;,
+                    atomFunction : &quot;Is Empty Cell&quot;,
+                    atomArguments : [ +2, -2 ]
+                }, {
+                    atomName : &quot;entity can reach the first row with northwest move&quot;,
+                    atomFunction : &quot;Entity Is Able To Reach A Specific Row&quot;,
+                    atomArguments : [ &quot;first&quot;, &quot;northwest&quot; ]
+                }, {
+                    atomName : &quot;entity can reach the first row with northeast move&quot;,
+                    atomFunction : &quot;Entity Is Able To Reach A Specific Row&quot;,
+                    atomArguments : [ &quot;first&quot;, &quot;northeast&quot; ]
+                }],
+
+                // Assemble sub goals / goal atoms to game goals of the entity
+                goals : [{
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;capture opponent northwest&quot;,
+                    atoms    : [&quot;opponent northwest&quot;, &quot;empty field two fields northwest&quot;],
+                    move     : &quot;northwest&quot;
+                }, {
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;capture opponent northeast&quot;,
+                    atoms    : [&quot;opponent northeast&quot;, &quot;empty field two fields northeast&quot;],
+                    move     : &quot;northeast&quot;
+                }, {
+                    type     : &quot;GOALMOVE&quot;,
+                    name     : &quot;reach the first row with northwest move&quot;,
+                    atoms    : [&quot;empty field northwest&quot;,
+                        &quot;entity can reach the first row with northwest move&quot;],
+                    move     : &quot;northwest&quot;
+                }, {
+                    type     : &quot;GOALMOVE&quot;,
+                    name     : &quot;reach the first row with northeast move&quot;,
+                    atoms    : [&quot;empty field northeast&quot;,
+                        &quot;entity can reach the first row with northeast move&quot;],
+                    move     : &quot;northeast&quot;
+                }]
+            },
+
+            // Blueprint of advanced entity for player 1
+            bottomKingEntity : {
+
+                entityType : &quot;bottomKingEntity&quot;,
+
+                typeID : &quot;BB&quot;,
+
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white_02.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;northeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;southeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southeast&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;southwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }, {
+                    name : &quot;northwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northwest&quot;,
+                    frequency : 1,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }],
+
+                // Sub Goals
+                goalAtoms : [
+                    {
+                        atomName : &quot;opponent northeast&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;northeast&quot;
+                    }, {
+                        atomName : &quot;opponent northwest&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;northwest&quot;
+                    }, {
+                        atomName : &quot;opponent southwest&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;southwest&quot;
+                    }, {
+                        atomName : &quot;opponent southeast&quot;,
+                        atomFunction : &quot;Is Opponent&quot;,
+                        atomArguments : &quot;southeast&quot;
+                    }, {
+                        atomName : &quot;empty field two fields northwest&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ -2, -2 ]
+                    }, {
+                        atomName : &quot;empty field two fields northeast&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ +2, -2 ]
+                    }, {
+                        atomName : &quot;empty field two fields southwest&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ -2, +2 ]
+                    }, {
+                        atomName : &quot;empty field two fields southeast&quot;,
+                        atomFunction : &quot;Is Empty Cell&quot;,
+                        atomArguments : [ +2, +2 ]
+                    }],
+
+                // Assemble sub goals / goal atoms to game goals of the entity
+                goals : [
+                    {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent northwest&quot;,
+                        atoms    : [&quot;opponent northwest&quot;, &quot;empty field two fields northwest&quot;],
+                        move     : &quot;northwest&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent northeast&quot;,
+                        atoms    : [&quot;opponent northeast&quot;, &quot;empty field two fields northeast&quot;],
+                        move     : &quot;northeast&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent southwest&quot;,
+                        atoms    : [&quot;opponent southwest&quot;, &quot;empty field two fields southwest&quot;],
+                        move     : &quot;southwest&quot;
+                    }, {
+                        type     : &quot;CAPTURE&quot;,
+                        name     : &quot;capture opponent southeast&quot;,
+                        atoms    : [&quot;opponent southeast&quot;, &quot;empty field two fields southeast&quot;],
+                        move     : &quot;southeast&quot;
+                    }]
+            }
+        },
+
+        consequences : {
+
+            topPlayer : {
+                man_capture_opponent_southwest : {
+                    goalName     : &quot;capture opponent southwest&quot;,
+                    entityType : &quot;topStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, +1, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, +2, &quot;topStandardEntity&quot;, &quot;captureMove&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity If It Has Reached The Last Row&quot;,
+                            jobFunction: &quot;Transform Entity If Row Reached&quot;,
+                            jobArguments: { row : &quot;last&quot;, entityType : &quot;topKingEntity&quot; }
+                        }]
+                },
+                man_capture_opponent_southeast : {
+                    goalName     : &quot;capture opponent southeast&quot;,
+                    entityType : &quot;topStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, +1, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, +2, &quot;topStandardEntity&quot;, &quot;captureMove&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity If It Has Reached The Last Row&quot;,
+                            jobFunction: &quot;Transform Entity If Row Reached&quot;,
+                            jobArguments: { row : &quot;last&quot;, entityType : &quot;topKingEntity&quot; }
+                        }]
+                },
+
+                man_reach_last_row_southwest : {
+                    goalName     : &quot;reach the last row with southwest move&quot;,
+                    entityType : &quot;topStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -1, +1, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -1, +1, &quot;topStandardEntity&quot;, &quot;&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity Into King Entity&quot;,
+                            jobFunction: &quot;Transform Entity&quot;,
+                            jobArguments: &quot;topKingEntity&quot;
+                        }]
+                },
+
+                man_reach_last_row_southeast : {
+                    goalName     : &quot;reach the last row with southeast move&quot;,
+                    entityType : &quot;topStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +1, +1, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +1, +1, &quot;topStandardEntity&quot;, &quot;&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity Into King Entity&quot;,
+                            jobFunction: &quot;Transform Entity&quot;,
+                            jobArguments: &quot;topKingEntity&quot;
+                        }]
+                },
+                //*** Consequences for king entity
+                king_capture_opponent_northwest : {
+                    goalName : &quot;capture opponent northwest&quot;,
+                    entityType : &quot;topKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, -1, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, -2, &quot;topKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_northeast : {
+                    goalName     : &quot;capture opponent northeast&quot;,
+                    entityType : &quot;topKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, -1, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, -2, &quot;topKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_southwest : {
+                    goalName     : &quot;capture opponent southwest&quot;,
+                    entityType : &quot;topKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, +1, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, +2, &quot;topKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_southeast : {
+                    goalName     : &quot;capture opponent southeast&quot;,
+                    entityType : &quot;topKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, +1, &quot;RELATIVE&quot;, &quot;topKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, +2, &quot;topKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                }
+            },
+
+            bottomPlayer: {
+                man_capture_opponent_northwest : {
+                    goalName     : &quot;capture opponent northwest&quot;,
+                    entityType : &quot;bottomStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, -1, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, -2, &quot;bottomStandardEntity&quot;, &quot;captureMove&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity If It Has Reached The First Row&quot;,
+                            jobFunction: &quot;Transform Entity If Row Reached&quot;,
+                            jobArguments: { row : &quot;first&quot;, entityType : &quot;bottomKingEntity&quot; }
+                        }]
+                },
+                man_capture_opponent_northeast : {
+                    goalName     : &quot;capture opponent northeast&quot;,
+                    entityType : &quot;bottomStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, -1, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, -2, &quot;bottomStandardEntity&quot;, &quot;captureMove&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity If It Has Reached The First Row&quot;,
+                            jobFunction: &quot;Transform Entity If Row Reached&quot;,
+                            jobArguments: { row : &quot;first&quot;, entityType : &quot;bottomKingEntity&quot; }
+                        }]
+                },
+
+                man_reach_last_row_northwest : {
+                    goalName     : &quot;reach the first row with northwest move&quot;,
+                    entityType : &quot;bottomStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -1, -1, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -1, -1, &quot;bottomStandardEntity&quot;, &quot;&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity Into King Entity&quot;,
+                            jobFunction: &quot;Transform Entity&quot;,
+                            jobArguments: &quot;bottomKingEntity&quot;
+                        }]
+                },
+
+                man_reach_first_row_northeast : {
+                    goalName     : &quot;reach the first row with northeast move&quot;,
+                    entityType : &quot;bottomStandardEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +1, -1, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomStandardEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +1, -1, &quot;topStandardEntity&quot;, &quot;&quot; ]
+                        }, {
+                            jobName: &quot;Transform Entity Into King Entity&quot;,
+                            jobFunction: &quot;Transform Entity&quot;,
+                            jobArguments: &quot;bottomKingEntity&quot;
+                        }]
+                },
+
+                king_capture_opponent_northwest : {
+                    goalName     : &quot;capture opponent northwest&quot;,
+                    entityType : &quot;bottomKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, -1, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, -2, &quot;bottomKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_northeast : {
+                    goalName     : &quot;capture opponent northeast&quot;,
+                    entityType : &quot;bottomKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, -2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, -1, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, -2, &quot;bottomKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_southwest : {
+                    goalName     : &quot;capture opponent southwest&quot;,
+                    entityType : &quot;bottomKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ -2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ -1, +1, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ -2, +2, &quot;bottomKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                },
+                king_capture_opponent_southeast : {
+                    goalName     : &quot;capture opponent southeast&quot;,
+                    entityType : &quot;bottomKingEntity&quot;,
+                    consequences : [
+                        {
+                            jobName: &quot;Highlight Target Cell&quot;,
+                            jobFunction: &quot;Highlight Cell&quot;,
+                            jobArguments: [ +2, +2, &quot;move_goal&quot;, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ],
+                            execute: &quot;immediately&quot;
+                        }, {
+                            jobName: &quot;Delete Opponent Entity&quot;,
+                            jobFunction: &quot;Capture Opponent At&quot;,
+                            jobArguments: [ +1, +1, &quot;RELATIVE&quot;, &quot;bottomKingEntity&quot; ]
+                        }, {
+                            jobName: &quot;Move Game Entity&quot;,
+                            jobFunction: &quot;Move Entity Relative To&quot;,
+                            jobArguments: [ +2, +2, &quot;bottomKingEntity&quot;, &quot;captureMove&quot; ]
+                        }]
+                }
+            }
+        }
+    }
+};</pre>
+</body>
+</html>

@@ -10,13 +10,13 @@ Warning: D:\developing\SpoookyJS\js\spoooky.Areas.js:1: Global property:
 Warning: D:\developing\SpoookyJS\js\spoooky.Agent.js:1: Global property: 
 Warning: D:\developing\SpoookyJS\js\spoooky.MetaAgent.js:1: Global property: 
 Warning: D:\developing\SpoookyJS\js\spoooky.Entity.js:1: Global property: 
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:3: Global property: AMAZONS
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:288: Global property: TICTACTOE
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:318: Global property: GOMOKU
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:345: Global property: CHECKERS
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:1073: Global property: BACKGAMMON
-Warning: D:\developing\SpoookyJS\js\spoooky.Blueprints.js:1290: Global property: CHESS
-Warning: D:\developing\SpoookyJS\js\spoooky.Models.js:111: Unnamed property
+Warning: D:\developing\SpoookyJS\js\blueprints\amazons.js:3: Global property: AMAZONS
+Warning: D:\developing\SpoookyJS\js\blueprints\backgammon.js:3: Global property: BACKGAMMON
+Warning: D:\developing\SpoookyJS\js\blueprints\checkers.js:3: Global property: CHECKERS
+Warning: D:\developing\SpoookyJS\js\blueprints\chess.js:3: Global property: CHESS
+Warning: D:\developing\SpoookyJS\js\blueprints\gomoku.js:3: Global property: GOMOKU
+Warning: D:\developing\SpoookyJS\js\blueprints\ninemensmorris.js:3: Global property: NINEMENSMORRIS
+Warning: D:\developing\SpoookyJS\js\blueprints\tictactoe.js:3: Global property: TICTACTOE
 Warning: D:\developing\SpoookyJS\js\spoooky.MetaAgent.js:598: Unnamed property
 Warning: D:\developing\SpoookyJS\js\spoooky.AI.js:78: Unnamed property
 Warning: D:\developing\SpoookyJS\js\spoooky.Modules.js:45: Unnamed property

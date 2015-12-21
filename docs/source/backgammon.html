@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Spoooky.Blueprints = {
+
+<span id='global-property-BACKGAMMON'>    /**
+</span>     * Blueprints for the game of backgammon
+     */
+    BACKGAMMON : {
+
+        entities : {
+
+            // Blueprint of standard entity for player 1
+            player1StandardEntity : {
+
+                typeID : &quot;A&quot;,
+                entityType : &quot;Spielfigur von Spielerin 1&quot;,
+                associatedWithMetaAgent : null,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white_01.png&quot; },
+                selectCondition : {
+                    neighboursY : [{
+                        count: 0, condition: &quot;EQUAL&quot;, direction: &quot;NORTH&quot;, appliesTo: {
+                            axis: &quot;y&quot;,
+                            operator: &quot;&gt;&quot;,
+                            value: 4 }
+                    },{ count: 0, condition: &quot;EQUAL&quot;, direction: &quot;SOUTH&quot;, appliesTo: {
+                        axis: &quot;y&quot;,
+                        operator: &quot;&lt;&quot;,
+                        value: 5 }
+                    }]
+                },
+                moves : [{
+                    name : &quot;Zug nach Wuerfelaugen&quot;,
+                    type : &quot;By Field ID&quot;,
+                    direction : [&quot;X-AXIS&quot;, &quot;POSITIVE&quot;],
+                    frequency : &quot;DICE&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }],
+                goalAtoms : [{
+                    atomName : &quot;Eine gegnerische Spielfigur befindet sich auf dem Zielfeld&quot;,
+                    atomFunction : &quot;Number Of Opponents At Destination Field Is&quot;,
+                    atomArguments : [&quot;MOVE POSITIVE&quot;, 1]
+                },{
+                    atomName : &quot;Jede Spielfigur befindet sich im letzten Drittel des Spielbrettes&quot;,
+                    atomFunction : &quot;No Own Entitys On Fields With ID Less Than&quot;,
+                    atomArguments : 19
+                },{
+                    atomName : &quot;Spielfigur kann den Auswuerfelbereich erreichen&quot;,
+                    atomFunction : &quot;Destination Field ID Is Greater Than&quot;,
+                    atomArguments : [&quot;MOVE POSITIVE&quot;, 24]
+                }],
+                goals : [{
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;Schlage gegnerische Spielfigur auf dem Zielfeld&quot;,
+                    atoms    : [&quot;Eine gegnerische Spielfigur befindet sich auf dem Zielfeld&quot;],
+                    move     : &quot;MOVE POSITIVE&quot;
+                },{
+                    type     : &quot;BEAROFF&quot;,
+                    name     : &quot;Auswuerfeln&quot;,
+                    weight   : 200,
+                    atoms    : [&quot;Jede Spielfigur befindet sich im letzten Drittel des Spielbrettes&quot;,
+                        &quot;Spielfigur kann den Auswuerfelbereich erreichen&quot;],
+                    move     : &quot;BEAR OFF MOVE&quot;,
+                    area : &quot;player1BearOffArea&quot;
+                }]
+            },
+
+            // Blueprint of standard entity for player 2
+            player2StandardEntity : {
+
+                entityType : &quot;player2StandardEntity&quot;,
+
+                typeID : &quot;B&quot;,
+
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black_01.png&quot; },
+
+                // Sets the conditions under which the entity can be chosen / clicked
+                selectCondition : {
+                    neighboursY : [{
+                        count: 0, condition: &quot;EQUAL&quot;, direction: &quot;NORTH&quot;, appliesTo: {
+                            axis: &quot;y&quot;,
+                            operator: &quot;&gt;&quot;,
+                            value: 4 }
+                    },{ count: 0, condition: &quot;EQUAL&quot;, direction: &quot;SOUTH&quot;, appliesTo: {
+                        axis: &quot;y&quot;,
+                        operator: &quot;&lt;&quot;,
+                        value: 5 }
+                    }]
+                },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;Dice Move&quot;,
+                    type : &quot;By Field ID&quot;,
+                    direction : [&quot;X-AXIS&quot;, &quot;NEGATIVE&quot;],
+                    frequency : &quot;DICE&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }]
+                }],
+
+                goalAtoms : [{
+                    atomName : &quot;one opponent entity at destination field&quot;,
+                    atomFunction : &quot;Number Of Opponents At Destination Field Is&quot;,
+                    atomArguments : [&quot;MOVE NEGATIVE&quot;, 1]
+                },{
+                    atomName : &quot;Every entity of the associated player is in the first area of the game board&quot;,
+                    atomFunction : &quot;No Own Entitys On Fields With ID More Than&quot;,
+                    atomArguments : 6
+                },{
+                    atomName : &quot;Entity can reach the off board area&quot;,
+                    atomFunction : &quot;Destination Field ID Is Less Than&quot;,
+                    atomArguments : [&quot;MOVE NEGATIVE&quot;, 1]
+                }],
+
+                // Assemble sub goals / goal atoms to game goals of the entity
+                goals : [{
+                    type     : &quot;CAPTURE&quot;,
+                    name     : &quot;capture opponent entity at destination field&quot;,
+                    atoms    : [&quot;one opponent entity at destination field&quot;],
+                    move     : &quot;MOVE NEGATIVE&quot;
+                },{
+                    type     : &quot;BEAROFF&quot;,
+                    name     : &quot;Bear off&quot;,
+                    weight   : 200,
+                    atoms    : [&quot;Every entity of the associated player is in the first area of the game board&quot;,
+                        &quot;Entity can reach the off board area&quot;],
+                    move     : &quot;BEAR OFF MOVE&quot;,
+                    area : &quot;player2BearOffArea&quot;
+                }]
+            }
+        },
+
+        consequences : {
+
+            player1 : {
+                capture_opponent : {
+                    goalName     : &quot;Schlage gegnerische Spielfigur auf dem Zielfeld&quot;,
+                    entityType : &quot;Spielfigur von Spielerin 1&quot;,
+                    consequences : [{
+                        jobName: &quot;Highlight Dice Target Cell&quot;,
+                        jobFunction: &quot;Highlight Dice Target Cell&quot;,
+                        jobArguments: &quot;move_goal&quot;,
+                        execute: &quot;immediately&quot;
+                    },{
+                        jobName: &quot;Move the opponent entity to the Bear Off Area&quot;,
+                        jobFunction: &quot;Bear Off Entity At Dice Target Cell&quot;
+                    },{
+                        jobName: &quot;Move Entity To Destination Field&quot;,
+                        jobFunction: &quot;Move Entity To Dice Destination Cell&quot;
+                    },{
+                        jobName: &quot;Delete Dice Value&quot;,
+                        jobFunction: &quot;Delete Assigned Dice Value&quot;
+                    }]
+                },
+                bear_off : {
+                    goalName : &quot;Auswuerfeln&quot;,
+                    entityType : &quot;Spielfigur von Spielerin 1&quot;,
+                    consequences : [{
+                        jobName: &quot;Highlight Off Board Area&quot;,
+                        jobFunction: &quot;Highlight Area&quot;,
+                        jobArguments: { areaName : &quot;player1BearOffArea&quot;, highlightClass : &quot;move_bearoff&quot; },
+                        execute: &quot;immediately&quot;
+                    },{
+                        jobName: &quot;Move the opponent from the game board&quot;,
+                        jobFunction: &quot;Delete This Entity&quot;
+                    },{
+                        jobName: &quot;Increment Off Board Entity Counter&quot;,
+                        jobFunction: &quot;Increment Off Board Counter&quot;,
+                        jobArguments: &quot;player1BearOffArea&quot;
+                    },{
+                        jobName: &quot;Delete Dice Value&quot;,
+                        jobFunction: &quot;Delete Assigned Dice Value&quot;
+                    }]
+                }
+            },
+
+            player2 : {
+                capture_opponent : {
+                    goalName     : &quot;capture opponent entity at destination field&quot;,
+                    entityType : &quot;player2StandardEntity&quot;,
+                    consequences : [{
+                        jobName: &quot;Highlight Dice Target Cell&quot;,
+                        jobFunction: &quot;Highlight Dice Target Cell&quot;,
+                        jobArguments: &quot;move_goal&quot;,
+                        execute: &quot;immediately&quot;
+                    },{
+                        jobName: &quot;Move the opponent entity to the Bear Off Area&quot;,
+                        jobFunction: &quot;Bear Off Entity At Dice Target Cell&quot;
+                    },{
+                        jobName: &quot;Move Entity To Destination Field&quot;,
+                        jobFunction: &quot;Move Entity To Dice Destination Cell&quot;
+                    },{
+                        jobName: &quot;Delete Dice Value&quot;,
+                        jobFunction: &quot;Delete Assigned Dice Value&quot;
+                    }]
+                },
+                bear_off : {
+                    goalName : &quot;Bear off&quot;,
+                    entityType : &quot;player2StandardEntity&quot;,
+                    consequences : [{
+                        jobName: &quot;Highlight Off Board Area&quot;,
+                        jobFunction: &quot;Highlight Area&quot;,
+                        jobArguments: { areaName : &quot;player2BearOffArea&quot;, highlightClass : &quot;move_bearoff&quot; },
+                        execute: &quot;immediately&quot;
+                    },{
+                        jobName: &quot;Move the opponent from the game board&quot;,
+                        jobFunction: &quot;Delete This Entity&quot;
+                    },{
+                        jobName: &quot;Increment Off Board Entity Counter&quot;,
+                        jobFunction: &quot;Increment Off Board Counter&quot;,
+                        jobArguments: &quot;player2BearOffArea&quot;
+                    },{
+                        jobName: &quot;Delete Dice Value&quot;,
+                        jobFunction: &quot;Delete Assigned Dice Value&quot;
+                    }]
+                }
+            }
+        }
+    }
+};</pre>
+</body>
+</html>

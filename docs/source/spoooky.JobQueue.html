@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
+ *
+ * @author Jan Gerrit Wieners &lt;jan@jan-wieners.de&gt;
+ *
+ * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ *
+ * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
+ **/
+
+<span id='Spoooky-JobQueue-method-constructor'><span id='Spoooky-JobQueue'>/**
+</span></span> * Spoooky.JobQueue
+ * Controller for Spoooky.Models.JobQueue
+ * @param game
+ * @constructor
+ */
+Spoooky.JobQueue = function(game) {
+
+    var self_JobQueue = this,
+        myGame = game;
+
+<span id='Spoooky-JobQueue-method-addJob'>    /**
+</span>     * Adds a job to the job queue
+     */
+    self_JobQueue.addJob = function(job) {
+
+        var queue = myGame.models.JobQueue;
+
+        if (_.isUndefined(queue[job.jobID])) {
+            queue[job.jobID] = [];
+        }
+
+        queue[job.jobID][job.jobName] = job;
+    };
+
+<span id='Spoooky-JobQueue-method-flush'>    /**
+</span>     * Delets all job queue jobs
+     */
+    self_JobQueue.flush = function() {
+        myGame.models.JobQueue.length = 0;
+    };
+
+<span id='Spoooky-JobQueue-method-getJobsWithMoveID'>    /**
+</span>     * Get a job for an associated move identifier
+     * @param moveID
+     * @returns {Array}
+     */
+    self_JobQueue.getJobsWithMoveID = function(moveID) {
+
+        var jobs = [], queue = myGame.models.JobQueue[moveID];
+
+        for (var job in queue) {
+            jobs.push(queue[job]);
+        }
+
+        return jobs;
+    }
+};</pre>
+</body>
+</html>

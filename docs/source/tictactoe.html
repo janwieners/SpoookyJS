@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Spoooky.Blueprints = {
+
+<span id='global-property-TICTACTOE'>    /**
+</span>     * Blueprints for the game of tic tac toe
+     */
+    TICTACTOE : {
+
+        entities : {
+
+            // Entities in the game of tic tac toe are just entities
+            // They cannot move, have no goals and are simply intended
+            // to be put on the game board
+            black: {
+                entityType : &quot;Black&quot;,
+                typeID : &quot;B&quot;,
+                associatedWithMetaAgent : null,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;ANY&quot;
+            },
+
+            white: {
+                entityType : &quot;White&quot;,
+                typeID : &quot;W&quot;,
+                associatedWithMetaAgent : null,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;ANY&quot;
+            }
+        }
+    }
+};</pre>
+</body>
+</html>
