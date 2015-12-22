@@ -610,6 +610,235 @@ Spoooky.MetaAgent = function(game) {
     };
 
     /**
+     * Find a move where an associated entity is moved in the game world
+     * @returns {Array}
+     */
+    self_MetaAgent.getEntityMovesMoving = function() {
+
+        var entities = self_MetaAgent.getEntities(),
+            entityCount = entities.length;
+
+        if (entityCount === 0) {
+            return [];
+        }
+
+        var game = self_MetaAgent.getGame(), models = game.models,
+            entityMoves = [], goalMoves = [], allEntityMoves = [],
+            rstrct, entity, counter;
+
+        // Process every entity
+        for (counter = entityCount; counter--;) {
+
+            entity = entities[counter];
+
+            // See if the current entity can move or can capture an opponent entity
+            if (game.checkSelectCondition(entity) === true) {
+
+                // Reset working arrays
+                entityMoves.length = 0;
+                goalMoves.length = 0;
+
+                // See if current entity is restricted to move in a specific way
+                rstrct = models.SelectRestrictions.moves;
+
+                switch (rstrct) {
+
+                    case "Standard Moves":
+                        entityMoves = entity.getMoves();
+                        break;
+
+                    case "Capture Moves":
+                        goalMoves = entity.getGoalMoves(entityMoves);
+                        break;
+
+                    default:
+
+                        // Build up the move table
+                        entityMoves = entity.getMoves();
+                        // Build up the goal move table
+                        goalMoves = entity.getGoalMoves(entityMoves);
+                        break;
+                }
+
+                // Perform last checks
+                game.performPostMoveChecks(entity, entityMoves);
+                game.performPostMoveChecks(entity, goalMoves);
+
+                // Save the moves
+                allEntityMoves.push.apply(allEntityMoves, entityMoves);
+                allEntityMoves.push.apply(allEntityMoves, goalMoves);
+            }
+        }
+
+        // Return moves of the entity
+        if (allEntityMoves.length === 0) {
+
+            // Return an empty array
+            return [];
+        }
+
+        return allEntityMoves;
+    };
+
+    /**
+     * Find an entity which is placed in the game world
+     * @returns {Array}
+     */
+    self_MetaAgent.getEntityMovesPlacing = function() {
+
+        // Find entities to place in the game world
+        var entities = self_MetaAgent.getPlaceableEntities();
+
+        // No entities found
+        if (entities.length === 0)  {
+            return [];
+        }
+
+        var possibleMoves = [], dest, moveID, counter, entity,
+            game = self_MetaAgent.getGame();
+
+        // Pick and work with the last entity of retrieved entities
+        entity = _.last(entities);
+
+        switch (entity.placeTo) {
+
+            // Place an entity on a free field of the game board
+            case "ANY":
+
+                var destFields = game.gameWorld.getFreeCells();
+
+                // Create moves
+                for (counter = destFields.length; counter--;) {
+
+                    dest = destFields[counter];
+
+                    moveID = game.getUniqueMoveID(entity.name, "place-entity", dest.x, dest.y);
+
+                    possibleMoves.push({
+                        type : "PLACE",
+                        name : "place entity",
+                        entity: entity,
+                        targetX : dest.x,
+                        targetY : dest.y,
+                        moveClass : "move_place",
+                        ID : moveID });
+
+                    game.addJobForMoveID({
+                        jobID : moveID,
+                        jobName : "Put the Entity to the destination field",
+                        job : "Place Entity",
+                        jobArguments : {
+                            entity : entity,
+                            xPosition : dest.x,
+                            yPosition : dest.y }
+                    });
+                }
+                return possibleMoves;
+                break;
+
+            // Place an entity on a free field which is reachable by the recently moved entity
+            // Implemented for the game of amazons
+            case "REACHABLE BY RECENTLY MOVED ENTITY":
+
+                var recentlyMoved = game.getrecentlyMovedEntity();
+
+                if (recentlyMoved === false) {
+                    //break;
+                    return [];
+                }
+                var moves;
+
+                moves = recentlyMoved.getMoves();
+
+                for (counter = moves.length; counter--;) {
+
+                    dest = moves[counter];
+
+                    moveID = game.getUniqueMoveID(entity.name, "place-entity",
+                        dest.targetX, dest.targetY);
+
+                    possibleMoves.push({
+                        type : "PLACE",
+                        name : "place entity",
+                        entity: entity,
+                        targetX : dest.targetX,
+                        targetY : dest.targetY,
+                        moveClass : "move_place",
+                        ID : moveID });
+
+                    game.addJobForMoveID({
+                        jobID : moveID,
+                        jobName : "Put the Entity to the destination field",
+                        job : "Place Entity",
+                        jobArguments : {
+                            entity : entity,
+                            xPosition : dest.targetX,
+                            yPosition : dest.targetY }
+                    });
+
+                    // Process game after one successfully executed move
+                    // Implemented for the game of amazons
+                    game.addJobForMoveID({
+                        jobID : moveID,
+                        jobName : "Let Players Change",
+                        job: "Enable Player Change"
+                    });
+
+                    game.addJobForMoveID({
+                        jobID : moveID,
+                        jobName : "Change Back To Move Mode",
+                        job: "Change Game Mode",
+                        jobArguments : { mode: "MOVING" }
+                    });
+                }
+                return possibleMoves;
+                break;
+
+            default:
+                console.log("Wrong Placing Mode: ", entity.placeTo);
+                break;
+        }
+
+    };
+
+    /**
+     * Free Capture Mode, i.e. for the game of nine mens morris
+     * @returns {Array}
+     */
+    self_MetaAgent.getEntityMovesFreeCapture = function() {
+
+        // Currently: Check for patterns of opponent entities
+        // TODO: Generalize to enable other free capture moves likes capturing any opponent entity
+        var game = self_MetaAgent.getGame(), op, i, captureMoves = [], moveID,
+            opPositions = game.getAssociatedOpponentEntities(self_MetaAgent.cellConnections);
+
+        // Highlight non-associated entities
+        for (i in opPositions) {
+
+            op = opPositions[i];
+
+            if (!op.associated) {
+
+                // Add a capture move
+                moveID = game.getUniqueMoveID("free-capture", "opponent",
+                    op.x, op.y);
+
+                captureMoves.push({
+                    ID : moveID,
+                    type : "FREE CAPTURE",
+                    entity : false,
+                    name : "Capture Opponent",
+                    targetX : op.x,
+                    targetY : op.y,
+                    moveClass : "move_goal"
+                });
+            }
+        }
+
+        return captureMoves;
+    };
+
+    /**
      * Returns every possible standard and goal move of all associated entities
      * @returns {*}
      */
@@ -621,236 +850,16 @@ Spoooky.MetaAgent = function(game) {
             return [];
         }
 
-        var entities, entity, models = game.models;
+        var mode = game.models.gameMode;
 
-        switch (models.gameMode) {
-
-            // Find a move where an associated entity
-            // is moved in the game world
-            case "MOVING":
-
-                entities = self_MetaAgent.getEntities();
-
-                var entityCount = entities.length;
-
-                if (entityCount === 0) {
-                    return [];
-                }
-
-                var entityMoves = [], goalMoves = [],
-                    allEntityMoves = [], rstrct;
-
-                // Process every entity
-                for (counter = entityCount; counter--;) {
-
-                    entity = entities[counter];
-
-                    // See if the current entity can move or can capture an opponent entity
-                    if (game.checkSelectCondition(entity) === true) {
-
-                        // Reset working arrays
-                        entityMoves.length = 0;
-                        goalMoves.length = 0;
-
-                        // See if current entity is restricted to move in a specific way
-                        rstrct = models.SelectRestrictions.moves;
-
-                        switch (rstrct) {
-
-                            case "Standard Moves":
-                                entityMoves = entity.getMoves();
-                                break;
-
-                            case "Capture Moves":
-                                goalMoves = entity.getGoalMoves(entityMoves);
-                                break;
-
-                            default:
-
-                                // Build up the move table
-                                entityMoves = entity.getMoves();
-                                // Build up the goal move table
-                                goalMoves = entity.getGoalMoves(entityMoves);
-                                break;
-                        }
-
-                        // Perform last checks
-                        game.performPostMoveChecks(entity, entityMoves);
-                        game.performPostMoveChecks(entity, goalMoves);
-
-                        // Save the moves
-                        allEntityMoves.push.apply(allEntityMoves, entityMoves);
-                        allEntityMoves.push.apply(allEntityMoves, goalMoves);
-                    }
-                }
-
-                // Return moves of the entity
-                if (allEntityMoves.length === 0) {
-
-                    // Return an empty array
-                    return [];
-                }
-
-                return allEntityMoves;
-                break;
-
-            // Find an entity which is placed in the game world
-            case "PLACING":
-
-                // Find entities to place in the game world
-                entities = self_MetaAgent.getPlaceableEntities();
-
-                // No entities found
-                if (entities.length === 0)  {
-                    return [];
-                }
-
-                var possibleMoves = [], dest, moveID, counter;
-
-                // Pick and work with the last entity of retrieved entities
-                entity = _.last(entities);
-
-                switch (entity.placeTo) {
-
-                    // Place an entity on a free field of the game board
-                    case "ANY":
-
-                        var destFields = game.gameWorld.getFreeCells();
-
-                        // Create moves
-                        for (counter = destFields.length; counter--;) {
-
-                            dest = destFields[counter];
-
-                            moveID = game.getUniqueMoveID(entity.name, "place-entity", dest.x, dest.y);
-
-                            possibleMoves.push({
-                                type : "PLACE",
-                                name : "place entity",
-                                entity: entity,
-                                targetX : dest.x,
-                                targetY : dest.y,
-                                moveClass : "move_place",
-                                ID : moveID });
-
-                            game.addJobForMoveID({
-                                jobID : moveID,
-                                jobName : "Put the Entity to the destination field",
-                                job : "Place Entity",
-                                jobArguments : {
-                                    entity : entity,
-                                    xPosition : dest.x,
-                                    yPosition : dest.y }
-                            });
-                        }
-                        return possibleMoves;
-                        break;
-
-                    // Place an entity on a free field which is
-                    // reachable by the recently moved entity
-                    // Implemented for the game of amazons
-                    case "REACHABLE BY RECENTLY MOVED ENTITY":
-
-                        var recentlyMoved = game.getrecentlyMovedEntity();
-
-                        if (recentlyMoved === false) {
-                            //break;
-                            return [];
-                        }
-                        var moves;
-
-                        moves = recentlyMoved.getMoves();
-
-                        for (counter = moves.length; counter--;) {
-
-                            dest = moves[counter];
-
-                            moveID = game.getUniqueMoveID(entity.name, "place-entity",
-                                dest.targetX, dest.targetY);
-
-                            possibleMoves.push({
-                                type : "PLACE",
-                                name : "place entity",
-                                entity: entity,
-                                targetX : dest.targetX,
-                                targetY : dest.targetY,
-                                moveClass : "move_place",
-                                ID : moveID });
-
-                            game.addJobForMoveID({
-                                jobID : moveID,
-                                jobName : "Put the Entity to the destination field",
-                                job : "Place Entity",
-                                jobArguments : {
-                                    entity : entity,
-                                    xPosition : dest.targetX,
-                                    yPosition : dest.targetY }
-                            });
-
-                            // Process game after one successfully executed move
-                            // Implemented for the game of amazons
-                            game.addJobForMoveID({
-                                jobID : moveID,
-                                jobName : "Let Players Change",
-                                job: "Enable Player Change"
-                            });
-
-                            game.addJobForMoveID({
-                                jobID : moveID,
-                                jobName : "Change Back To Move Mode",
-                                job: "Change Game Mode",
-                                jobArguments : { mode: "MOVING" }
-                            });
-                        }
-                        return possibleMoves;
-                        break;
-
-                    default:
-                        console.log("Wrong Placing Mode: ", entity.placeTo);
-                        break;
-                }
-
-                break;
-
-            // Free Capture Mode
-            // i.e. for the game of nine mens morris
-            case "FREE CAPTURE":
-
-                // Currently: Check for patterns of opponent entities
-                // TODO: Generalize to enable other free capture moves likes capturing any opponent entity
-                var op, i, captureMoves = [], moveID,
-                    opPositions = game.getAssociatedOpponentEntities(self_MetaAgent.cellConnections);
-
-                // Highlight non-associated entities
-                for (i in opPositions) {
-
-                    op = opPositions[i];
-
-                    if (!op.associated) {
-
-                        // Add a capture move
-                        moveID = game.getUniqueMoveID("free-capture", "opponent",
-                            op.x, op.y);
-
-                        captureMoves.push({
-                            ID : moveID,
-                            type : "FREE CAPTURE",
-                            entity : false,
-                            name : "Capture Opponent",
-                            targetX : op.x,
-                            targetY : op.y,
-                            moveClass : "move_goal"
-                        });
-                    }
-                }
-
-                return captureMoves;
-
-                break;
-
-            default:
-                console.log("Wrong command in self_MetaAgent.getAllEntityMoves", models.gameMode);
-                break;
+        if (mode === "MOVING") {
+            return self_MetaAgent.getEntityMovesMoving();
+        } else if (mode === "PLACING") {
+            return self_MetaAgent.getEntityMovesPlacing();
+        } else if (mode === "FREE CAPTURE") {
+            return self_MetaAgent.getEntityMovesFreeCapture();
+        } else {
+            console.log("Wrong command in self_MetaAgent.getAllEntityMoves", mode);
         }
     };
 
