@@ -3005,7 +3005,7 @@ Spoooky.Game = function() {
         }
 
         var targetArea = false, entity, entityPosition;
-console.log(move)
+
         // Goal move
         if (move.moveClass === "move_goal" || move.moveClass === "move_bearoff") {
 
@@ -7492,7 +7492,7 @@ Spoooky.MetaAgent = function(game) {
             allResults.length = 0;
 
             Spoooky.AgentLog.pushMessage("<strong>" + simCount + " simulierte Spiele " +
-            " mit insgesamt " + simSteps + " Simulationsschritten (~" +
+            " mit insgesamt " + simSteps + " Simulationsschritten (" +
             (simSteps / simCount).toFixed(2) + " Schritte/Simulation) in " +
             decisionTime + " Sekunden.</strong>");
 

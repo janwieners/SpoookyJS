@@ -1656,7 +1656,7 @@ Spoooky.MetaAgent = function(game) {
             allResults.length = 0;
 
             Spoooky.AgentLog.pushMessage("<strong>" + simCount + " simulierte Spiele " +
-            " mit insgesamt " + simSteps + " Simulationsschritten (~" +
+            " mit insgesamt " + simSteps + " Simulationsschritten (" +
             (simSteps / simCount).toFixed(2) + " Schritte/Simulation) in " +
             decisionTime + " Sekunden.</strong>");
 
