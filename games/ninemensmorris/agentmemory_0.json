@@ -8,7 +8,7 @@
             "focus": "ALL MOVES",
             "fitness": 5,
             "uctConstant" : 0.1,
-            "thinkingTime": 10000,
+            "thinkingTime": 500,
             "maximumSteps": 5000
         }
     ],

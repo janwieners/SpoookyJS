@@ -645,9 +645,6 @@ Spoooky.MetaAgent = function(game) {
 
                     entity = entities[counter];
 
-                    // Really process only entities which can be moved on the game board
-                    if (entity.mode === "PLACE") { continue; }
-
                     // See if the current entity can move or can capture an opponent entity
                     if (game.checkSelectCondition(entity) === true) {
 

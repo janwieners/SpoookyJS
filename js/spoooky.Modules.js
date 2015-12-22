@@ -18,7 +18,7 @@ Spoooky.AngularWrapper = function(arguments) {
     self_AngularWrapper.module = angular.module("SpoookyGame", ['ui.bootstrap', 'spoooky.templates']);
 
     // Catch errors
-    window.onerror = catchError;
+    // window.onerror = catchError;
 
     /**
      * Catch JavaScript error messages

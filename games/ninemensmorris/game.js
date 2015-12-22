@@ -98,7 +98,7 @@ game.getGameWorld().connectCells({
     24: [15, 23] });
 
 // Add nine entities for each player to the game
-var quantity = 4;
+var quantity = 9;
 
 // Manually set player IDs
 player1.setID(0);
@@ -108,8 +108,8 @@ player2.setID(1);
 var white = game.addBlueprint(player1, Spoooky.Blueprints.NINEMENSMORRIS.entities.white, quantity),
     black = game.addBlueprint(player2, Spoooky.Blueprints.NINEMENSMORRIS.entities.black, quantity);
 
-// Test setup
 /*
+// Test setup
 game.addEntitiesToGameBoard([
     white,0,0,0,0,0,black,0,0,0,0,0,black,
     0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -125,7 +125,7 @@ game.addEntitiesToGameBoard([
     0,0,0,0,0,0,0,0,0,0,0,0,0,
     black,0,0,0,0,0,black,0,0,0,0,0,0]);
 
-game.setGameMode("MOVING");
+//game.setGameMode("MOVING");
 */
 
 // *** Game Rules ***
@@ -372,7 +372,6 @@ game.connectGameRuleConsequences({
         jobFunction: "Set Winner",
         jobArguments: player2.getID()
     }]});
-
 
 // ***************************** //
 // *** Interface / AngularJS *** //

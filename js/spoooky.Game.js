@@ -1613,7 +1613,7 @@ Spoooky.Game = function() {
             self_Game.getCurrentPlayerID());
         },
 
-        "Print Debug Message": function() {
+        "Print Debug Message": function(currentRuleAtom) {
             return true;
         },
 
@@ -2697,7 +2697,7 @@ Spoooky.Game = function() {
         }
 
         var targetArea = false, entity, entityPosition;
-
+console.log(move)
         // Goal move
         if (move.moveClass === "move_goal" || move.moveClass === "move_bearoff") {
 

@@ -2,7 +2,7 @@
  * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
  *
  * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- * Version 0.5.1 "Little Green Men" (December 2015)
+ * Version 0.5.0 "The Erlenmeyer Flask" (December 2015)
  *
  * Copyright (c) Jan G. Wieners; Licensed under the MIT License
  *
@@ -1921,7 +1921,7 @@ Spoooky.Game = function() {
             self_Game.getCurrentPlayerID());
         },
 
-        "Print Debug Message": function() {
+        "Print Debug Message": function(currentRuleAtom) {
             return true;
         },
 
@@ -3005,7 +3005,7 @@ Spoooky.Game = function() {
         }
 
         var targetArea = false, entity, entityPosition;
-
+console.log(move)
         // Goal move
         if (move.moveClass === "move_goal" || move.moveClass === "move_bearoff") {
 
@@ -6480,9 +6480,6 @@ Spoooky.MetaAgent = function(game) {
                 for (counter = entityCount; counter--;) {
 
                     entity = entities[counter];
-
-                    // Really process only entities which can be moved on the game board
-                    if (entity.mode === "PLACE") { continue; }
 
                     // See if the current entity can move or can capture an opponent entity
                     if (game.checkSelectCondition(entity) === true) {
