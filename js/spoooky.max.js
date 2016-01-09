@@ -3259,9 +3259,9 @@ Spoooky.Game = function() {
         var moveTable = self_Game.models.MoveTable, move,
             moveCnt = moveTable.length;
 
-        for (var counter = moveCnt; counter--;) {
+        for (;moveCnt--;) {
 
-            move = moveTable[counter];
+            move = moveTable[moveCnt];
             if (move.xPosition === xPos) {
 
                 if (move.yPosition === yPos) {
@@ -3285,13 +3285,16 @@ Spoooky.Game = function() {
     self_Game.isGoalMove = function(xPos, yPos) {
 
         // ToDo Refactor
-        var goals = self_Game.models.GoalMoves, maxGoals = goals.length;
+        var goals = self_Game.models.GoalMoves, cnt = goals.length;
 
-        for (var counter = maxGoals; counter--;) {
+        for (; cnt--;) {
 
-            if (goals[counter].xPosition === xPos &&
-                goals[counter].yPosition === yPos) {
-                return true;
+            if (goals[cnt].xPosition === xPos) {
+
+                if (goals[cnt].yPosition === yPos) {
+
+                    return true;
+                }
             }
         }
         return false;
@@ -3306,11 +3309,11 @@ Spoooky.Game = function() {
     self_Game.getMoveID = function(xPos, yPos) {
 
         var entityMoves = self_Game.models.MoveTable,
-            move;
+            move, cnt = entityMoves.length;
 
-        for (var counter = entityMoves.length; counter--;) {
+        for (; cnt--;) {
 
-            move = entityMoves[counter];
+            move = entityMoves[cnt];
             if (move.xPosition === xPos && move.yPosition === yPos) {
 
                 if (move.moveID !== 0) {
@@ -3725,10 +3728,10 @@ Spoooky.Game = function() {
 
         // Get entities to protect
         var entitiesToProtect = player.getEntitiesOfType(entityTypeName),
-            max = entitiesToProtect.length;
+            cnt = entitiesToProtect.length;
 
-        for (var counter = max; counter--;) {
-            if (entitiesToProtect[counter].canBeCaptured()) {
+        for (; cnt--;) {
+            if (entitiesToProtect[cnt].canBeCaptured()) {
                 return true;
             }
         }
@@ -3752,13 +3755,13 @@ Spoooky.Game = function() {
         // Stop processing if there aren"t any entities of specific type
         if (entitiesOfType.length === 0) { return false; }
 
-        var max = entitiesOfType.length;
+        var cnt = entitiesOfType.length;
 
         // Check if an entity of a specific type is under attack
-        for (var counter = max; counter--;) {
+        for (;cnt--;) {
 
             // Execute opponent Entity Goals for destination coordinates
-            if (entitiesOfType[counter].canBeCaptured() === true) { return true; }
+            if (entitiesOfType[cnt].canBeCaptured() === true) { return true; }
         }
         return false;
     }
