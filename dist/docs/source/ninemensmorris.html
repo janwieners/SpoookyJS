@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Spoooky.Blueprints = {
+
+<span id='global-property-NINEMENSMORRIS'>    /**
+</span>     * Blueprints for the game of nine mens morris
+     */
+    NINEMENSMORRIS : {
+
+        entities : {
+
+            white: {
+                entityType : &quot;White&quot;,
+                typeID : &quot;W&quot;,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;ANY&quot;,
+
+                // Move to connected fields if player has got more than 3 entities
+                moves : [{
+                    name : &quot;Move to connected field&quot;,
+                    type : &quot;By Connected Field IDs&quot;,
+                    conditions : [
+                        { condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Player Owns &gt; n Entities&quot;,
+                            playerID : 0, // Player ID has been set in game.js
+                            value : 3,
+                            state : true }]
+                }, {
+                    name : &quot;Jump&quot;,
+                    type : &quot;Jump To Free Field&quot;,
+                    conditions : [{
+                        condition : &quot;Player Owns n Entities&quot;,
+                        playerID : 0,
+                        value : 3,
+                        state : true }]
+                }]
+            },
+
+            black: {
+                entityType : &quot;Black&quot;,
+                typeID : &quot;B&quot;,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;ANY&quot;,
+
+                // Moves are getting automatically enabled when player is in mode &quot;MOVING&quot;
+                // Move to connected fields if player has got more than 3 entities
+                moves : [{
+                    name : &quot;Move to connected field&quot;,
+                    type : &quot;By Connected Field IDs&quot;,
+                    conditions : [
+                        { condition : &quot;Is Empty&quot;, state : true },
+                        { condition : &quot;Player Owns &gt; n Entities&quot;,
+                            playerID : 1,
+                            value : 3,
+                            state : true }]
+                }, {
+                    name : &quot;Jump&quot;,
+                    type : &quot;Jump To Free Field&quot;,
+                    conditions : [{
+                        condition : &quot;Player Owns n Entities&quot;,
+                        playerID : 1,
+                        value : 3,
+                        state : true }]
+                }]
+            }
+        }
+    }
+};</pre>
+</body>
+</html>

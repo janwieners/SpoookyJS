@@ -1,0 +1,98 @@
+{
+    "game" : "Gomoku 9x9",
+    "metaAgentID" : 1,
+    "bestAgentEnsemble" : [
+        {
+            "ID": 1,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 1.0,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        },
+        {
+            "ID": 2,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 0,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        },
+        {
+            "ID": 3,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 0.5,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        },
+        {
+            "ID": 4,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 0.5,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        },
+        {
+            "ID": 5,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 0.5,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        },
+        {
+            "ID": 6,
+            "role": "ANALYZE POSSIBLE MOVES",
+            "focus": "MOVES NEAR OPPONENT FIELDS",
+            "fitness": 1,
+            "uctConstant" : 0.5,
+            "thinkingTime": 30000,
+            "maximumSteps": 10000
+        }
+    ],
+
+    "learnModule" : {"alpha":0,"gamma":0.8,"rho":0.2,"nu":0,"rewards":{},"gameStates":{}},
+
+    "expertKnowledge" : {
+
+        "intentions" : [
+            {
+                "atomName": "Opponent Player Has Four Entities In A Row",
+                "atomFunction": "Player Has Number Of Entities In Row",
+                "atomArguments": {
+                    "number": 4,
+                    "playerID": 0,
+                    "entityID": "B"
+                },
+                "winningID" : 0
+            },
+            {
+                "atomName" : "Opponent Player Has Four Entities In A Column",
+                "atomFunction" : "Player Has Number Of Entities In Column",
+                "atomArguments" : {
+                    "number" : 4,
+                    "playerID" : 0,
+                    "entityID" : "B"
+                },
+                "winningID" : 0
+            },
+            {
+                "atomName" : "Opponent Player Has Four Entities Diagonally",
+                "atomFunction" : "Player Has Number Of Entities Diagonally",
+                "atomArguments" : {
+                    "number" : 4,
+                    "playerID" : 0,
+                    "entityID" : "B"
+                },
+                "winningID" : 0
+            }
+        ]
+    }
+}

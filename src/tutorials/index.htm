@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jan G. Wieners">
+    <meta name="description" content="Tutorial zur Spielerstellung mit SpoookyJS">
+
+    <title>SpoookyJS - Tutorial</title>
+
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <link href="../css/style-frontpage.min.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body id="tut" data-spy="scroll" data-target="#sidenav">
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+
+        <div class="container">
+
+            <div class="navbar-header page-scroll">
+
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".spoookynavbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html">
+                    <img id="logoghost" src="../img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
+                </a>
+
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div id="spoookynavbar" class="collapse navbar-collapse navbar-right navbar-main-collapse">
+
+                <ul class="nav navbar-nav">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Spiele<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="../games/amazons/index.htm">Amazons</a></li>
+                            <li><a href="../games/backgammon/index.htm">Backgammon</a></li>
+                            <li><a href="../games/checkers/index.htm">Dame</a></li>
+                            <li><a href="../games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
+                            <li><a href="../games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
+                            <li><a href="../games/chess/index.htm">Schach</a></li>
+                            <li><a href="../games/chessvariant/index.htm">Schachvariante 5x6 (Tutorial)</a></li>
+                            <li><a href="../games/tictactoe/index.htm">Tic Tac Toe</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="../index.html#about">Über SpoookyJS</a>
+                    </li>
+
+                    <li>
+                        <a href="../index.html#download">Download</a>
+                    </li>
+
+                    <li class="active">
+                        <a href="#">Tutorial</a>
+                    </li>
+
+                    <li>
+                        <a href="../docs/index.html">API</a>
+                    </li>
+
+                    <li>
+                        <a href="../index.html#contact">Impressum</a>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </div>
+
+    <div id="content" class="bs-docs-header">
+        <div class="container">lorem ipsum</div>
+    </div>
+
+    <div id="tutorial" class="container">
+
+        <div class="row">
+
+            <div class="col-md-7" role="main">
+
+                <div id="overview">
+
+                    <h1>Spielerstellung mit SpoookyJS - Ein Tutorial</h1>
+                    <div class="description">
+                        In diesem Tutorial wird erläutert, wie sich eigene Spiele mit dem JavaScript-Framework SpoookyJS entwickeln lassen.
+                        Umgesetzt wird eine Schachvariante, die auf einem Spielbrett mit 5x6 Spielfeldern gespielt wird.
+                    </div>
+                </div>
+
+                <div class="linedivider"></div>
+
+                <h2 id="downloadspoookyjs">Download und _template-Ordner</h2>
+                SpoookyJS wird über <a href="https://github.com/janwieners/SpoookyJS">GitHub</a> bereitgestellt.
+                Nachdem das Framework in seiner aktuellen Version als Zip-Archiv von <a href="https://github.com/janwieners/SpoookyJS/archive/master.zip">https://github.com/janwieners/SpoookyJS/archive/master.zip</a>
+                heruntergeladen und extrahiert wurde, zeigt sich die folgende Ordnerstruktur:
+                <br>
+                <img class="centered" src="img/spoookyjs-folders.jpg" class="img-responsive" alt="Ordnerstruktur SpoookyJS">
+                Im Ordner <i>games</i> finden sich einige Spiele, die mit dem Framework erstellt wurden; ein guter Startpunkt für die Erstellung eigener Spiele ist der Vorlageordner <i>games/_template</i>.
+
+                <div class="linedivider"></div>
+                <h2 id="chessvariant">Vorbereitung einer Schachvariante</h2>
+
+                In diesem Tutorial wird eine Schachvariante erstellt, die auf einem Spielbrett mit 5x6 Spielfeldern von zwei Spielern gespielt wird. Beide Spieler verfügen zu Beginn des Spieles
+                über zehn Spielfiguren, die zu Beginn des Spieles wie folgend auf dem Spielbrett abgelegt werden:
+
+                <img width="250px" src="img/chessvariant-startconfig.jpg" alt="Startkonfiguration der Schachvariante" class="centered">
+
+                Um die Schachvariante vorzubereiten, wird der Ordner <i>games/_template</i> kopiert und unter dem Namen <i>chessvariant</i> in den Ordner <i>games</i> eingefügt. Der Ordner <i>chessvariant</i> enthält nun die folgenden Dateien und Ordner:
+                <img class="centered" src="img/spoookyjs-files-chessvariant.jpg" class="img-responsive" alt="Struktur des Ordners chessvariant">
+                Im Ordner <i>assets</i> finden sich sowohl Vorlagegrafiken für die Spielfiguren des Schachspieles als auch Grafiken zur Darstellung von Würfelwerten.
+                Mit den <a href="http://de.wikipedia.org/wiki/JavaScript_Object_Notation">JSON</a>-Dateien <i>agentmemory_1.json</i> und <i>agentmemory_2.json</i>
+                wird das Verhalten der Meta Agenten und ihrer assoziierten Agentenensembles agesteuert. In der HTML-Datei <i>index.htm</i> werden die einzelnen Seitenbereiche
+                realisiert und HTML-Dateien aus dem übergeordneten Ordner <i>templates</i> eingebunden.
+                <br>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Weil im Webbrowser das Sicherheitskonzept der
+                <a href="http://de.wikipedia.org/wiki/Same-Origin-Policy">Same-Origin-Policy</a> greift, müssen die Spiele auf einem (lokalen oder externen) Webserver ausgeführt werden
+                oder muss der Sicherheitsmechanismus deaktiviert werden - im Browser Firefox z.B. durch Eingabe von <i>about:config</i> in der Adressleiste und Änderung der <i>security.fileuri.strict_origin_policy</i> auf <i>false</i>.
+
+                <div class="linedivider"></div>
+                <h2 id="gamejs">Das zentrale Spielskript game.js</h2>
+
+                Zentral für die Erstellung eigener Spiele ist die JavaScript-Datei <i>game.js</i> im neu erstellten Ordner <i>chessvariant</i>.
+                Hier werden Spielerinnen und Spieler dem Spiel hinzugefügt, wird die Spielwelt generiert, Spielfiguren erstellt und Spielregeln definiert.
+
+                <h2 id="gamejs_init">Spielinitialisierung</h2>
+                Um die Schachvariante umzusetzen, wird die leere Skriptdatei <i>game.js</i> zuerst um die folgenden Anweisungen ergänzt:
+
+                <pre class="prettyprint">
+// Ein neues SpoookyJS Spiel erstellen
+var game = new Spoooky.Game;
+
+// Bootstrapping-Funktion: Instanzen aller benötigten Controller generieren
+game.initialize("Schachvariante");
+
+// Beschreibung der Schachvariante
+game.setDescription("Die Schachvariante wird gespielt auf einem Spielbrett " +
+    "mit 5x8 Spielfeldern und einer reduzierten Anzahl von Spielfiguren. " +
+    "Gespielt wird nach den klassischen Spielregeln des Schachspieles." +
+    "Ausgenommen ist die Fähigkeit der Spielfiguren, zu rochieren.");
+                </pre>
+
+                <h2 id="gamejs_players">Spieler erstellen mit game.createPlayer</h2>
+                Nach der grundlegenden Initialisierung des neuen Spieles mit den Memberfunktionen <i><a href="../docs/index.html#!/api/Spoooky.Game-method-initialize">initialize</a></i>
+                und <i><a href="../docs/index.html#!/api/Spoooky.Game-method-setDescription">setdescription</a></i> werden dem Spiel
+                anhand der Methode <i><a href="../docs/index.html#!/api/Spoooky.Game-method-createPlayer">createPlayer</a></i>
+                ein menschlicher Spieler und eine artifizielle Spielerin hinzugefügt:
+<pre class="prettyprint">
+// Menschlichen Spieler erstellen
+var player1 = game.createPlayer({
+    name: "Jan",
+    type: "HUMAN"
+});
+
+// Artifiziellen Gegner erstellen
+var player2 = game.createPlayer({
+    name: "Scully",
+    type: "ARTIFICIAL"
+});
+
+// Startspieler festlegen: Spieler 1 (weiß) startet das Spiel
+game.setPlayer(player1);
+</pre>
+
+                <h2 id="gamejs_boardsetup">Spielbrettsetup</h2>
+                Das Spielbrett wird mit der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-setupGridWorld">setupGridWorld</a></i> initialisiert. Als ersten Parameter erwartet die Funktion
+                die Anzahl der Felder auf der X-Achse, der zweite Parameter dient dazu, die Anzahl der Felder auf der Y-Achse anzugeben und mit dem
+                dritten Parameter wird die Darstellung der Spielfelder festgelegt. Zurückgreifen lässt sich hierbei auf
+                CSS-Klassen, die im Stylesheet <i><a href="../css/spoookystyle.css">css/spoookystyle.css</a></i> vordefiniert sind.
+<pre class="prettyprint">
+// CSS-Klassennamen (vordefiniert in css/spoookystyle.css)
+// zur vereinfachten Verwendung in Variablen speichern
+var b = "gridCellBlack",
+    w = "gridCellWhite";
+
+// Spielbrett mit 5x6 Spielfeldzellen erstellen
+game.setupGridWorld(5, 6, [
+    w, b, w, b, w,
+    b, w, b, w, b,
+    w, b, w, b, w,
+    b, w, b, w, b,
+    w, b, w, b, w,
+    b, w, b, w, b
+]);
+</pre>
+                Die Darstellung des Spielbrettes wird geleistet, indem
+<pre class="prettyprint">
+var SpoookyGame = new Spoooky.AngularWrapper({
+    game : game,
+    cellWidth : 100,
+    cellHeight : 100 });
+</pre>
+                <h2 id="gamejs_addblueprints">Spielfiguren hinzufügen</h2>
+                Jede Spieleseite ist mit einer entsprechenden Blaupausendatei verknüpft, so
+                dass sich auf einen Fundus vordefinierter Spielfiguren zugreifen lässt (vgl. die JavaScript-Dateien im Ordner js/blueprints). Für die Schachvariante werden zunächst die entsprechenden Spielfigurenblaupausen mit der Funktion
+                <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addBlueprint">addBlueprint</a></i> dem Spiel hinzugefügt.
+                Anschließend werden die Aktionsmöglichkeiten der Spielfiguren und ihre Auswirkungen auf den Spielverlauf anhand der Funktion
+                <i><a href="../docs/index.html#!/api/Spoooky.Game-method-connectConsequences">connectConsequences</a></i>
+                mit dem Spiel verknüpft:
+<pre class="prettyprint">
+// Entitätenblaupausen dem Spiel hinzufügen
+var black_bishop = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_bishop),
+    black_king = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_king),
+    black_knight = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_knight),
+    black_pawn = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_pawn),
+    black_queen = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_queen),
+    black_rook = game.addBlueprint(player2,
+        Spoooky.Blueprints.CHESS.entities.black_rook),
+
+    white_bishop = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_bishop),
+    white_king = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_king),
+    white_knight = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_knight),
+    white_pawn = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_pawn),
+    white_queen = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_queen),
+    white_rook = game.addBlueprint(player1,
+        Spoooky.Blueprints.CHESS.entities.white_rook);
+
+// Entitätenziele mit Folgen für das Spiel und die Spielwelt verknüpfen
+game.connectConsequences(Spoooky.Blueprints.CHESS.consequences.blackPlayer);
+game.connectConsequences(Spoooky.Blueprints.CHESS.consequences.whitePlayer);
+</pre>
+                Die Memberfunktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addEntitiesToGameBoard">addEntitiesToGameBoard</a></i>
+                sorgt schließlich dafür, dass die Spielfiguren auf dem Spielbrett abgelegt werden:
+<pre class="prettyprint">
+// Spielfiguren auf dem Spielbrett ablegen
+game.addEntitiesToGameBoard([
+    black_rook, black_queen, black_king, black_knight, black_bishop,
+    black_pawn, black_pawn, black_pawn, black_pawn, black_pawn,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    white_pawn, white_pawn, white_pawn, white_pawn, white_pawn,
+    white_rook, white_queen, white_king, white_knight, white_bishop
+]);
+</pre>
+                <h2 id="gamejs_blueprints">Aufbau von Spielfigurenblaupausen</h2>
+                Die Eigenschaften der einzelnen Spielfiguren werden anhand von Spielfigurenblaupausen definiert, die mit
+                der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addBlueprint">addBlueprint</a></i> verarbeitet
+                und dem Spiel hinzugefügt werden. Wie der folgende Quelltextausschnit aus dem Skript
+                <i><a href="../js/spoooky.Blueprints.js">js/spoooky.Blueprints.js</a></i> veranschaulicht,
+                wird in jeder Blaupause zunächst der Typ der Spielfigur zur späteren Verwendung angegeben und wird die Darstellung bestimmt:
+<pre class="prettyprint">
+black_pawn : {
+
+    typeID : "AA",
+    entityType : "Black Pawn",
+    associatedWithMetaAgent : null,
+    representation : { type : "image",
+        texture : "assets/black_pawn.png" },
+</pre>
+                Die Zugmöglichkeiten des schwarzen Bauern werden im <i>moves</i>-Bereich vorgesehen - für den Bauern
+                sind die Bewegungsmöglichkeiten schnell umgesetzt. So kann sich der Bauer auf ein leeres Feld bewegen,
+                das sich südlich von ihm befindet:
+<pre class="prettyprint">
+    // Zugmöglichkeiten der Spielfigur
+    moves : [{
+        name : "Zug in Richtung des unteren Spielfeldrandes",
+        type : "Default",
+        direction : "south",
+        frequency : 1,
+        // Zugbedingungen: Das Zielfeld ist nicht besetzt
+        // und befindet sich nicht am unteren Rand des Spielbrettes
+        // (hier wird der Bauer eingetauscht in eine andere Spielfigur)
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+            { condition : "Is Not The Last Row",
+                state : true }]
+    },
+</pre>
+                Zu Beginn des Spieles ist's dem schwarzen Bauern möglich, sich um zwei Felder nach unten zu bewegen:
+<pre class="prettyprint">
+    {
+        name : "Startzug: Zwei Felder nach unten",
+        type : "Default",
+        direction : [ 0, +2 ],
+        frequency : 1,
+        conditions : [
+            { condition : "Is Empty",
+                state : true },
+
+            // Andere Spielfiguren dürfen nicht übersprungen werden.
+            // Bedingung: Leeres Feld südlich des Bauern
+            { condition : "Is Empty At",
+                relativeCoordinate : [ 0, +1 ],
+                state : true },
+            { condition : "yPosition",
+                value : 1, state : true }
+        ]
+    }],
+</pre>
+                Um festzulegen, dass sich der schwarze Bauer nicht bewegen darf, wenn der eigene König nach
+                dem Zug des Bauern von einer gegnerischen Spielfigur bedroht wird, werden die Zugmöglichkeiten
+                des schwarzen Bauern an die entsprechende Bedingung geknüpft:
+<pre class="prettyprint">
+    // Zugbedingung: Prüfen, ob der eigene König nach ausgeführter
+    // Zugmöglichkeit des Bauern angreifbar ist
+    postMoveCheck : [{
+        condition : "Entity Is Attackable After Move",
+        state : false, entity : "Black King" }],
+</pre>
+                <h2 id="gamejs_blueprintsgoals">Spielfigurenziele</h2>
+                Nachdem die Zugmöglichkeiten des Bauern formuliert wurden, werden die Ziele der Spielfigur angegeben: Der
+                Bauer verfolgt das Ziel, gegnerische Sielfiguren zu schlagen und die unterste Reihe des Spielbrettes zu erreichen.
+                Spielfigurenziele setzen sich aus Zielatomen (<i>goalAtoms</i>) und zusammengesetzten Zielen (<i>goals</i>) zusammen.
+                Mit dem folgenden Quelltext werden zuerst die einzelnen Bestandteile der Spielfigurenziele definiert -
+                Bestandteile wie die Abfrage nach gegnerischen Spielfiguren oder das Erreichen der untersten Reihe des Spielbrettes:
+<pre class="prettyprint">
+    // Definition von Unterzielen, die anschließend
+    // zu Zielen der Spielfigur zusammengesetzt werden
+    goalAtoms : [{
+        atomName : "Gegner auf suedoestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southeast"
+    },{
+        atomName : "Gegner auf suedwestlich angrenzendem Feld",
+        atomFunction : "Is Opponent",
+        atomArguments : "southwest"
+    }, {
+        atomName : "Leeres Feld Suedlich",
+        atomFunction : "Is Empty Cell",
+        atomArguments : "south"
+    }, {
+        atomName : "Figur steht auf einem Spielfeld in Zeile vier",
+        atomFunction : "Current Y Position Is",
+        atomArguments : 4
+    },{
+        atomName : "Weißer Bauer westlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ -1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer oestlich",
+        atomFunction : "Entity At Cell Is Of Type",
+        atomArguments : [ +1, 0, "White Pawn" ]
+    },{
+        atomName : "Weißer Bauer westlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ -1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde nur einmal bewegt",
+        atomFunction : "Entity At Cell Has Been Moved n Times",
+        atomArguments : [ +1, 0, 1 ]
+    },{
+        atomName : "Weißer Bauer westlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ -1, 0 ]
+    },{
+        atomName : "Weißer Bauer oestlich wurde zuletzt bewegt",
+        atomFunction : "Entity At Cell Has Been Moved In Last Game Round",
+        atomArguments : [ +1, 0 ]
+    }, {
+        atomName : "Spielfigur kann die unterste Reihe erreichen",
+        atomFunction : "Entity Is Able To Reach A Specific Row",
+        atomArguments : [ "last", "south" ]
+    }],
+</pre>
+                Abschließend werden die Zielatome zu Spielfigurenzielen zusammengesetzt:
+<pre class="prettyprint">
+    // Zielatome zu Spielsteinzielen zusammensetzen
+    goals : [{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedost",
+        atoms    : ["Gegner auf suedoestlich angrenzendem Feld"],
+        move     : "southeast"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Spielfigur auf Feld suedwest",
+        atoms    : ["Gegner auf suedwestlich angrenzendem Feld"],
+        move     : [ -1, +1 ]
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedwestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer westlich",
+            "Weißer Bauer westlich wurde nur einmal bewegt",
+            "Weißer Bauer westlich wurde zuletzt bewegt"],
+        move     : "southwest"
+    },{
+        type     : "CAPTURE",
+        name     : "Schlage Gegner en passant suedoestlich",
+        atoms    : ["Figur steht auf einem Spielfeld in Zeile vier",
+            "Weißer Bauer oestlich",
+            "Weißer Bauer oestlich wurde nur einmal bewegt",
+            "Weißer Bauer oestlich wurde zuletzt bewegt"],
+        move     : "southeast"
+    }, {
+        type     : "GOALMOVE",
+        name     : "Erreiche die letzte Reihe des Spielbrettes",
+        atoms    : ["Leeres Feld Suedlich",
+            "Spielfigur kann die unterste Reihe erreichen"],
+        move     : "south"
+    }]
+}
+</pre>
+            Im <i>consequences</i>-Bereich der Spielfigurenblaupausen werden die Folgen ausgeführter Spielfigurenziele
+            bestimmt, um anhand der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-connectConsequences">connectConsequences</a></i>
+            mit dem Spiel verknüpft zu werden. Folgen, die sich mit  Erreichen der letzten Reihe des Spielbrettes verbinden:
+<pre class="prettyprint">
+black_pawn_reach_last_row_south : {
+    goalName     : "Erreiche die letzte Reihe des Spielbrettes",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ 0, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        }, {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ 0, +1, "Black Pawn", "captureMove" ]
+        }, {
+            jobName: "Transformiere Bauer in Koenigin",
+            jobFunction: "Transform Entity",
+            jobArguments: "Black Queen"
+        }]
+},
+</pre>
+            Was geschieht, wenn der schwarze Bauer eine gegnerische Spielfigur schlägt, ist mit den folgenden Anweisungen
+            definiert:
+<pre class="prettyprint">
+black_pawn_capture_opponent_southwest : {
+    goalName     : "Schlage Spielfigur auf Feld suedwest",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ -1, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ -1, +1, "RELATIVE",
+                "Black Pawn" ]
+        },
+        {
+            jobName: "Bewege Spielfigur",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ -1, +1, "Black Pawn",
+                "captureMove" ]
+        }, {
+            jobName: "Transformiere Spielfigur, wenn letzte Reihe erreicht",
+            jobFunction: "Transform Entity If Row Reached",
+            jobArguments: { row : "last",
+                entityType : "Black Queen" }
+        }]
+},
+
+black_pawn_capture_opponent_southwest_enpassant : {
+    goalName     : "Schlage Gegner en passant suedwestlich",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Markiere das Zielfeld",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ -1, +1, "move_goal",
+                "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Entferne gegnerischen Spielstein",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ -1, 0, "RELATIVE",
+                "Black Pawn" ]
+        },
+        {
+            jobName: "Bewege Spielfigur",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ -1, +1, "Black Pawn",
+                "captureMove" ]
+        }]
+},
+
+black_pawn_capture_opponent_southeast : {
+    goalName     : "Schlage Spielfigur auf Feld suedost",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Highlight Target Cell",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ +1, +1, "move_goal", "RELATIVE", "Black Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Delete Opponent Entity",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ +1, +1, "RELATIVE", "Black Pawn" ]
+        },
+        {
+            jobName: "Move Game Entity",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ +1, +1, "Black Pawn", "captureMove" ]
+        }, {
+            jobName: "Transform Entity If It Has Reached The First Row",
+            jobFunction: "Transform Entity If Row Reached",
+            jobArguments: { row : "last", entityType : "Black Queen" }
+        }]
+},
+
+black_pawn_capture_opponent_southeast_enpassant : {
+    goalName     : "Schlage Gegner en passant suedoestlich",
+    entityType : "Black Pawn",
+    consequences : [
+        {
+            jobName: "Highlight Target Cell",
+            jobFunction: "Highlight Cell",
+            jobArguments: [ +1, +1, "move_goal", "RELATIVE", "White Pawn" ],
+            execute: "immediately"
+        },
+        {
+            jobName: "Delete Opponent Entity",
+            jobFunction: "Capture Opponent At",
+            jobArguments: [ +1, 0, "RELATIVE", "White Pawn" ]
+        },
+        {
+            jobName: "Move Game Entity",
+            jobFunction: "Move Entity Relative To",
+            jobArguments: [ +1, +1, "White Pawn", "captureMove" ]
+        }]
+},
+</pre>
+            <h2 id="gamejs_gamerules">Spielregeln definieren</h2>
+            Die Definition von Spielregeln verläuft dreischrittig: Mit der Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-addGameRuleAtom">addGameRuleAtom</a></i>
+            werden zunächst Spielregelatome definiert, mit denen sich bestimmte Zustände des Spieles abfragen lassen, wie sie in
+                <i><a href="../docs/index.html#!/api/Spoooky.Game-method-gameRuleAtoms">Spoooky.Game.gameRuleAtoms</a></i> definiert sind:
+<pre class="prettyprint">
+// ***** Spielregeln des Schachspieles *****
+// *** Unentschieden: König gegen König ***
+game.addGameRuleAtom({
+    atomName : "Spieler 1 hat nur noch eine Spielfigur",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [ player1.getID(), 1 ]
+});
+
+game.addGameRuleAtom({
+    atomName : "Spielerin 2 hat nur noch eine Spielfigur",
+    atomFunction : "Player Has Number Of Entities",
+    atomArguments : [ player2.getID(), 1 ]
+});
+</pre>
+            Anschließend wird die Spielregel "Unentschieden, wenn sich nur noch die Könige der beiden Spieler auf dem Spielbrett befinden" durch Verknüpfung der beiden
+            Spielregelatome "Spieler 1 hat nur noch eine Spielfigur" und "Spielerin 2 hat nur noch eine Spielfigur" definiert:
+<pre class="prettyprint">
+game.assembleGameRule({
+    name     : "Unentschieden: König gegen König",
+    atoms    : ["Spieler 1 hat nur noch eine Spielfigur",
+        "Spielerin 2 hat nur noch eine Spielfigur"]
+});
+</pre>
+            ...und durch Funktion <i><a href="../docs/index.html#!/api/Spoooky.Game-method-connectGameRuleConsequences">connectGameRuleConsequences</a></i>
+            mit Folgen für die Spielwelt und den Spielverlauf verknüpft:
+<pre class="prettyprint">
+game.connectGameRuleConsequences({
+    ruleName     : "Unentschieden: König gegen König",
+    consequences : [{
+        jobName: "Spiel anhalten",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Unentschieden-Nachricht ausgeben",
+        jobFunction: "Print Game Process",
+        jobArguments: "Unentschieden."
+    }]});
+</pre>
+
+        <h3 id="chessrule_check">Spielregel "Der König von Spieler 1 steht im Schach"</h3>
+        Steht der König von Spieler 1 im Schach, so wird eine entsprechende Nachricht im Spielverlauf ausgegeben, der aktuelle Spieler gewechselt und der Spielzustand auf "SCHACH" bzw. "CHECK" gesetzt
+        (der Quell:
+<pre class="prettyprint">
+game.addGameRuleAtom({
+    atomName : "König von Spieler 1 steht im Schach",
+    atomFunction : "Entity Is Under Attack",
+    atomArguments : white_king
+});
+
+game.assembleGameRule({
+    name     : "Schach (Spieler 1)",
+    atoms    : ["König von Spieler 1 steht im Schach"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Schach (Spieler 1)",
+    consequences : [{
+        jobName: "Ausgabe, dass der König von Spieler 1 im Schach steht",
+        jobFunction: "Print Game Process",
+        jobArguments: "Der König von Spieler 1 steht im Schach."
+    },{
+        jobName: "Spielerwechsel",
+        jobFunction: "Next Player"
+    },{
+        jobName: "Spielzustand auf CHECK setzen",
+        jobFunction: "Set Game State",
+        jobArguments: "CHECK"
+    }]});
+</pre>
+
+        <h3 id="chessrule_checkmate">Spielregel "Spieler 1 ist Schachmatt gesetzt"</h3>
+        Wurdee der König von Spieler 1 Schachmatt gesetzt, wird das Spiel beendet und eine entsprechende Nachricht im Spielverlaufsdialog ausgegeben:
+<pre class="prettyprint">
+game.addGameRuleAtom({
+    atomName : "Keine Spielfigur von Spieler 1 kann dem eigenen König helfen.",
+    atomFunction : "Got No Protecting Entities",
+    atomArguments : white_king
+});
+
+game.addGameRuleAtom({
+    atomName : "Das Spiel ist im Zustand CHECK",
+    atomFunction : "Game State Is",
+    atomArguments : "CHECK"
+});
+game.assembleGameRule({
+    name     : "Schachmatt (Spieler 1)",
+    atoms    : ["König von Spieler 1 steht im Schach",
+        "Keine Spielfigur von Spieler 1 kann dem eigenen König helfen.",
+        "Das Spiel ist im Zustand CHECK"]
+});
+game.connectGameRuleConsequences({
+    ruleName     : "Schachmatt (Spieler 1)",
+    consequences : [{
+        jobName: "Spiel beenden",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Ausgabe im Spielverlaufsdialog, dass Spieler 1 das Spiel verloren hat.",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 1 ist schachmatt."
+    },{
+        jobName: "Ausgabe im Spielverlaufsdialog, dass Spielerin 2 das Spiel gewonnen hat.",
+        jobFunction: "Print Game Process",
+        jobArguments: "Spieler 2 gewinnt das Spiel."
+    },{
+        jobName: "ID der Spielerin speichern, die das Spiel gewonnen hat.",
+        jobFunction: "Set Winner",
+        jobArguments: player2.getID()
+    }]});
+</pre>
+
+            <h3 id="chessrule_stalemate">Spielregel "Unentschieden (Stalemate)"</h3>
+            Verfügt keine Spielfigur von Spieler 1 über die Möglichkeit, sich zu bewegen, endet das Spiel unentschieden:
+<pre class="prettyprint">
+game.addGameRuleAtom({
+    atomName : "Keine Spielfigur von Spieler 1 kann sich bewegen.",
+    atomFunction : "Player Has No Movable Entities",
+    atomArguments : player1.getID()
+});
+
+game.addGameRuleAtom({
+    atomName : "Das Spiel ist im Zustand INGAME",
+    atomFunction : "Game State Is",
+    atomArguments : "INGAME"
+});
+
+game.assembleGameRule({
+    name     : "Patt (Spieler 1)",
+    atoms    : ["Keine Spielfigur von Spieler 1 kann sich bewegen.",
+        "Das Spiel ist im Zustand INGAME"]
+});
+
+game.connectGameRuleConsequences({
+    ruleName     : "Patt (Spieler 1)",
+    consequences : [{
+        jobName: "Spiel beenden",
+        jobFunction: "Stop Game"
+    }, {
+        jobName: "Ausgabe im Spielverlaufsdialog, dass Spieler 1 " +
+            "ueber keine gueltige Zugmoeglichkeit verfuegt.",
+        jobFunction: "Print Game Process",
+        jobArguments: "Patt: Spieler 1 verfuegt ueber keine gueltige Zugmoeglichkeit."
+    }]});
+</pre>
+
+            </div>
+
+            <div class="col-md-1">
+
+                <div class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix"
+                     role="complementary" data-spy="affix" id="sidenav">
+
+                    <ul class="nav">
+
+                        <li class="heading">I. Setup und Initialisierung</li>
+                        <li class="page-scroll"><a href="#downloadspoookyjs">Download und _template-Ordner</a></li>
+                        <li class="page-scroll"><a href="#chessvariant">Vorbereitung einer Schachvariante</a></li>
+                        <li class="page-scroll"><a href="#gamejs">Das zentrale Spielskript game.js</a></li>
+                        <li class="page-scroll"><a href="#gamejs_init">Spielinitialisierung</a></li>
+                        <li class="page-scroll"><a href="#gamejs_players">Spieler erstellen mit game.createPlayer</a></li>
+                        <li class="page-scroll"><a href="#gamejs_boardsetup">Spielweltsetup</a></li>
+                        <li class="divider"></li>
+                        <li class="heading">II. Spielfigurenblaupausen</li>
+                        <li class="page-scroll"><a href="#gamejs_addblueprints">Spielfiguren hinzufügen</a></li>
+                        <li class="page-scroll"><a href="#gamejs_blueprints">Aufbau von Spielfigurenblaupausen</a></li>
+                        <li class="page-scroll"><a href="#gamejs_blueprintsgoals">Spielfigurenziele</a></li>
+                        <li class="divider"></li>
+                        <li class="heading">III. Umsetzung von Spielregeln</li>
+                        <li class="page-scroll"><a href="#gamejs_gamerules">Spielregeln definieren</a></li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_check">
+                                Spielregel "König von Spieler 1 steht im Schach"
+                            </a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_checkmate">
+                                Spielregel "Spieler 1 ist Schachmatt gesetzt"
+                            </a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#chessrule_stalemate">
+                                Spielregel "Unentschieden (Stalemate)"
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div id="downloadbutton">
+                                <a href="https://github.com/janwieners/SpoookyJS/archive/master.zip">
+                                    <button type="button" class="btn btn-success btn-lg">
+
+                                        <div class="dwnheading">
+                                            Download SpoookyJS
+                                        </div>
+                                        <div class="dwntext">
+                                            via GitHub
+                                        </div>
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="footer">
+        <div class="text-muted credit">&copy; 2012-2016 Jan G. Wieners <a href="mailto:jan@jan-wieners.de">jan@jan-wieners.de</a></div>
+    </div>
+
+    <script src="../js/deps-frontpage.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <script type="text/javascript">
+        !function ($) {
+            $(function(){
+                window.prettyPrint && prettyPrint()
+            })
+        }(window.jQuery);
+
+        // use jQuery to collapse the navbar on scroll
+        $(window).scroll(function() {
+            if ($(".navbar").offset().top > 50) {
+                $(".navbar-fixed-top").addClass("top-nav-collapse");
+            } else {
+                $(".navbar-fixed-top").removeClass("top-nav-collapse");
+            }
+        });
+
+        //jQuery for page scrolling feature - requires jQuery Easing plugin
+        $(document).ready(function() {
+            $(function() {
+
+                $('.page-scroll a').bind('click', function(event) {
+
+                    var $anchor = $(this);
+
+                    $('html, body').stop().animate({
+                        scrollTop: $($anchor.attr('href')).offset().top-50
+                    }, 1500, 'easeInOutExpo');
+
+                    event.preventDefault();
+                });
+
+            });
+
+            $("body").scrollspy({ target: '#sidenav', offset: 250 });
+
+        });
+
+    </script>
+
+</body>
+
+</html>

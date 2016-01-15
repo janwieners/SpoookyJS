@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">Spoooky.Blueprints = {
+
+<span id='global-property-AMAZONS'>    /**
+</span>     * Blueprints for the game of amazons
+     */
+    AMAZONS : {
+
+        entities : {
+
+            white_queen: {
+
+                entityType : &quot;White Queen&quot;,
+
+                typeID : &quot;AA&quot;,
+
+                associatedWithMetaAgent : null,
+
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white_queen.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;north&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;north&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+
+                    // Implement ability to fire an arrow after executed move
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;northeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northeast&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;east&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;east&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;southeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southeast&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;south&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;south&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;southwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southwest&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;west&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;west&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;northwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northwest&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }]
+            },
+
+            black_queen: {
+
+                entityType : &quot;Black Queen&quot;,
+
+                typeID : &quot;BA&quot;,
+
+                associatedWithMetaAgent : null,
+
+                // Visualization of the entity
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black_queen.png&quot; },
+
+                // Moves of the entity
+                moves : [{
+                    name : &quot;north&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;north&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;northeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northeast&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;east&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;east&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;southeast&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southeast&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;south&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;south&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;southwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;southwest&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;west&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;west&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }, {
+                    name : &quot;northwest&quot;,
+                    type : &quot;Default&quot;,
+                    direction : &quot;northwest&quot;,
+                    frequency : &quot;ANY&quot;,
+                    conditions : [{ condition : &quot;Is Empty&quot;, state : true }],
+                    postMove : [{
+                        jobName: &quot;Enable Second Move&quot;,
+                        jobFunction: &quot;Prevent Player Change&quot;
+                    }, {
+                        jobName: &quot;Enable Firing Of One Arrow&quot;,
+                        jobFunction: &quot;Change Game Mode&quot;,
+                        jobArguments: { mode: &quot;PLACING&quot; }
+                    }]
+                }]
+            },
+
+            // An arrow is a simple, non-movable entity to block fields
+            // and can be placed on fields which are reachable by the
+            // recently moved entity
+            white_arrow: {
+                entityType : &quot;Arrow&quot;,
+                typeID : &quot;AX&quot;,
+                associatedWithMetaAgent : null,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/white_block.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;REACHABLE BY RECENTLY MOVED ENTITY&quot;
+            },
+
+            black_arrow: {
+                entityType : &quot;Arrow&quot;,
+                typeID : &quot;BX&quot;,
+                associatedWithMetaAgent : null,
+                representation : { type : &quot;image&quot;, texture : &quot;assets/black_block.png&quot; },
+                mode : &quot;PLACE&quot;,
+                placeTo : &quot;REACHABLE BY RECENTLY MOVED ENTITY&quot;
+            }
+        }
+    }
+};</pre>
+</body>
+</html>

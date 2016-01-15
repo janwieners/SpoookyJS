@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Spoooky-AngularWrapper-method-constructor'><span id='Spoooky-AngularWrapper'>/**
+</span></span> * AngularJS Interface
+ * Extends the angular scope with frequently used
+ * game specific controllers and helper functions
+ * @param arguments
+ * @constructor
+ */
+Spoooky.AngularWrapper = function(arguments) {
+
+    var self_AngularWrapper = this;
+
+    self_AngularWrapper.game = arguments.game;
+    self_AngularWrapper.players = self_AngularWrapper.game.getPlayers();
+    self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
+    self_AngularWrapper.cellWidth = arguments.cellWidth;
+    self_AngularWrapper.cellHeight = arguments.cellHeight;
+
+    self_AngularWrapper.module = angular.module(&quot;SpoookyGame&quot;, ['ui.bootstrap', 'spoooky.templates']);
+
+    // Catch errors
+    window.onerror = catchError;
+
+<span id='Spoooky-AngularWrapper-method-catchError'>    /**
+</span>     * Catch JavaScript error messages
+     * @param errorMessage
+     * @param errorFile
+     * @param errorLine
+     * @returns {boolean}
+     */
+    function catchError(errorMessage, errorFile, errorLine) {
+
+        // Error output in console
+        console.log(errorMessage, errorFile, errorLine);
+
+        // Notify user
+        alert(&quot;Es ist ein Fehler im Programmfluss aufgetreten. Ich versuche, den Fehler zu beheben. &quot; +
+        &quot;Bitte haben Sie einen Moment Geduld.&quot;);
+
+        // Try to fix the error autonomously
+        self_AngularWrapper.game.pseudoLoop();
+
+        return true;
+    }
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Filter to enable html output in ng-repeats
+     */
+    self_AngularWrapper.module.filter(&quot;unsafe&quot;, function($sce) {
+        return function(val) {
+            return $sce.trustAsHtml(val);
+        }
+    });
+
+    // *** Controllers *** //
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for display the name of the game
+     */
+    self_AngularWrapper.module.controller(&quot;HeadingCtrl&quot;, function($scope) {
+        $scope.gameName = self_AngularWrapper.game.getName();
+        $scope.gameDescription = self_AngularWrapper.game.getDescription();
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the game process
+     */
+    self_AngularWrapper.module.controller(&quot;GameProcessCtrl&quot;, function($scope) {
+        $scope.messages = Spoooky.GameProcess.messages;
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the agent log
+     */
+    self_AngularWrapper.module.controller(&quot;AgentLogCtrl&quot;, function($scope) {
+        $scope.messages = Spoooky.AgentLog.messages;
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the game settings element
+     * :O Uuuh, I'm ugly, please refactor me!
+     */
+    self_AngularWrapper.module.controller(&quot;GameSettingsCtrl&quot;, function($scope, $uibModal, $rootScope) {
+
+        // Prepare player types
+        $scope.playerTypes1 = {
+            &quot;type&quot;: &quot;select&quot;,
+            &quot;values&quot;: [ &quot;Menschlicher Spieler/in&quot;, &quot;Artifizielle Spielerin&quot;]
+        };
+        $scope.playerTypes2 = {
+            &quot;type&quot;: &quot;select&quot;,
+            &quot;values&quot;: [ &quot;Menschlicher Spieler/in&quot;, &quot;Artifizielle Spielerin&quot;]
+        };
+
+        // Init
+        if (localStorage[&quot;firstPlayerName&quot;]) {
+            self_AngularWrapper.players[0].name = localStorage[&quot;firstPlayerName&quot;];
+        }
+
+        if (localStorage[&quot;secondPlayerName&quot;]) {
+            self_AngularWrapper.players[1].name = localStorage[&quot;secondPlayerName&quot;];
+        }
+
+        // Prepare player object
+        $scope.player1 = {
+            name : self_AngularWrapper.players[0].name,
+            type : self_AngularWrapper.players[0].type
+        };
+
+        $scope.player2 = {
+            name : self_AngularWrapper.players[1].name,
+            type : self_AngularWrapper.players[1].type
+        };
+
+<span id='Spoooky-AngularWrapper-property-userDialog'>        /**
+</span>         * Modal / Dialog
+         * @type {number}
+         */
+        $scope.userDialog = 0;
+
+        // Show a dialog to get the user name at first start of SpoookyJS
+        if (!localStorage[&quot;initialized&quot;]) {
+
+            $scope.userDialog = $uibModal.open({
+                templateUrl: &quot;templates/userdialog.htm&quot;,
+                scope: $scope
+            });
+        } else {
+            // Set previously stored player name
+            $scope.player1.name = localStorage[&quot;firstPlayerName&quot;];
+            self_AngularWrapper.game.getPlayers()[0].setName(localStorage[&quot;firstPlayerName&quot;]);
+
+            Spoooky.GameProcess.pushMessage(&quot;&lt;strong&gt;&quot; + self_AngularWrapper.game.getCurrentPlayerName() + &quot;&lt;/strong&gt; beginnt das Spiel&quot;);
+        }
+
+<span id='Spoooky-AngularWrapper-method-modalSave'>        /**
+</span>         * Functionality of the save button in the dialog / modal
+         */
+        $scope.modalSave = function() {
+
+            // Save the player name
+            localStorage[&quot;initialized&quot;] = true;
+            localStorage[&quot;firstPlayerName&quot;] = $scope.player1.name;
+            self_AngularWrapper.game.getPlayers()[0].setName($scope.player1.name);
+
+            Spoooky.GameProcess.pushMessage(&quot;&lt;strong&gt;&quot; + self_AngularWrapper.game.getCurrentPlayerName() + &quot;&lt;/strong&gt; beginnt das Spiel&quot;);
+
+            $scope.userDialog.close();
+        };
+
+<span id='Spoooky-AngularWrapper-method-modalCancel'>        /**
+</span>         * Functionality of the save button in the dialog / modal
+         */
+        $scope.modalCancel = function() {
+
+            localStorage[&quot;initialized&quot;] = true;
+            localStorage[&quot;firstPlayerName&quot;] = $scope.player1.name;
+            Spoooky.GameProcess.pushMessage(&quot;&lt;strong&gt;&quot; + self_AngularWrapper.game.getCurrentPlayerName() + &quot;&lt;/strong&gt; beginnt das Spiel&quot;);
+            $scope.userDialog.close();
+        };
+
+        //localStorage.removeItem(&quot;initialized&quot;);
+
+        // Set the player type names
+        if ($scope.player1.type === &quot;HUMAN&quot;) {
+            $scope.playerTypes1.value = &quot;Menschlicher Spieler/in&quot;;
+        } else {
+            $scope.playerTypes1.value = &quot;Artifizielle Spielerin&quot;;
+        }
+
+        if ($scope.player2.type === &quot;HUMAN&quot;) {
+            $scope.playerTypes2.value = &quot;Menschlicher Spieler/in&quot;;
+        } else {
+            $scope.playerTypes2.value = &quot;Artifizielle Spielerin&quot;;
+        }
+
+<span id='Spoooky-AngularWrapper-method-changePlayerName'>        /**
+</span>         * Change the player names
+         * @param playerID
+         */
+        $scope.changePlayerName = function(playerID) {
+
+            // ToDo - Refactor me!
+            switch(playerID) {
+
+                case 0:
+                    localStorage[&quot;firstPlayerName&quot;] = $scope.player1.name;
+                    self_AngularWrapper.players[0].setName($scope.player1.name);
+                    self_AngularWrapper.game.getPlayers()[0].setName($scope.player1.name);
+                    break;
+
+                case 1:
+                    localStorage[&quot;secondPlayerName&quot;] = $scope.player2.name;
+                    self_AngularWrapper.players[1].setName($scope.player2.name);
+                    self_AngularWrapper.game.getPlayers()[1].setName($scope.player2.name);
+                    break;
+
+                default:
+                    console.log(&quot;Invalid player ID&quot;);
+            }
+        };
+
+<span id='Spoooky-AngularWrapper-method-changePlayerType'>        /**
+</span>         * Change the type of the player (HUMAN / ARTIFICIAL)
+         * @param playerID
+         */
+        $scope.changePlayerType = function(playerID) {
+
+            var metaAgent = self_AngularWrapper.players[playerID];
+
+            // ToDo Refactor me!
+            switch (playerID) {
+                case 0:
+                    if ($scope.playerTypes1.value === &quot;Menschlicher Spieler/in&quot;) {
+                        metaAgent.setType(&quot;HUMAN&quot;);
+                    } else {
+                        metaAgent.setType(&quot;ARTIFICIAL&quot;);
+                    }
+                    break;
+
+                case 1:
+                    if ($scope.playerTypes2.value === &quot;Menschlicher Spieler/in&quot;) {
+                        metaAgent.setType(&quot;HUMAN&quot;);
+                    } else {
+
+
+                        metaAgent.setType(&quot;ARTIFICIAL&quot;);
+
+                        if (metaAgent.countAgents() === 0) {
+                            metaAgent.assembleAgents();
+                        }
+                    }
+            }
+
+            // Do some extra work for artificial players / meta agents
+            if (metaAgent.type === &quot;ARTIFICIAL&quot;) {
+
+                self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
+
+                // Create agent ensemble if necessary
+                if (metaAgent.countAgents() === 0) {
+                    metaAgent.assembleAgents();
+                }
+
+                // Execute an artificial move if its current meta agent's turn
+                if (self_AngularWrapper.game.models.currentPlayerID === metaAgent.ID) {
+                    self_AngularWrapper.game.playArtificial();
+                }
+            } else {
+                self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
+            }
+
+            // Notify other controllers about changed meta agents
+            $rootScope.$broadcast(&quot;metaAgentChange&quot;);
+        };
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the agent ensemble overview
+     */
+    self_AngularWrapper.module.controller(&quot;AgentEnsembleCtrl&quot;, function($scope) {
+
+        $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+
+        $scope.focusOptions = [
+            &quot;ALL MOVES&quot;,
+            &quot;FIRST HALF OF POSSIBLE MOVES&quot;,
+            &quot;SECOND HALF OF POSSIBLE MOVES&quot;,
+            &quot;MOVES NEAR OPPONENT FIELDS&quot;,
+            &quot;MOVES NEAR OPPONENT OR OWN FIELDS&quot;
+        ];
+
+        // Listen for changes in settings controller
+        $scope.$on(&quot;metaAgentChange&quot;, function() {
+            // Update array of meta agents
+            $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+        });
+
+<span id='Spoooky-AngularWrapper-method-deleteAgent'>        /**
+</span>         * Deletes an agent with agenteID from the ensemble of meta agent metaID
+         * @param metaID
+         * @param agentID
+         * @returns {boolean}
+         */
+        $scope.deleteAgent = function(metaID, agentID) {
+
+            var metaAgents = $scope.metaAgents,
+                metaAgent;
+
+            for (var i = metaAgents.length; i--;) {
+
+                if (metaAgents[i].ID === metaID) {
+                    metaAgent = metaAgents[i];
+                }
+            }
+
+            var container = &quot;#&quot; + metaID + &quot;-&quot; + agentID;
+
+            metaAgent.deleteAgentWithID(agentID);
+
+            return true;
+        };
+
+<span id='Spoooky-AngularWrapper-method-addAgent'>        /**
+</span>         * Adds an agent to the agent ensemble of meta agent with metaID
+         * @param metaID
+         */
+        $scope.addAgent = function(metaID) {
+            self_AngularWrapper.game.getPlayerWithID(metaID).addStandardAgent();
+        };
+
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Convert input type=&quot;range&quot; values from string to integer
+     */
+    self_AngularWrapper.module.directive(&quot;integer&quot;, function(){
+
+        return {
+            require: &quot;ngModel&quot;,
+            link: function(scope, ele, attr, ctrl){
+                ctrl.$parsers.unshift(function(viewValue){
+                    return parseInt(viewValue, 10);
+                });
+            }
+        };
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Convert input type=&quot;range&quot; values from string to float
+     */
+    self_AngularWrapper.module.directive(&quot;float&quot;, function(){
+
+        return {
+            require: &quot;ngModel&quot;,
+            link: function(scope, ele, attr, ctrl){
+                ctrl.$parsers.unshift(function(viewValue){
+                    return parseFloat(viewValue);
+                });
+            }
+        };
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the monte carlo tree search graph view
+     */
+    self_AngularWrapper.module.controller(&quot;MCTSGraphCtrl&quot;, function($scope) {
+
+        self_AngularWrapper.game.connectGraphView($scope);
+
+<span id='Spoooky-AngularWrapper-method-updateGraphs'>        /**
+</span>         * Update (render) all graphs
+         * @param graphData
+         * @param metaAgentID
+         */
+        $scope.updateGraphs = function(graphData, metaAgentID) {
+
+            if ($(&quot;#mctsgraph&quot;).is(&quot;:visible&quot;)) {
+
+                // Sort input data
+                graphData = _.sortBy(graphData, &quot;agentID&quot;);
+
+                var container = &quot;#d3graphs-&quot; + metaAgentID, treeData, divName;
+
+                // Create container if necessary
+                if ($(&quot;#graphs &quot; + container).length === 0) {
+                    $(&quot;#graphs&quot;).append('&lt;div id=&quot;d3graphs-' + metaAgentID + '&quot;/&gt;');
+                }
+
+                // Delete previously drawn graphs
+                // ToDo
+                d3.select(container).selectAll(&quot;*&quot;).remove();
+
+                for (var i = 0; i &lt; graphData.length; i++) {
+
+                    if (graphData[i].mctsGraph.children.length === 0) {
+
+                        $(&quot;#graphs&quot;).append(&quot;Spielbaumdarstellung konnte leider aufgrund &quot; +
+                        &quot;zu hoher Komplexität des Graphen nicht generiert werden.&lt;br&gt;&quot;);
+
+                        continue;
+                    }
+
+                    divName = &quot;graph_&quot; + metaAgentID + &quot;-&quot; + graphData[i].agentID;
+
+                    // Create new DOM-Element for the graphs of the associated agent ensemble
+                    $(container).append(&quot;&lt;h5&gt;Ensemble Agent #&quot; + graphData[i].agentID +
+                        &quot; (UCT-Konstante &lt;strong&gt;&quot; + graphData[i].uctConstant + &quot;&lt;/strong&gt;);&quot; +
+                        &quot; assoziierter Meta Agent #&quot; + metaAgentID + &quot;&lt;/h5&gt;&quot;);
+
+                    // Create a sub container for the agent-individual graphs
+                    $(container).append('&lt;div id=&quot;' + divName + '&quot;/&gt;');
+
+                    // Get tree / graph data
+                    treeData = graphData[i].mctsGraph;
+
+                    // Reset data to prevent errors (&quot;Converting circular structure to JSON&quot;)
+                    graphData[i].length = 0;
+
+                    // Finally: Draw the graph
+                    $scope.drawGraph(treeData, &quot;#&quot; + divName);
+
+                    //treeData.length = 0;
+                }
+
+                // Try to call garbage collector
+                graphData.length = 0;
+
+                // Keep in mind: $timeout(function () { }, 0);
+            }
+        };
+
+<span id='Spoooky-AngularWrapper-method-drawGraph'>        /**
+</span>         * Update the graph of an agent
+         * @param treeData
+         * @param graphContainer
+         */
+        $scope.drawGraph = function(treeData, graphContainer) {
+
+            // *** d3 graph view ***
+            // Source: http://bl.ocks.org/d3noob/8375092
+
+            // ************** Generate the tree diagram *****************
+            var margin = { top: 20, right: 10, bottom: 20, left: 10 },
+                //width = 990 - margin.right - margin.left,
+                width = 990 - margin.right - margin.left,
+                height = 700 - margin.top - margin.bottom;
+            var i = 0,
+                duration = 500,
+                root;
+
+            var tree = d3.layout.tree()
+                //.nodeSize([5, 5]);
+                .size([width, height]);
+
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.x, d.y]; });
+
+            // Define the zoom function for the zoomable tree
+            function zoom() {
+                //svg.attr(&quot;transform&quot;, &quot;translate(&quot; + d3.event.translate + &quot;)scale(&quot; + d3.event.scale + &quot;)&quot;);
+                svg.attr(&quot;transform&quot;, &quot;translate(&quot; +  d3.event.translate + &quot;)scale(&quot; + d3.event.scale + &quot;)&quot;);
+            }
+
+            // define the zoomListener which calls the zoom function on the &quot;zoom&quot; event constrained within the scaleExtents
+            var zoomListener = d3.behavior.zoom().scaleExtent([0.2, Infinity]).on(&quot;zoom&quot;, zoom);
+
+            var svg = d3.select(graphContainer).append(&quot;svg&quot;)
+                .attr(&quot;class&quot;,&quot;svg_container&quot;)
+                .attr(&quot;width&quot;, width + margin.right + margin.left)
+                .attr(&quot;height&quot;, height + margin.top + margin.bottom)
+                .style(&quot;overflow&quot;, &quot;scroll&quot;)
+                .style(&quot;background-color&quot;,&quot;#f1f1f1&quot;)
+                .call(zoomListener)
+                .append(&quot;svg:g&quot;)
+                .attr(&quot;transform&quot;, &quot;translate(&quot; + margin.left + &quot;,&quot; + margin.top + &quot;)&quot;);
+
+            d3.select(&quot;svg&quot;)
+                .call(d3.behavior.zoom()
+                    .scaleExtent([0.5, Infinity])
+                    .on(&quot;zoom&quot;, zoom));
+
+            root = treeData;
+            root.x0 = height / 2;
+            root.y0 = 0;
+
+            d3.select(self.frameElement).style(&quot;height&quot;, &quot;400px&quot;);
+
+            // Toggle children on click.
+            function click(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+                update(d);
+            }
+
+            function update(source) {
+
+                // Compute the new tree layout.
+                var nodes = tree.nodes(root).reverse(),
+                    links = tree.links(nodes);
+
+                // Normalize for fixed-depth.
+                nodes.forEach(function(d) { d.y = d.depth * 75; });
+
+                // Update the nodes…
+                var node = svg.selectAll(&quot;g.node&quot;)
+                    .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+                // Enter any new nodes at the parent's previous position.
+                var nodeEnter = node.enter().append(&quot;g&quot;)
+                    .attr(&quot;class&quot;, &quot;node&quot;)
+                    //.attr(&quot;transform&quot;, function(d) { return &quot;translate(&quot; + source.y0 + &quot;,&quot; + source.x0 + &quot;)&quot;; })
+                    .attr(&quot;transform&quot;, function(d) { return &quot;translate(&quot; + source.x0 + &quot;,&quot; + source.y0 + &quot;)&quot;; })
+                    .on(&quot;click&quot;, click);
+
+                nodeEnter.append(&quot;circle&quot;)
+                    .attr(&quot;r&quot;, 1e-6)
+                    .style(&quot;fill&quot;, function(d) { return d._children ? &quot;#8fcc5b&quot; : &quot;#004b86&quot;; });
+
+
+                nodeEnter.on(&quot;mouseover&quot;, function(d) {
+                    var g = d3.select(this); // The node
+                    // The class is used to remove the additional text later
+                    var info = g.append('text')
+                        .classed('info', true)
+                        .attr(&quot;background-color&quot;, &quot;pink&quot;)
+                        .attr('x', 15)
+                        .attr('y', 3)
+                        .text(function(d) { return d.name; });
+                })
+                .on(&quot;mouseout&quot;, function() {
+                    // Remove the info text on mouse out.
+                    d3.select(this).select('text.info').remove();
+                });
+
+                 // Transition nodes to their new position.
+                var nodeUpdate = node.transition()
+                    .duration(duration)
+                    .attr(&quot;transform&quot;, function(d) { return &quot;translate(&quot; + d.x + &quot;,&quot; + d.y + &quot;)&quot;; });
+
+                nodeUpdate.select(&quot;circle&quot;)
+                    .attr(&quot;r&quot;, 6)
+                    .style(&quot;fill&quot;, function(d) {
+                        if (d._children) {
+                            return &quot;#8fcc5b&quot;;
+                        } else {
+
+                            // Terminal node
+                            if (d.terminal) {
+                                return &quot;#26ab2f&quot;;
+                            }
+
+                            else if (d.value &lt; 50) {
+                                return &quot;#68b9f8&quot;;
+                            } else if (d.value &lt; 100) {
+                                return &quot;#0086f0&quot;;
+                            } else if (d.value &lt; 200) {
+                                return &quot;#016fc5&quot;;
+                            } else if (d.value &lt; 400) {
+                                return &quot;#005faa&quot;;
+                            } else {
+                                return &quot;#004b86&quot;;
+                            }
+                        }
+                    });
+
+                nodeUpdate.select(&quot;text&quot;)
+                    .style(&quot;fill-opacity&quot;, 1);
+
+                // Transition exiting nodes to the parent's new position.
+                var nodeExit = node.exit().transition()
+                    .duration(duration)
+                    .attr(&quot;transform&quot;, function(d) { return &quot;translate(&quot; + source.x + &quot;,&quot; + source.y + &quot;)&quot;; })
+                    .remove();
+
+                nodeExit.select(&quot;circle&quot;)
+                    .attr(&quot;r&quot;, 1e-6);
+
+                nodeExit.select(&quot;text&quot;)
+                    .style(&quot;fill-opacity&quot;, 1e-6);
+
+                // Update the links…
+                var link = svg.selectAll(&quot;path.link&quot;)
+                    .data(links, function(d) { return d.target.id; });
+
+                // Enter any new links at the parent's previous position.
+                link.enter().insert(&quot;path&quot;, &quot;g&quot;)
+                    .attr(&quot;class&quot;, &quot;link&quot;)
+                    .attr(&quot;d&quot;, function(d) {
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
+                    });
+
+                // Transition links to their new position.
+                link.transition()
+                    .duration(duration)
+                    .attr(&quot;d&quot;, diagonal);
+
+                // Transition exiting nodes to the parent's new position.
+                link.exit().transition()
+                    .duration(duration)
+                    .attr(&quot;d&quot;, function(d) {
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                    })
+                    .remove();
+
+                // Stash the old positions for transition.
+                nodes.forEach(function(d) {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            }
+
+            update(root);
+        }
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Directive to react on last ng-repeat in StatisticsCtrl
+     */
+    self_AngularWrapper.module.directive(&quot;createChartsIfFinished&quot;, function($timeout) {
+
+        return function(scope, element, attrs) {
+
+            if (scope.$last) {
+                $timeout(function () {
+                    $timeout(function () {
+                        scope.$emit(&quot;createCharts&quot;, element, attrs);
+                    }, 0);
+                }, 0);
+            }
+        }
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the agent ensemble statistics / charts
+     */
+    self_AngularWrapper.module.controller(&quot;StatisticsCtrl&quot;, function($scope, $timeout) {
+
+        $scope.charts = [];
+        $scope.stats = Spoooky.Statistics;
+        $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+
+        self_AngularWrapper.game.connectStatsView($scope);
+
+        // Listen for changes in settings controller
+        $scope.$on(&quot;metaAgentChange&quot;, function() {
+
+            // Update array of meta agents
+            $scope.metaAgents = self_AngularWrapper.game.getAIPlayers();
+
+            // Create new chart for meta agent if necessary
+            for (var i = 0; i &lt; $scope.metaAgents.length; i++) {
+
+                if (_.isUndefined($scope.charts[$scope.metaAgents[i].ID])) {
+                    $scope.createChart($scope.metaAgents[i].ID);
+                }
+            }
+        });
+
+        $scope.$on(&quot;createCharts&quot;, function() {
+
+            for (var i = 0; i &lt; $scope.metaAgents.length; i++) {
+                $scope.createChart($scope.metaAgents[i].ID);
+            }
+        });
+
+<span id='Spoooky-AngularWrapper-method-update'>        /**
+</span>         * Update agents decision statistics
+         * @param agentID
+         */
+        $scope.update = function(agentID) {
+
+            if ($(&quot;#statistics&quot;).is(&quot;:visible&quot;)) {
+
+                var curID, simCounts, simSteps, rollouts = [],
+                    simulations = [], updateCols = [], rounds = [];
+
+                if ($scope.charts.length &gt; 0) {
+
+                    curID = agentID;
+
+                    simSteps = $scope.stats.getEntriesOfType(curID, &quot;simSteps&quot;);
+                    simCounts = $scope.stats.getEntriesOfType(curID, &quot;simCount&quot;);
+
+                    if (simSteps !== false &amp;&amp; simCounts !== false) {
+
+                        rounds.push(&quot;x&quot;);
+                        rollouts.push(&quot;Rollouts&quot;);
+                        simulations.push(&quot;Simulationsschritte&quot;);
+
+                        for (var j = 0; j &lt; simSteps.length; j++) {
+
+                            rounds.push(simCounts[j].round.toString());
+                            rollouts.push(simCounts[j].value);
+                            simulations.push(simSteps[j].value);
+                        }
+
+                        updateCols.push(rounds);
+                        updateCols.push(rollouts);
+                        updateCols.push(simulations);
+
+                        $scope.charts[curID].chart.load({
+                            columns : updateCols
+                        });
+                    }
+                }
+            }
+        };
+
+        $scope.createChart = function(agentID) {
+
+            var bind = &quot;#chart-&quot;+agentID;
+
+            var chart = c3.generate({
+                bindto: bind,
+                data: {
+                    x: &quot;x&quot;,
+                    columns: [
+                        [&quot;Rollouts&quot;],
+                        [&quot;Simulationsschritte&quot;]
+                    ],
+                    axes: {
+                        Rollouts: &quot;y2&quot;
+                    },
+                    types: {
+                        Rollouts: &quot;line&quot;,
+                        Simulationsschritte : &quot;bar&quot;
+                    },
+                    colors : {
+                        Rollouts : &quot;#004b86&quot;,
+                        Simulationsschritte : &quot;#88C356&quot;
+                    }
+                },
+                grid: {
+                    x: {
+                        show: true
+                    },
+                    y: {
+                        show: true
+                    }
+                },
+                axis: {
+                    y: {
+                        label: {
+                            text: &quot;Simulationsschritte (simulierte Spielrunden)&quot;,
+                            position: &quot;outer-middle&quot;
+                        },
+                        tick: {
+                            format: d3.format(&quot;d&quot;)
+                        }
+                    },
+                    y2: {
+                        show: true,
+                        label: {
+                            text: &quot;Simulierte Spiele&quot;,
+                            position: &quot;outer-middle&quot;
+                        },
+                        tick: {
+                            format: d3.format(&quot;d&quot;)
+                        }
+                    },
+                    x: {
+                        type: &quot;category&quot;
+                    }
+                },
+                tooltip: {
+                    format: {
+                        title: function (d) { return &quot;Spielrunde &quot; + d; },
+                        value: function (value, ratio, id) {
+                            var format = id === &quot;data1&quot; ? d3.format(&quot;d&quot;) : d3.format(&quot;d&quot;);
+                            return format(value);
+                        }
+                    }
+                }
+            });
+
+            $scope.charts[agentID] = {
+                &quot;ID&quot;: agentID,
+                &quot;chart&quot; : chart
+            };
+        };
+
+    });
+
+<span id='Spoooky-AngularWrapper-property-'>    /**
+</span>     * Controller for the grid world
+     * Initializes the view
+     */
+    self_AngularWrapper.module.controller(&quot;GridWeltCtrl&quot;, function($scope, $timeout) {
+
+        $scope.game = self_AngularWrapper.game;
+
+        // Provide game grid specifics to the interface
+        $scope.gameGrid = game.models.GameGrid;
+        $scope.gridRows = game.gameWorld.getRows();
+        $scope.gridColumns = game.gameWorld.getColumns();
+
+        $scope.cellWidth = self_AngularWrapper.cellWidth;
+        $scope.cellHeight = self_AngularWrapper.cellHeight;
+
+<span id='Spoooky-AngularWrapper-method-getCharFromInt'>        /**
+</span>         * Helper function for cell names
+         * @param charCode
+         * @returns {string}
+         */
+        $scope.getCharFromInt = function(charCode) {
+            return String.fromCharCode(97+charCode);
+        };
+
+<span id='Spoooky-AngularWrapper-method-styleCell'>        /**
+</span>         * Set the styling of a game world cell
+         */
+        $scope.styleCell = function() {
+
+            return {
+                &quot;min-width&quot; : $scope.cellWidth,
+                &quot;min-height&quot; : $scope.cellHeight,
+                &quot;width&quot; : $scope.cellWidth,
+                &quot;height&quot; : $scope.cellHeight
+            };
+        };
+
+<span id='Spoooky-AngularWrapper-method-entityAtCell'>        /**
+</span>         * Checks for an entity at a specific cell
+         * @param cell
+         * @returns {boolean}
+         */
+        $scope.entityAtCell = function(cell) {
+            return (cell.contains.length &gt; 0);
+        };
+
+<span id='Spoooky-AngularWrapper-method-getEntityName'>        /**
+</span>         * Get the name of an entity at a specific cell
+         * @param cell
+         * @returns {string|String|*}
+         */
+        $scope.getEntityName = function(cell) {
+            var entity = _.last(cell.contains);
+            entity = $scope.game.getPlayerWithID(entity.playerID).getEntityWithID(entity.entityID);
+            return entity.getName();
+        };
+
+<span id='Spoooky-AngularWrapper-method-getEntityImage'>        /**
+</span>         * Get the visual representation of an entity at a specific cell
+         * @param cell
+         * @returns {*|AbstractView|*}
+         */
+        $scope.getEntityImage = function(cell) {
+            var entity = _.last(cell.contains);
+            entity = $scope.game.getPlayerWithID(entity.playerID).getEntityWithID(entity.entityID);
+            return entity.getView();
+        };
+
+<span id='Spoooky-AngularWrapper-method-cellClicked'>        /**
+</span>         * Controles the click event
+         * @param xPos
+         * @param yPos
+         * @param cellIsEnabled
+         */
+        $scope.cellClicked = function(xPos, yPos, cellIsEnabled) {
+
+            if (cellIsEnabled) {
+
+                if ($scope.game.getCurrentPlayerType() === &quot;HUMAN&quot;) {
+
+                    $scope.game.loop(false, xPos, yPos);
+                }
+            }
+        };
+
+<span id='Spoooky-AngularWrapper-method-startGame'>        /**
+</span>         * Events to fire when the game starts
+         */
+        $scope.startGame = function() {
+
+            // Prevent navigation while ai player is thinking
+            window.onbeforeunload = function(e) {
+
+                if ($scope.game.getGameState() !== &quot;END&quot; &amp;&amp; $scope.game.getCurrentPlayerType() === &quot;ARTIFICIAL&quot;) {
+
+                    return &quot;Bitte haben Sie noch ein wenig Geduld, bis der KI-Spieler seine Arbeit abgeschlossen hat, um Probleme zu vermeiden.&quot;;
+                }
+            };
+
+            // Perform a pseudo loop to show free fields initially
+            $scope.game.pseudoLoop();
+        };
+
+        // Connect the game with angularJS scope
+        $scope.game.connectGridWeltView($scope);
+
+        // Start the game
+        $timeout(function () {
+            $scope.startGame();
+        }, 0);
+
+    });
+
+    return self_AngularWrapper.module;
+};
+
+<span id='Spoooky-AngularWrapper-property-Statistics'>/**
+</span> * Holds monte carlo tree search statistics
+ * @type {Object}
+ */
+Spoooky.Statistics = {
+
+    changed : false,
+    AIplayers : [],
+
+<span id='Spoooky-AngularWrapper-method-logEntry'>    /**
+</span>     * Add a log entry
+     * @param metaAgentID
+     * @param logType
+     * @param round
+     * @param value
+     */
+    logEntry : function(metaAgentID, logType, round, value) {
+
+        // Add logging for a new meta agent
+        if (_.isUndefined(this.AIplayers[metaAgentID])) {
+            this.AIplayers[metaAgentID] = [];
+        }
+
+        if (_.isUndefined(this.AIplayers[metaAgentID][logType])) {
+            this.AIplayers[metaAgentID][logType] = [];
+        }
+
+        this.AIplayers[metaAgentID][logType].push({
+            &quot;round&quot; : round,
+            &quot;value&quot; : value
+        });
+
+        this.changed = Date.now();
+    },
+
+<span id='Spoooky-AngularWrapper-method-getEntriesOfType'>    /**
+</span>     * Get a log entry of a specific type
+     * @param metaAgentID
+     * @param type
+     */
+    getEntriesOfType : function(metaAgentID, type) {
+
+        if (_.isUndefined(this.AIplayers[metaAgentID])) { return false; }
+        if (_.isUndefined(this.AIplayers[metaAgentID][type])) { return false; }
+
+        return this.AIplayers[metaAgentID][type];
+    }
+
+};
+
+<span id='Spoooky-AngularWrapper-property-GameProcess'>/**
+</span> * Holds the history of the game
+ * @type {Object}
+ */
+Spoooky.GameProcess = {
+
+    messages : [],
+    messageID : 0,
+
+    pushMessage : function(newMessage, messageType) {
+
+        var type = messageType ? messageType : &quot;none&quot;;
+
+        // Show not only more than 200 messages
+        if (this.messageID % 200 === 0) {
+            this.messages.length = 0;
+        }
+
+        this.messageID += 1;
+        this.messages.push({
+            &quot;message&quot; : newMessage,
+            &quot;id&quot; : this.messageID,
+            &quot;type&quot; : type
+        });
+    }
+};
+
+<span id='Spoooky-AngularWrapper-property-AgentLog'>/**
+</span> * Holds the history of the game
+ * @type {Object}
+ */
+Spoooky.AgentLog = {
+
+    messages : [],
+    messageID : 0,
+
+    pushMessage : function(newMessage) {
+
+        // Show not only more than 200 agent log messages
+        if (this.messageID % 200 === 0) {
+            this.messages.length = 0;
+        }
+
+        this.messageID += 1;
+        this.messages.push({ message: newMessage, id: this.messageID });
+    }
+};</pre>
+</body>
+</html>
