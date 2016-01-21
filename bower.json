@@ -31,5 +31,8 @@
     "filesaver": "https://github.com/eligrey/FileSaver.js.git",
     "jquery": "~2.1.4",
     "underscore": "~1.8.3"
+  },
+  "resolutions": {
+    "d3": "~3.5.12"
   }
 }
