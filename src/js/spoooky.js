@@ -11,7 +11,7 @@
  * Dependencies:
  *  - jQuery 2.1.4
  *  - Bootstrap 3.3.6
- *  - AngularJS 1.4.8
+ *  - AngularJS 1.4.9
  *  - Angular UI Bootstrap 0.14.3
  *  - Underscore.js 1.8.3
  *  - D3.js 3.5.13
