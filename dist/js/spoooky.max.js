@@ -14,7 +14,7 @@
  *  - AngularJS 1.4.9
  *  - Angular UI Bootstrap 0.14.3
  *  - Underscore.js 1.8.3
- *  - D3.js 3.5.13
+ *  - D3.js 3.5.14
  *  - C3.js 0.4.10
  **/
 

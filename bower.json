@@ -23,13 +23,13 @@
     "bower_components"
   ],
   "dependencies": {
-    "angular": "~1.4.8",
-    "angular-bootstrap": "~0.14.3",
+    "angular": "~1.4.9",
+    "angular-bootstrap": "~1.1.2",
     "bootstrap": "~3.3.6",
     "c3": "~0.4.10",
     "d3": "~3.5.12",
     "filesaver": "https://github.com/eligrey/FileSaver.js.git",
-    "jquery": "~2.1.4",
+    "jquery": "~2.2.0",
     "underscore": "~1.8.3"
   },
   "resolutions": {
