@@ -10,7 +10,7 @@ var gulp = require('gulp'),
 var path = {
     css: 'src/css/',
     src: 'src/js/',
-    components: 'bower_components/',
+    components: 'node_modules/',
     dist: 'dist/'
 };
 
@@ -139,11 +139,11 @@ gulp.task('compress-deps', function() {
     return gulp.src([
         path.components + 'jquery/dist/jquery.min.js',
         path.components + 'angular/angular.min.js',
-        path.components + 'angular-bootstrap/ui-bootstrap-tpls.min.js',
+        path.components + 'angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
         path.components + 'bootstrap/dist/js/bootstrap.min.js',
         path.components + 'c3/c3.min.js',
         path.components + 'd3/d3.min.js',
-        path.components + 'filesaver/FileSaver.min.js',
+        'src/js/FileSaver.min.js',
         path.components + 'underscore/underscore-min.js']
     ).pipe(concat('deps.min.js'))
         .pipe(gulp.dest(path.dist + 'js'));
