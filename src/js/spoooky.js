@@ -4,7 +4,9 @@
  * @author Jan Gerrit Wieners <jan@jan-wieners.de>
  * Version 0.5.0 "The Erlenmeyer Flask" (December 2015)
  *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
+ * Copyright (c) Jan G. Wieners
+ *
+ * Licensed under the MIT License
  *
  * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
  *
