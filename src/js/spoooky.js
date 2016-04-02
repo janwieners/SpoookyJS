@@ -11,10 +11,10 @@
  * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
  *
  * Dependencies:
- *  - jQuery 2.2.1
+ *  - jQuery 2.2.2
  *  - Bootstrap 3.3.6
- *  - AngularJS 1.5.0
- *  - Angular UI Bootstrap 1.2.4
+ *  - AngularJS 1.5.3
+ *  - Angular UI Bootstrap 1.2.5
  *  - Underscore.js 1.8.3
  *  - D3.js 3.5.16
  *  - C3.js 0.4.11-rc4
