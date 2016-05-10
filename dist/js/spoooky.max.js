@@ -1,3 +1,5 @@
+
+"use strict";
 /**
  * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
  *
@@ -11,16 +13,14 @@
  * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
  *
  * Dependencies:
- *  - jQuery 2.2.3
- *  - Bootstrap 3.3.6
- *  - AngularJS 1.5.3
+ *  - AngularJS 1.5.5
  *  - Angular UI Bootstrap 1.3.2
+ *  - Bootstrap 3.3.6
+ *  - D3.js 3.5.17
+ *  - C3.js 0.4.11
+ *  - jQuery 2.2.3
  *  - Underscore.js 1.8.3
- *  - D3.js 3.5.16
- *  - C3.js 0.4.11-rc4
  **/
-
-"use strict";
 var Spoooky = Spoooky || {};
 /**
  * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
