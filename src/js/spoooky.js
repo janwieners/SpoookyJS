@@ -13,7 +13,7 @@
  * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
  *
  * Dependencies:
- *  - AngularJS 1.5.5
+ *  - AngularJS 1.5.6
  *  - Angular UI Bootstrap 1.3.3
  *  - Bootstrap 3.3.6
  *  - D3.js 3.5.17

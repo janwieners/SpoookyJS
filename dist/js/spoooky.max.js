@@ -13,12 +13,12 @@
  * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
  *
  * Dependencies:
- *  - AngularJS 1.5.5
- *  - Angular UI Bootstrap 1.3.2
+ *  - AngularJS 1.5.6
+ *  - Angular UI Bootstrap 1.3.3
  *  - Bootstrap 3.3.6
  *  - D3.js 3.5.17
  *  - C3.js 0.4.11
- *  - jQuery 2.2.3
+ *  - jQuery 2.2.4
  *  - Underscore.js 1.8.3
  **/
 var Spoooky = Spoooky || {};
