@@ -1483,7 +1483,9 @@ Spoooky.MetaAgent = function(game) {
         });
 
         // Try to manually garbage collect...
-        agentDecision.mctsGraph.length = 0;
+        if (agentDecision.mctsGraph) {
+            agentDecision.mctsGraph.length = 0;
+        }
 
         // Save best moves, identified by the current individual agent
         self_MetaAgent.bestMoves.push(agentDecision);
