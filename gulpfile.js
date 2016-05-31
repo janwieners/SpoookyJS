@@ -115,7 +115,7 @@ gulp.task('compress-spoooky', function() {
             path.src + 'spoooky.MetaAgent.js',
             path.src + 'spoooky.Entity.js',
             path.src + 'spoooky.AI.js']
-    ).pipe(concat('spoooky.max.js'))
+    ).pipe(concat('spoooky.js'))
         .pipe(gulp.dest(path.dist + 'js'))
         .pipe(rename('spoooky.min.js'))
         .pipe(uglify())
