@@ -20,6 +20,7 @@ gulp.task('build', function() {
         'clean',
         'compress-spoooky',
         'compress-worker',
+        'copy-blueprints',
         'compress-blueprints',
         'compress-deps',
         'compress-deps-worker',
@@ -40,6 +41,12 @@ gulp.task('build', function() {
 gulp.task('clean', function() {
 
     return del(path.dist + '**/*');
+});
+
+gulp.task('copy-blueprints', function() {
+
+    return gulp.src('src/js/blueprints/**/*.js')
+        .pipe(gulp.dest(path.dist + 'js/blueprints'));
 });
 
 gulp.task('copy-fonts', function() {
@@ -226,7 +233,7 @@ gulp.task('serve', ['build'], function() {
         'src/js/spoooky.AI.js'], ['compress-spoooky']);
 
     gulp.watch(path.src + 'spoooky.Worker.js', ['compress-worker']);
-    gulp.watch(path.src + 'blueprints/*.js', ['compress-blueprints']);
+    gulp.watch(path.src + 'blueprints/*.js', ['copy-blueprints', 'compress-blueprints']);
     gulp.watch('src/games/**/*', ['copy-games']);
     gulp.watch('src/css/**/*', ['minify-css']);
 
