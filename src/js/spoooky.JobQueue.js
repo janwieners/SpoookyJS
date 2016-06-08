@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.JobQueue
  * Controller for Spoooky.Models.JobQueue

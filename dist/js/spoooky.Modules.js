@@ -1,19 +1,21 @@
+"use strict";
+
 /**
  * AngularJS Interface
  * Extends the angular scope with frequently used
  * game specific controllers and helper functions
- * @param arguments
+ * @param args
  * @constructor
  */
-Spoooky.AngularWrapper = function(arguments) {
+Spoooky.AngularWrapper = function(args) {
 
     var self_AngularWrapper = this;
 
-    self_AngularWrapper.game = arguments.game;
+    self_AngularWrapper.game = args.game;
     self_AngularWrapper.players = self_AngularWrapper.game.getPlayers();
     self_AngularWrapper.AIplayers = self_AngularWrapper.game.getAIPlayers();
-    self_AngularWrapper.cellWidth = arguments.cellWidth;
-    self_AngularWrapper.cellHeight = arguments.cellHeight;
+    self_AngularWrapper.cellWidth = args.cellWidth;
+    self_AngularWrapper.cellHeight = args.cellHeight;
 
     self_AngularWrapper.module = angular.module("SpoookyGame", ['ui.bootstrap', 'spoooky.templates']);
 

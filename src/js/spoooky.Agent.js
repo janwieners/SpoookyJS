@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.Agent
  * Associated to a meta agent, every agent thinks about best moves in the current game state

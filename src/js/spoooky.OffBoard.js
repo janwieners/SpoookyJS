@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.OffBoard
  * Controller for Spoooky.Models.OffBoardContent

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.Entity
  * Entities of the game

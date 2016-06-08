@@ -1,9 +1,10 @@
-// ToDo: Add DEBUG flag
+"use strict";
 
 // Import necessary scripts to build virtual SpoookyJS games
 importScripts("deps-worker.min.js", "spoooky.min.js");
 
 // Debug imports
+// ToDo: Add DEBUG flag
 /*
 importScripts("libs/underscore-min.js",
     "spoooky.js",

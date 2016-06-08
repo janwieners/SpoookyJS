@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.Areas
  * Controller for Spoooky.Models.Areas

@@ -1,27 +1,6 @@
 "use strict";
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- * Version 0.5.1 "The Erlenmeyer Flask" (December 2015)
- *
- * Copyright (c) Jan G. Wieners
- *
- * Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- *
- **/
 var Spoooky = Spoooky || {};
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.Models
@@ -299,15 +278,7 @@ Spoooky.Models = function() {
      */
     self_Models.gameRounds = 0;
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.Game
@@ -3759,15 +3730,7 @@ Spoooky.Game = function() {
         return false;
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.DiceBox
@@ -3945,15 +3908,7 @@ Spoooky.DiceBox = function(game) {
         myGame.models.DiceBox.diceValues.length = 0;
     };
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.GridWelt
@@ -4610,15 +4565,7 @@ Spoooky.GridWelt = function(game) {
         return self_GridWelt.countNeighboursNorth(currentEntity) + self_GridWelt.countNeighboursSouth(currentEntity);
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.OffBoard
@@ -4741,15 +4688,7 @@ Spoooky.OffBoard = function(game) {
         return returnEntities;
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.GameEvents
@@ -5493,15 +5432,7 @@ console.log('here')
         this.events[gameEvent.job](gameEvent, game);
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.JobQueue
@@ -5551,15 +5482,7 @@ Spoooky.JobQueue = function(game) {
         return jobs;
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.Areas
@@ -5654,15 +5577,7 @@ Spoooky.Areas = function(game) {
         })
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.Agent
@@ -5830,15 +5745,7 @@ Spoooky.Agent = function(metaAgent, agentID) {
         return agentWorker;
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.MetaAgent
@@ -7599,15 +7506,7 @@ Spoooky.MetaAgent = function(game) {
         return false;
     }
 };
-/**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
+"use strict";
 
 /**
  * Spoooky.Entity
@@ -9017,6 +8916,8 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
         });
     };
 };
+"use strict";
+
 /**
  * Spoooky.AI
  * Implementations of artificial intelligence methods

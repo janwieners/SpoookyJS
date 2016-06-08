@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.GridWelt
  * Controller for Spoooky.Models.GameGrid

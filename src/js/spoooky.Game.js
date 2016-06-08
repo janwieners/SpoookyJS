@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.Game
  * Core of SpoookyJS: the game class

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.GameEvents
  * Executes predefined game events / delegates game events to the game

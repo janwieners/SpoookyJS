@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.MetaAgent
  * Every game is played by a number of different meta agents (the players of the game).

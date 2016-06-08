@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.Models
  * Game Models; Class holds all relevant game data, represents the current game state of a game

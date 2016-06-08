@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.DiceBox
  * Controller for Spoooky.Models.DiceBox

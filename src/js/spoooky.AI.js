@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Spoooky.AI
  * Implementations of artificial intelligence methods
