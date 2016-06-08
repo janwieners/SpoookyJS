@@ -1,14 +1,4 @@
 /**
- * Spoooky.js - A JavaScript Multiagent Board Game Framework Based On Monte Carlo Methods
- *
- * @author Jan Gerrit Wieners <jan@jan-wieners.de>
- *
- * Copyright (c) Jan G. Wieners; Licensed under the MIT License
- *
- * http://www.spoookyjs.de, https://github.com/janwieners/spoookyjs
- **/
-
-/**
  * Spoooky.MetaAgent
  * Every game is played by a number of different meta agents (the players of the game).
  * Those meta agents own (sub)-agents which focus different aspects of the game

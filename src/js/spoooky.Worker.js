@@ -3,10 +3,6 @@
 // Import necessary scripts to build virtual SpoookyJS games
 importScripts("deps-worker.min.js", "spoooky.min.js");
 
-
-
-
-
 // Debug imports
 /*
 importScripts("libs/underscore-min.js",
