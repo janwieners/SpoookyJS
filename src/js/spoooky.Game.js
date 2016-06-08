@@ -558,7 +558,6 @@ Spoooky.Game = function() {
 
             // Perform dedicated jobs after executed move
             self_Game.executePostMoveJobs();
-
         }
 
         // Artificial Player

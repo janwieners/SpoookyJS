@@ -33,7 +33,6 @@ Spoooky.Areas = function(game) {
      * @returns {boolean}
      */
     self_Areas.isMove = function(areaName) {
-
         return (self_Areas.getArea(areaName).moveID !== 0);
     };
 
@@ -52,7 +51,6 @@ Spoooky.Areas = function(game) {
      * @returns {*|number|String}
      */
     self_Areas.getMoveID = function(areaName) {
-
         return self_Areas.getArea(areaName).moveID;
     };
 
