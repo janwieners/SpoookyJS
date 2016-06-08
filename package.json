@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/janwieners/SpoookyJS.git"
   },
-  "version": "0.4.1",
+  "version": "0.5.1",
   "license": "MIT",
   "keywords": [
     "monte carlo simulation",
@@ -19,22 +19,18 @@
     "Jan Gerrit Wieners"
   ],
   "licence": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules"
-  ],
   "dependencies": {
     "angular": "~1.5.6",
     "angular-ui-bootstrap": "~1.3.3",
     "bootstrap": "~3.3.6",
     "c3": "~0.4.11",
     "d3": "~3.5.17",
-    "file-saver": "^1.3.0",
+    "file-saver": "^1.3.1",
     "jquery": "~2.2.4",
     "underscore": "~1.8.3"
   },
   "devDependencies": {
-    "browser-sync": "^2.12.10",
+    "browser-sync": "^2.13.0",
     "del": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
