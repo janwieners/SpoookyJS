@@ -202,7 +202,7 @@ gulp.task('html2js', function() {
         .pipe(gulp.dest(path.dist + 'js'));
 });
 
-gulp.task('server', ['build'], function() {
+gulp.task('server', function() {
 
     browserSync.init({
         server: {
