@@ -92,13 +92,6 @@ gulp.task('copy-apidocs', function() {
         .pipe(gulp.dest(path.dist + 'docs'));
 });
 
-gulp.task('default', function() {
-
-    runSequence(
-        'build'
-    );
-});
-
 gulp.task('compress-spoooky', function() {
 
     return gulp.src([
@@ -209,7 +202,7 @@ gulp.task('html2js', function() {
         .pipe(gulp.dest(path.dist + 'js'));
 });
 
-gulp.task('serve', ['build'], function() {
+gulp.task('server', ['build'], function() {
 
     browserSync.init({
         server: {

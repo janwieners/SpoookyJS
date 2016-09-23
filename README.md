@@ -23,24 +23,24 @@ To install the necessary dependencies for SpoookyJS, please run the following co
 git clone https://github.com/janwieners/SpoookyJS.git
 cd SpoookyJS
 npm install
-npm install -g bower gulp
-bower install
 ```
 
 ### Build the SpoookyJS libraries
 
-Start gulp's default task to build the SpoookyJS libraries and necessary dependencies: 
+Run 
 
 ```
-gulp
+npm run build
 ```
+
+to build the SpoookyJS libraries and necessary dependencies.
 
 ### Running the development server
 
 Use 
 
 ```
-gulp server
+npm start
 ```
 
-to start your development server at [http://localhost:1503/](http://localhost:1503/).
+after building SpoookyJS to start your development server at [http://localhost:1503/](http://localhost:1503/).
