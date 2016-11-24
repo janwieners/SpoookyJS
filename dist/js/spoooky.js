@@ -5753,7 +5753,7 @@ Spoooky.Agent = function(metaAgent, agentID) {
  * @param game
  * @constructor
  */
-Spoooky.MetaAgent = function(game) {
+Spoooky.MetaAgent = function (game) {
 
     var self_MetaAgent = this,
         myGame = game;
@@ -5768,7 +5768,7 @@ Spoooky.MetaAgent = function(game) {
      * Sets the name of the meta agent
      * @param playerName
      */
-    self_MetaAgent.setName = function(playerName) {
+    self_MetaAgent.setName = function (playerName) {
         self_MetaAgent.name = playerName;
     };
 
@@ -5776,7 +5776,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets the name of the meta agent
      * @returns {string}
      */
-    self_MetaAgent.getName = function() {
+    self_MetaAgent.getName = function () {
         return self_MetaAgent.name;
     };
 
@@ -5784,7 +5784,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets the game the meta agent is connected to
      * @returns {*}
      */
-    self_MetaAgent.getGame = function() {
+    self_MetaAgent.getGame = function () {
         return myGame;
     };
 
@@ -5799,7 +5799,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets the unique identifier of the mega agent
      * @returns {number}
      */
-    self_MetaAgent.getID = function() {
+    self_MetaAgent.getID = function () {
         return self_MetaAgent.ID;
     };
 
@@ -5807,7 +5807,7 @@ Spoooky.MetaAgent = function(game) {
      * Sets the unique identifier of the meta agent
      * @param setID
      */
-    self_MetaAgent.setID = function(setID) {
+    self_MetaAgent.setID = function (setID) {
         self_MetaAgent.ID = setID;
     };
 
@@ -5822,7 +5822,7 @@ Spoooky.MetaAgent = function(game) {
      * @param playerType
      * @returns {boolean}
      */
-    self_MetaAgent.setType = function(playerType) {
+    self_MetaAgent.setType = function (playerType) {
 
         if (playerType === "HUMAN" || playerType === "ARTIFICIAL") {
             self_MetaAgent.type = playerType;
@@ -5842,7 +5842,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Enable learning of the meta agent
      */
-    self_MetaAgent.enableLearning = function() {
+    self_MetaAgent.enableLearning = function () {
         self_MetaAgent.learningEnabled = true;
     };
 
@@ -5855,7 +5855,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Finish learning if game has ended
      */
-    self_MetaAgent.gameHasEnded = function() {
+    self_MetaAgent.gameHasEnded = function () {
 
         if (self_MetaAgent.learningEnabled) {
 
@@ -5884,7 +5884,7 @@ Spoooky.MetaAgent = function(game) {
      * Associate an entity with the meta agent
      * @param entity
      */
-    self_MetaAgent.associateEntity = function(entity, quantity) {
+    self_MetaAgent.associateEntity = function (entity, quantity) {
 
         // Associate the entity with the meta agent
         entity.associatedWithMetaAgent = self_MetaAgent.ID;
@@ -5901,7 +5901,7 @@ Spoooky.MetaAgent = function(game) {
      * @param entityBluePrint
      * @returns {Object}
      */
-    self_MetaAgent.entityFactory = function(entityBluePrint) {
+    self_MetaAgent.entityFactory = function (entityBluePrint) {
 
         var newEntity,
             entityName = "",
@@ -5910,13 +5910,13 @@ Spoooky.MetaAgent = function(game) {
         if (entityBluePrint.entityName) {
             entityName = entityBluePrint.entityName;
         } else {
-            entityName = self_MetaAgent.ID + "_entity_" + parseInt(self_MetaAgent.countEntities()+1, 10);
+            entityName = self_MetaAgent.ID + "_entity_" + parseInt(self_MetaAgent.countEntities() + 1, 10);
         }
 
         if (entityBluePrint.entityID) {
             entityID = entityBluePrint.entityID;
         } else {
-            entityID = parseInt(self_MetaAgent.countEntities()+1, 10);
+            entityID = parseInt(self_MetaAgent.countEntities() + 1, 10);
         }
 
         newEntity = new Spoooky.Entity(entityName, entityID,
@@ -5933,12 +5933,12 @@ Spoooky.MetaAgent = function(game) {
 
                 item = moves[i];
                 newEntity.addMove({
-                    name : item.name,
-                    type : item.type,
-                    direction : item.direction,
-                    frequency : item.frequency,
-                    conditions : item.conditions,
-                    postMove : item.postMove
+                    name: item.name,
+                    type: item.type,
+                    direction: item.direction,
+                    frequency: item.frequency,
+                    conditions: item.conditions,
+                    postMove: item.postMove
                 });
             }
         }
@@ -5958,12 +5958,12 @@ Spoooky.MetaAgent = function(game) {
 
                 item = entityBluePrint.goals[i];
                 newEntity.assembleGoal({
-                    type : item.type,
-                    name : item.name,
-                    atoms : item.atoms,
+                    type: item.type,
+                    name: item.name,
+                    atoms: item.atoms,
                     // This goal will be executed for all fields which are reachable by the following entity's move
-                    move : item.move,
-                    area : item.area
+                    move: item.move,
+                    area: item.area
                 });
             }
         }
@@ -6006,7 +6006,7 @@ Spoooky.MetaAgent = function(game) {
      * Add an entity to the game model and associate the entity with this meta agent
      * @param currentEntity
      */
-    self_MetaAgent.addEntity = function(currentEntity) {
+    self_MetaAgent.addEntity = function (currentEntity) {
 
         currentEntity.setAssociatedPlayerID(self_MetaAgent.ID);
         myGame.models.Entities[self_MetaAgent.ID].push(currentEntity);
@@ -6017,11 +6017,13 @@ Spoooky.MetaAgent = function(game) {
      * @param arrayID
      * @returns {*}
      */
-    self_MetaAgent.getEntityFromArray = function(arrayID) {
+    self_MetaAgent.getEntityFromArray = function (arrayID) {
 
         if (arrayID >= 0 && arrayID < self_MetaAgent.countEntities()) {
             return myGame.models.Entities[self_MetaAgent.ID][arrayID];
-        } else { return false; }
+        } else {
+            return false;
+        }
     };
 
     /**
@@ -6029,7 +6031,7 @@ Spoooky.MetaAgent = function(game) {
      * @param entityID
      * @returns {*}
      */
-    self_MetaAgent.getEntityWithID = function(entityID) {
+    self_MetaAgent.getEntityWithID = function (entityID) {
 
         var cur, count = self_MetaAgent.countEntities(),
             entities = myGame.models.Entities[self_MetaAgent.ID];
@@ -6048,7 +6050,7 @@ Spoooky.MetaAgent = function(game) {
      * Find and return all associated entities
      * @returns {*}
      */
-    self_MetaAgent.getEntities = function() {
+    self_MetaAgent.getEntities = function () {
         return myGame.models.Entities[self_MetaAgent.ID];
     };
 
@@ -6056,7 +6058,7 @@ Spoooky.MetaAgent = function(game) {
      * Find and return all entities already placed the game board
      * @returns {*}
      */
-    self_MetaAgent.getOnBoardEntities = function() {
+    self_MetaAgent.getOnBoardEntities = function () {
 
         var entities = myGame.models.Entities[self_MetaAgent.ID],
             cnt = entities.length, cur, onBoard = [];
@@ -6077,7 +6079,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets all entities not placed on the game board
      * @returns {Array}
      */
-    self_MetaAgent.getOffBoardEntities = function() {
+    self_MetaAgent.getOffBoardEntities = function () {
 
         var entities = myGame.models.Entities[self_MetaAgent.ID],
             cnt = entities.length, cur, offBoard = [];
@@ -6099,7 +6101,7 @@ Spoooky.MetaAgent = function(game) {
      * @param entityType
      * @returns {Array}
      */
-    self_MetaAgent.getEntitiesOfType = function(entityType) {
+    self_MetaAgent.getEntitiesOfType = function (entityType) {
 
         var returnEntities = [], cnt = self_MetaAgent.countEntities(),
             entities = myGame.models.Entities[self_MetaAgent.ID];
@@ -6117,7 +6119,7 @@ Spoooky.MetaAgent = function(game) {
      * Find entities which can be dropped on the game board
      * @returns {Array}
      */
-    self_MetaAgent.getPlaceableEntities = function() {
+    self_MetaAgent.getPlaceableEntities = function () {
 
         var returnEntities = [], cur,
             index = self_MetaAgent.countEntities(),
@@ -6151,7 +6153,7 @@ Spoooky.MetaAgent = function(game) {
      * @param entityName
      * @returns {*}
      */
-    self_MetaAgent.getEntityWithName = function(entityName) {
+    self_MetaAgent.getEntityWithName = function (entityName) {
 
         for (var index = self_MetaAgent.countEntities(); index--;) {
             if (myGame.models.Entities[self_MetaAgent.ID][index].name === entityName) {
@@ -6165,7 +6167,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets the next (opponent) meta agent
      * @returns {*}
      */
-    self_MetaAgent.getNextOpponentPlayer = function() {
+    self_MetaAgent.getNextOpponentPlayer = function () {
 
         if (self_MetaAgent.ID < self_MetaAgent.getGame().models.MetaAgents.length - 1) {
             return self_MetaAgent.getGame().getPlayerWithID(parseInt(self_MetaAgent.ID + 1, 10));
@@ -6178,7 +6180,7 @@ Spoooky.MetaAgent = function(game) {
      * @param mode
      * @returns {Array}
      */
-    self_MetaAgent.getOccupiedFields = function(mode) {
+    self_MetaAgent.getOccupiedFields = function (mode) {
 
         var occupiedFields = [],
             game = self_MetaAgent.getGame(),
@@ -6242,7 +6244,7 @@ Spoooky.MetaAgent = function(game) {
      * Deletes an Entity
      * @param {String} entityName Name of the entity which will be deleted
      */
-    self_MetaAgent.deleteEntity = function(entityName) {
+    self_MetaAgent.deleteEntity = function (entityName) {
 
         var cnt = self_MetaAgent.countEntities(),
             entities = myGame.models.Entities[self_MetaAgent.ID];
@@ -6261,7 +6263,7 @@ Spoooky.MetaAgent = function(game) {
      * Counts associated entities
      * @returns {Number} Number of associated entities
      */
-    self_MetaAgent.countEntities = function() {
+    self_MetaAgent.countEntities = function () {
         return myGame.models.Entities[self_MetaAgent.ID].length;
     };
 
@@ -6269,12 +6271,14 @@ Spoooky.MetaAgent = function(game) {
      * Returns every possible standard move of all associated entities
      * @returns {*}
      */
-    self_MetaAgent.getAllEntityStdMoves = function() {
+    self_MetaAgent.getAllEntityStdMoves = function () {
 
         var entities = self_MetaAgent.getEntities(),
             entityCount = entities.length;
 
-        if (entityCount === 0) { return false; }
+        if (entityCount === 0) {
+            return false;
+        }
 
         var entity, entityMoves,
             allEntityStdMoves = [],
@@ -6294,7 +6298,9 @@ Spoooky.MetaAgent = function(game) {
             }
         }
 
-        if (allEntityStdMoves.length === 0) { return false; }
+        if (allEntityStdMoves.length === 0) {
+            return false;
+        }
         return allEntityStdMoves;
     };
 
@@ -6302,12 +6308,14 @@ Spoooky.MetaAgent = function(game) {
      * Returns every possible goal move of all associated entities
      * @returns {*}
      */
-    self_MetaAgent.getAllEntityGoalMoves = function() {
+    self_MetaAgent.getAllEntityGoalMoves = function () {
 
         var entities = self_MetaAgent.getEntities(),
             entityCount = entities.length;
 
-        if (entityCount === 0) { return false; }
+        if (entityCount === 0) {
+            return false;
+        }
 
         var entity, goalMoves,
             allEntityGoalMoves = [],
@@ -6327,7 +6335,9 @@ Spoooky.MetaAgent = function(game) {
         }
 
         // Return all goal moves of the entity
-        if (allEntityGoalMoves.length === 0) { return false; }
+        if (allEntityGoalMoves.length === 0) {
+            return false;
+        }
         return allEntityGoalMoves;
     };
 
@@ -6341,7 +6351,7 @@ Spoooky.MetaAgent = function(game) {
      * Set cell connections to check for opponent patterns.
      * @param connections
      */
-    self_MetaAgent.setCellConnections = function(connections) {
+    self_MetaAgent.setCellConnections = function (connections) {
         self_MetaAgent.cellConnections = connections;
     };
 
@@ -6349,7 +6359,7 @@ Spoooky.MetaAgent = function(game) {
      * Find a move where an associated entity is moved in the game world
      * @returns {Array}
      */
-    self_MetaAgent.getEntityMovesMoving = function() {
+    self_MetaAgent.getEntityMovesMoving = function () {
 
         var entities = self_MetaAgent.getEntities(),
             entityCount = entities.length;
@@ -6401,8 +6411,12 @@ Spoooky.MetaAgent = function(game) {
                 game.performPostMoveChecks(entity, goalMoves);
 
                 // Save the moves
-                allEntityMoves.push.apply(allEntityMoves, entityMoves);
-                allEntityMoves.push.apply(allEntityMoves, goalMoves);
+                if (entityMoves) {
+                    allEntityMoves.push.apply(allEntityMoves, entityMoves);
+                }
+                if (goalMoves) {
+                    allEntityMoves.push.apply(allEntityMoves, goalMoves);
+                }
             }
         }
 
@@ -6420,13 +6434,13 @@ Spoooky.MetaAgent = function(game) {
      * Find an entity which is placed in the game world
      * @returns {Array}
      */
-    self_MetaAgent.getEntityMovesPlacing = function() {
+    self_MetaAgent.getEntityMovesPlacing = function () {
 
         // Find entities to place in the game world
         var entities = self_MetaAgent.getPlaceableEntities();
 
         // No entities found
-        if (entities.length === 0)  {
+        if (entities.length === 0) {
             return [];
         }
 
@@ -6451,22 +6465,24 @@ Spoooky.MetaAgent = function(game) {
                     moveID = game.getUniqueMoveID(entity.name, "place-entity", dest.x, dest.y);
 
                     possibleMoves.push({
-                        type : "PLACE",
-                        name : "place entity",
+                        type: "PLACE",
+                        name: "place entity",
                         entity: entity,
-                        targetX : dest.x,
-                        targetY : dest.y,
-                        moveClass : "move_place",
-                        ID : moveID });
+                        targetX: dest.x,
+                        targetY: dest.y,
+                        moveClass: "move_place",
+                        ID: moveID
+                    });
 
                     game.addJobForMoveID({
-                        jobID : moveID,
-                        jobName : "Put the Entity to the destination field",
-                        job : "Place Entity",
-                        jobArguments : {
-                            entity : entity,
-                            xPosition : dest.x,
-                            yPosition : dest.y }
+                        jobID: moveID,
+                        jobName: "Put the Entity to the destination field",
+                        job: "Place Entity",
+                        jobArguments: {
+                            entity: entity,
+                            xPosition: dest.x,
+                            yPosition: dest.y
+                        }
                     });
                 }
                 return possibleMoves;
@@ -6494,37 +6510,39 @@ Spoooky.MetaAgent = function(game) {
                         dest.targetX, dest.targetY);
 
                     possibleMoves.push({
-                        type : "PLACE",
-                        name : "place entity",
+                        type: "PLACE",
+                        name: "place entity",
                         entity: entity,
-                        targetX : dest.targetX,
-                        targetY : dest.targetY,
-                        moveClass : "move_place",
-                        ID : moveID });
+                        targetX: dest.targetX,
+                        targetY: dest.targetY,
+                        moveClass: "move_place",
+                        ID: moveID
+                    });
 
                     game.addJobForMoveID({
-                        jobID : moveID,
-                        jobName : "Put the Entity to the destination field",
-                        job : "Place Entity",
-                        jobArguments : {
-                            entity : entity,
-                            xPosition : dest.targetX,
-                            yPosition : dest.targetY }
+                        jobID: moveID,
+                        jobName: "Put the Entity to the destination field",
+                        job: "Place Entity",
+                        jobArguments: {
+                            entity: entity,
+                            xPosition: dest.targetX,
+                            yPosition: dest.targetY
+                        }
                     });
 
                     // Process game after one successfully executed move
                     // Implemented for the game of amazons
                     game.addJobForMoveID({
-                        jobID : moveID,
-                        jobName : "Let Players Change",
+                        jobID: moveID,
+                        jobName: "Let Players Change",
                         job: "Enable Player Change"
                     });
 
                     game.addJobForMoveID({
-                        jobID : moveID,
-                        jobName : "Change Back To Move Mode",
+                        jobID: moveID,
+                        jobName: "Change Back To Move Mode",
                         job: "Change Game Mode",
-                        jobArguments : { mode: "MOVING" }
+                        jobArguments: {mode: "MOVING"}
                     });
                 }
                 return possibleMoves;
@@ -6541,7 +6559,7 @@ Spoooky.MetaAgent = function(game) {
      * Free Capture Mode, i.e. for the game of nine mens morris
      * @returns {Array}
      */
-    self_MetaAgent.getEntityMovesFreeCapture = function() {
+    self_MetaAgent.getEntityMovesFreeCapture = function () {
 
         // Currently: Check for patterns of opponent entities
         // TODO: Generalize to enable other free capture moves likes capturing any opponent entity
@@ -6560,13 +6578,13 @@ Spoooky.MetaAgent = function(game) {
                     op.x, op.y);
 
                 captureMoves.push({
-                    ID : moveID,
-                    type : "FREE CAPTURE",
-                    entity : false,
-                    name : "Capture Opponent",
-                    targetX : op.x,
-                    targetY : op.y,
-                    moveClass : "move_goal"
+                    ID: moveID,
+                    type: "FREE CAPTURE",
+                    entity: false,
+                    name: "Capture Opponent",
+                    targetX: op.x,
+                    targetY: op.y,
+                    moveClass: "move_goal"
                 });
             }
         }
@@ -6578,7 +6596,7 @@ Spoooky.MetaAgent = function(game) {
      * Returns every possible standard and goal move of all associated entities
      * @returns {*}
      */
-    self_MetaAgent.getAllEntityMoves = function() {
+    self_MetaAgent.getAllEntityMoves = function () {
 
         var game = self_MetaAgent.getGame();
 
@@ -6604,7 +6622,7 @@ Spoooky.MetaAgent = function(game) {
      * @param agentFocus
      * @returns {Array}
      */
-    self_MetaAgent.getExecutableMovesByAgentFocus = function(agentFocus) {
+    self_MetaAgent.getExecutableMovesByAgentFocus = function (agentFocus) {
 
         if (self_MetaAgent.getGame().models.gameState === "END") {
             return [];
@@ -6730,7 +6748,7 @@ Spoooky.MetaAgent = function(game) {
      * Get the number of agents owned by the meta agent
      * @returns {Number}
      */
-    self_MetaAgent.countAgents = function() {
+    self_MetaAgent.countAgents = function () {
         return self_MetaAgent.agents.length;
     };
 
@@ -6738,7 +6756,7 @@ Spoooky.MetaAgent = function(game) {
      * Gets all the associated agents
      * @returns {Array}
      */
-    self_MetaAgent.getAgents = function() {
+    self_MetaAgent.getAgents = function () {
         return self_MetaAgent.agents;
     };
 
@@ -6747,7 +6765,7 @@ Spoooky.MetaAgent = function(game) {
      * @param id
      * @returns {*}
      */
-    self_MetaAgent.getAgentWithID = function(id) {
+    self_MetaAgent.getAgentWithID = function (id) {
 
         var i, agents = self_MetaAgent.agents;
 
@@ -6771,8 +6789,8 @@ Spoooky.MetaAgent = function(game) {
      * @param fitness
      * @param uctConstant
      */
-    self_MetaAgent.assembleAgent = function(agentID, agentRole, agentFocus,
-                                            maxSteps, maxTime, fitness, uctConstant) {
+    self_MetaAgent.assembleAgent = function (agentID, agentRole, agentFocus,
+                                             maxSteps, maxTime, fitness, uctConstant) {
 
         var subAgent, metaID = self_MetaAgent.ID;
         subAgent = new Spoooky.Agent(metaID, agentID);
@@ -6789,7 +6807,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Adds a default / standard agent to the agent ensemble
      */
-    self_MetaAgent.addStandardAgent = function() {
+    self_MetaAgent.addStandardAgent = function () {
 
         var agentID, agents, lastID = 0;
 
@@ -6816,7 +6834,7 @@ Spoooky.MetaAgent = function(game) {
      * Delete an agent from the ensemble with a specific ID
      * @param agentID
      */
-    self_MetaAgent.deleteAgentWithID = function(agentID) {
+    self_MetaAgent.deleteAgentWithID = function (agentID) {
 
         for (var i = self_MetaAgent.agents.length; i--;) {
 
@@ -6836,7 +6854,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Assemble associated agents for multi agent based decision-making
      */
-    self_MetaAgent.assembleAgents = function() {
+    self_MetaAgent.assembleAgents = function () {
 
         var agentUrl = "agentmemory_" + self_MetaAgent.ID + ".json",
             success = false;
@@ -6846,14 +6864,14 @@ Spoooky.MetaAgent = function(game) {
             url: agentUrl,
             dataType: "json",
             async: false,
-            success : function(data) {
+            success: function (data) {
 
                 success = true;
 
                 Spoooky.AgentLog.pushMessage("Lade Agentenerinnerungen fuer Meta Agent " + self_MetaAgent.ID + ".");
                 Spoooky.AgentLog.pushMessage('<div class="progress progress-striped active">' +
-                '<div class="progress-bar"  role="progressbar" style="width: 100%">'+
-                '<span class="sr-only">Lade</span></div></div>');
+                    '<div class="progress-bar"  role="progressbar" style="width: 100%">' +
+                    '<span class="sr-only">Lade</span></div></div>');
 
                 // Create the learning module of the meta agent
                 self_MetaAgent.QLearner = new Spoooky.QLearner();
@@ -6862,14 +6880,14 @@ Spoooky.MetaAgent = function(game) {
                 self_MetaAgent.QLearner.reward = data.learnModule.rewards;
                 self_MetaAgent.QLearner.gameStates = data.learnModule.gameStates;
 
-                $.each(data.bestAgentEnsemble, function(i, agent) {
+                $.each(data.bestAgentEnsemble, function (i, agent) {
                     // Assemble all remembered agents
                     self_MetaAgent.assembleAgent(agent.ID, agent.role, agent.focus,
                         agent.maximumSteps, agent.thinkingTime, agent.fitness, agent.uctConstant);
                 });
 
             },
-            complete : function() {
+            complete: function () {
 
                 if (success) {
 
@@ -6881,13 +6899,13 @@ Spoooky.MetaAgent = function(game) {
                     Spoooky.AgentLog.pushMessage(stateCount + " gelernte Spielzustaende wurden erfolgreich aus der Datei " + agentUrl + " geladen.");
                 }
             },
-            error : function() {
+            error: function () {
 
                 // No agent memory available
                 if (self_MetaAgent.agents.length === 0) {
 
                     Spoooky.AgentLog.pushMessage("Keine Erinnerungen fuer Meta Agent " + self_MetaAgent.ID +
-                    " vorhanden: Datei " + agentUrl + " existiert nicht.");
+                        " vorhanden: Datei " + agentUrl + " existiert nicht.");
 
                     // Create the learning module of the meta agent
                     self_MetaAgent.QLearner = new Spoooky.QLearner();
@@ -6942,7 +6960,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Driver for ai methods
      */
-    self_MetaAgent.findBestMove = function() {
+    self_MetaAgent.findBestMove = function () {
 
         // Connect the ai routines with the current game state
         Spoooky.AI.game = self_MetaAgent.getGame();
@@ -6957,7 +6975,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Asks all of the associated agents for the best turn
      */
-    self_MetaAgent.askAgentsForDecision = function() {
+    self_MetaAgent.askAgentsForDecision = function () {
 
         //TESTGAME
         //var uctResults = Spoooky.AI.UCT(self_MetaAgent.getGame(), "ALL", 15000, 100, false, 0.9, true);
@@ -6970,8 +6988,8 @@ Spoooky.MetaAgent = function(game) {
         self_MetaAgent.bestMoves.length = 0;
 
         Spoooky.AgentLog.pushMessage("Meta agent " + self_MetaAgent.ID + " (" +
-        self_MetaAgent.getName() + ") fragt " +
-        self_MetaAgent.activeAgents + " assoziierte Agenten nach der besten Zugmoeglichkeit.");
+            self_MetaAgent.getName() + ") fragt " +
+            self_MetaAgent.activeAgents + " assoziierte Agenten nach der besten Zugmoeglichkeit.");
 
         var len = self_MetaAgent.agents.length;
 
@@ -6991,7 +7009,7 @@ Spoooky.MetaAgent = function(game) {
      * @param moveSuggestions
      * @returns {Array}
      */
-    self_MetaAgent.prepareAgentsMoveSuggestions = function(moveSuggestions) {
+    self_MetaAgent.prepareAgentsMoveSuggestions = function (moveSuggestions) {
 
         var accumulatedResults = [], mv, x, y,
             saved = false, saveMove, updatedSimSteps,
@@ -7019,13 +7037,13 @@ Spoooky.MetaAgent = function(game) {
 
                     // Manually copy all properties
                     saveMove = {
-                        simulationSteps : mv.simulationSteps,
-                        moveIndex : mv.moveIndex,
-                        agentID : updatedAgentID,
-                        visits : updatedVisits,
-                        target : mv.target,
-                        wins : updatedWins,
-                        lost : updatedLost
+                        simulationSteps: mv.simulationSteps,
+                        moveIndex: mv.moveIndex,
+                        agentID: updatedAgentID,
+                        visits: updatedVisits,
+                        target: mv.target,
+                        wins: updatedWins,
+                        lost: updatedLost
                     };
                     accumulatedResults[y] = saveMove;
                     saved = true;
@@ -7037,13 +7055,13 @@ Spoooky.MetaAgent = function(game) {
 
                 // Manually copy all properties
                 saveMove = {
-                    simulationSteps : mv.simulationSteps,
-                    moveIndex : mv.moveIndex,
-                    agentID : [mv.agentID],
-                    target : mv.target,
-                    visits : mv.visits,
-                    wins : mv.wins,
-                    lost : mv.lost
+                    simulationSteps: mv.simulationSteps,
+                    moveIndex: mv.moveIndex,
+                    agentID: [mv.agentID],
+                    target: mv.target,
+                    visits: mv.visits,
+                    wins: mv.wins,
+                    lost: mv.lost
                 };
                 accumulatedResults.push(saveMove);
             }
@@ -7057,7 +7075,7 @@ Spoooky.MetaAgent = function(game) {
      * Update the fitness of all agents in updateAgents
      * @param updateAgents
      */
-    self_MetaAgent.updateAgentsFitness = function(updateAgents) {
+    self_MetaAgent.updateAgentsFitness = function (updateAgents) {
 
         var fitnessChange = 0.5,
             agents = self_MetaAgent.getAgents(),
@@ -7087,7 +7105,7 @@ Spoooky.MetaAgent = function(game) {
      * Identifies and returns the fittest agent of the agent ensemble
      * @returns {*}
      */
-    self_MetaAgent.getFittestAgent = function() {
+    self_MetaAgent.getFittestAgent = function () {
 
         var agents = self_MetaAgent.getAgents(),
             i, fittest = 0, fittestAgent, current;
@@ -7107,7 +7125,7 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Replace unfit agents with most successful / fittest agents
      */
-    self_MetaAgent.replaceUnfitAgents = function() {
+    self_MetaAgent.replaceUnfitAgents = function () {
 
         var agents = self_MetaAgent.getAgents(),
             i, fittest = self_MetaAgent.getFittestAgent();
@@ -7118,8 +7136,8 @@ Spoooky.MetaAgent = function(game) {
             if (agents[i].fitness < 0.1) {
 
                 Spoooky.AgentLog.pushMessage("Agent #" + agents[i].ID + " hat eine schlechte Fitness von " +
-                agents[i].fitness + " und fokussiert nun den folgenden Spielaspekt: " +
-                fittest.focus);
+                    agents[i].fitness + " und fokussiert nun den folgenden Spielaspekt: " +
+                    fittest.focus);
 
                 agents[i].role = fittest.role;
                 agents[i].focus = fittest.focus;
@@ -7134,7 +7152,7 @@ Spoooky.MetaAgent = function(game) {
      * Update the meta agents q-learning module with simulated agent experience episodes
      * @param agentsLearnProcess
      */
-    self_MetaAgent.updateQLearner = function(agentsLearnProcess) {
+    self_MetaAgent.updateQLearner = function (agentsLearnProcess) {
 
         var reward, tmpReward, i,
             QLearner = self_MetaAgent.QLearner,
@@ -7209,13 +7227,13 @@ Spoooky.MetaAgent = function(game) {
      * Process an agents decision
      * @param agentDecision
      */
-    self_MetaAgent.processAgentDecision = function(agentDecision) {
+    self_MetaAgent.processAgentDecision = function (agentDecision) {
 
         // Save monte carlo tree search graphs
         self_MetaAgent.mctsData.push({
-            "agentID" : agentDecision.agentID,
-            "mctsGraph" : agentDecision.mctsGraph,
-            "uctConstant" : agentDecision.uctConstant
+            "agentID": agentDecision.agentID,
+            "mctsGraph": agentDecision.mctsGraph,
+            "uctConstant": agentDecision.uctConstant
         });
 
         // Try to manually garbage collect...
@@ -7227,10 +7245,10 @@ Spoooky.MetaAgent = function(game) {
         self_MetaAgent.bestMoves.push(agentDecision);
 
         Spoooky.AgentLog.pushMessage("Agent #" +
-        agentDecision.agentID + " hat " + agentDecision.results.length +
-        " Zugmoeglichkeiten anhand von " + agentDecision.simCount +
-        " Monte Carlo Ausspielungen mit insgesamt " + agentDecision.simSteps +
-        " Simulationsschritten analysiert.");
+            agentDecision.agentID + " hat " + agentDecision.results.length +
+            " Zugmoeglichkeiten anhand von " + agentDecision.simCount +
+            " Monte Carlo Ausspielungen mit insgesamt " + agentDecision.simSteps +
+            " Simulationsschritten analysiert.");
 
         // Refresh the view after an agent has finished his work
         self_MetaAgent.getGame().refreshView();
@@ -7243,7 +7261,7 @@ Spoooky.MetaAgent = function(game) {
      * Check for agents finished thinking
      * @returns {boolean}
      */
-    self_MetaAgent.allAgentsHaveFinishedThinking = function() {
+    self_MetaAgent.allAgentsHaveFinishedThinking = function () {
 
         if (self_MetaAgent.finishedAgents === self_MetaAgent.activeAgents) {
 
@@ -7258,7 +7276,7 @@ Spoooky.MetaAgent = function(game) {
      * Sum up the work of all agents
      * @returns {{results: Array, simCount: number, simSteps: number}}
      */
-    self_MetaAgent.sumUpAgentsWork = function() {
+    self_MetaAgent.sumUpAgentsWork = function () {
 
         // Prepare the results
         var cur, move, decision = {}, simCount = 0, simSteps = 0,
@@ -7294,9 +7312,9 @@ Spoooky.MetaAgent = function(game) {
         self_MetaAgent.bestMoves.length = 0;
 
         return {
-            "results" : allResults,
-            "simCount" : simCount,
-            "simSteps" : simSteps
+            "results": allResults,
+            "simCount": simCount,
+            "simSteps": simSteps
         };
     };
 
@@ -7305,7 +7323,7 @@ Spoooky.MetaAgent = function(game) {
      * @param data
      * @returns {string}
      */
-    self_MetaAgent.getBestMove = function(data) {
+    self_MetaAgent.getBestMove = function (data) {
 
         var bestScore = Number.MAX_VALUE, cur, curScore, bestMove = "Random";
 
@@ -7335,14 +7353,14 @@ Spoooky.MetaAgent = function(game) {
 
                 // Print move details
                 Spoooky.AgentLog.pushMessage(cur.target + " [Agent(en) #" + cur.agentID +
-                "]<ul>" +
-                "<li>Besuche: " + cur.visits + "</li>" +
+                    "]<ul>" +
+                    "<li>Besuche: " + cur.visits + "</li>" +
                     //"<li>Niederlagen: " + cur.lost + "</li>" +
-                "<li>Gewinnhaeufigkeit: " +cur.wins + "</li>" +
-                "<li>Simulationsschritte: " + cur.simulationSteps + "</li>" +
-                "<li>Gewinnrate: " + (cur.wins / cur.visits) + "</li>" +
+                    "<li>Gewinnhaeufigkeit: " + cur.wins + "</li>" +
+                    "<li>Simulationsschritte: " + cur.simulationSteps + "</li>" +
+                    "<li>Gewinnrate: " + (cur.wins / cur.visits) + "</li>" +
                     //"<li>Wertung (Niederlagen/Besuch): "+ (cur.lost/cur.visits) + "</li>" +
-                "</ul>");
+                    "</ul>");
             }
         }
         return bestMove;
@@ -7351,10 +7369,10 @@ Spoooky.MetaAgent = function(game) {
     /**
      * Print a message that all agents have finished their work
      */
-    self_MetaAgent.printAgentsFinishedMessage = function() {
+    self_MetaAgent.printAgentsFinishedMessage = function () {
 
         // Delete "thinking" message
-        for ( var i = Spoooky.GameProcess.messages.length; i--;) {
+        for (var i = Spoooky.GameProcess.messages.length; i--;) {
 
             if (Spoooky.GameProcess.messages[i].type === "thinking") {
                 Spoooky.GameProcess.messages.splice(i, 1);
@@ -7367,7 +7385,7 @@ Spoooky.MetaAgent = function(game) {
      * Coordinate the individual decisions of associated agents
      * @param results
      */
-    self_MetaAgent.coordinateAgentDecisions = function(results) {
+    self_MetaAgent.coordinateAgentDecisions = function (results) {
 
         self_MetaAgent.processAgentDecision(results);
 
@@ -7394,18 +7412,20 @@ Spoooky.MetaAgent = function(game) {
             allResults.length = 0;
 
             Spoooky.AgentLog.pushMessage("<strong>" + simCount + " simulierte Spiele " +
-            " mit insgesamt " + simSteps + " Simulationsschritten (" +
-            (simSteps / simCount).toFixed(2) + " Schritte/Simulation) in " +
-            decisionTime + " Sekunden.</strong>");
+                " mit insgesamt " + simSteps + " Simulationsschritten (" +
+                (simSteps / simCount).toFixed(2) + " Schritte/Simulation) in " +
+                decisionTime + " Sekunden.</strong>");
 
             // Save statistics
             Spoooky.Statistics.logEntry(self_MetaAgent.ID, "simCount",
-                self_MetaAgent.getGame().models.moveCounter+1, simCount);
+                self_MetaAgent.getGame().models.moveCounter + 1, simCount);
             Spoooky.Statistics.logEntry(self_MetaAgent.ID, "simSteps",
-                self_MetaAgent.getGame().models.moveCounter+1, simSteps);
+                self_MetaAgent.getGame().models.moveCounter + 1, simSteps);
 
             accumulatedResults = _.sortBy(accumulatedResults,
-                function(num){ return num.visits; });
+                function (num) {
+                    return num.visits;
+                });
             accumulatedResults.reverse();
 
             // Get the best move of all mcts processed moves
@@ -7441,7 +7461,7 @@ Spoooky.MetaAgent = function(game) {
 
                 // Execute the best move
                 Spoooky.AgentLog.pushMessage("<strong>Meta Agent hat sich fuer die folgende Zugmoeglichkeit entschieden: " +
-                bestMove.target + "</strong>");
+                    bestMove.target + "</strong>");
                 self_MetaAgent.getGame().executeArtificialMove(bestMove);
             }
 
@@ -7466,12 +7486,12 @@ Spoooky.MetaAgent = function(game) {
      * Driver for Monte Carlo Methods, AB-Pruning, etc.
      * @returns {*}
      */
-    self_MetaAgent.artificialMove = function() {
+    self_MetaAgent.artificialMove = function () {
 
         Spoooky.GameProcess.pushMessage(self_MetaAgent.getName() + " denkt nach...<br>" +
-        '<div class="progress progress-striped active">' +
-        '<div class="progress-bar"  role="progressbar" style="width: 100%">'+
-        '<span class="sr-only">Ich denke nach...</span></div></div>', "thinking");
+            '<div class="progress progress-striped active">' +
+            '<div class="progress-bar"  role="progressbar" style="width: 100%">' +
+            '<span class="sr-only">Ich denke nach...</span></div></div>', "thinking");
 
         self_MetaAgent.findBestMove();
     };
@@ -7482,15 +7502,25 @@ Spoooky.MetaAgent = function(game) {
      * @param compareOp
      * @returns {boolean}
      */
-    self_MetaAgent.hasEntitiesOnFieldWithFieldID = function(fieldID, compareOp) {
+    self_MetaAgent.hasEntitiesOnFieldWithFieldID = function (fieldID, compareOp) {
 
         var currentEntity,
             operators = {
-                "<": function(a, b) { return a < b },
-                "<=": function(a, b) { return a <= b },
-                ">": function(a, b) { return a > b },
-                ">=": function(a, b) { return a >= b },
-                "==": function(a, b) { return a == b }
+                "<": function (a, b) {
+                    return a < b
+                },
+                "<=": function (a, b) {
+                    return a <= b
+                },
+                ">": function (a, b) {
+                    return a > b
+                },
+                ">=": function (a, b) {
+                    return a >= b
+                },
+                "==": function (a, b) {
+                    return a == b
+                }
             };
 
         for (var entityCounter = self_MetaAgent.countEntities(); entityCounter--;) {

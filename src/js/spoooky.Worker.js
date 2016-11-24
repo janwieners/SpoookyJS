@@ -1,7 +1,7 @@
 "use strict";
 
 // Import necessary scripts to build virtual SpoookyJS games
-importScripts("deps-worker.min.js", "spoooky.min.js");
+importScripts("deps-worker.min.js", "spoooky.js");
 
 // Debug imports
 // ToDo: Add DEBUG flag
