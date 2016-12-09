@@ -1,26 +1,24 @@
 "use strict";
 
 // Import necessary scripts to build virtual SpoookyJS games
-importScripts("deps-worker.min.js", "spoooky.js");
+//importScripts("deps-worker.min.js", "spoooky.js");
 
 // Debug imports
 // ToDo: Add DEBUG flag
-/*
-importScripts("libs/underscore-min.js",
-    "spoooky.js",
-    "spoooky.Models.js",
-    "spoooky.Game.js",
-    "spoooky.DiceBox.js",
-    "spoooky.GridWelt.js",
-    "spoooky.OffBoard.js",
-    "spoooky.GameEvents.js",
-    "spoooky.JobQueue.js",
-    "spoooky.Areas.js",
-    "spoooky.Agent.js",
-    "spoooky.MetaAgent.js",
-    "spoooky.Entity.js",
-    "spoooky.AI.js");
-*/
+importScripts("deps-worker.min.js",
+    "debug/spoooky.js",
+    "debug/spoooky.Models.js",
+    "debug/spoooky.Game.js",
+    "debug/spoooky.DiceBox.js",
+    "debug/spoooky.GridWelt.js",
+    "debug/spoooky.OffBoard.js",
+    "debug/spoooky.GameEvents.js",
+    "debug/spoooky.JobQueue.js",
+    "debug/spoooky.Areas.js",
+    "debug/spoooky.Agent.js",
+    "debug/spoooky.MetaAgent.js",
+    "debug/spoooky.Entity.js",
+    "debug/spoooky.AI.js");
 
 self.addEventListener("message", function(e) {
 

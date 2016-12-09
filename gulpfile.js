@@ -20,6 +20,7 @@ gulp.task('build', function() {
         'clean',
         'compress-spoooky',
         'compress-worker',
+        'copy-debugfiles',
         'copy-blueprints',
         'compress-blueprints',
         'compress-deps',
@@ -113,6 +114,12 @@ gulp.task('compress-spoooky', function() {
         .pipe(rename('spoooky.min.js'))
         .pipe(uglify())
         .pipe(gulp.dest(path.dist + 'js'));
+});
+
+gulp.task('copy-debugfiles', function() {
+
+    return gulp.src(path.src + '/**/*')
+        .pipe(gulp.dest(path.dist + 'js/debug'));
 });
 
 gulp.task('compress-worker', function() {
@@ -223,7 +230,7 @@ gulp.task('server', function() {
         'src/js/spoooky.Agent.js',
         'src/js/spoooky.MetaAgent.js',
         'src/js/spoooky.Entity.js',
-        'src/js/spoooky.AI.js'], ['compress-spoooky']);
+        'src/js/spoooky.AI.js'], ['compress-spoooky', 'copy-debugfiles']);
 
     gulp.watch(path.src + 'spoooky.Worker.js', ['compress-worker']);
     gulp.watch(path.src + 'blueprints/*.js', ['copy-blueprints', 'compress-blueprints']);
