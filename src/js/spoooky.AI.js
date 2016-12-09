@@ -329,7 +329,6 @@ Spoooky.AI = {
                 if (learn) {
                     fromState = game.gameWorld.createBoardSignature();
                 }
-
                 execMove = allMoves[_.random(0, allMoves.length-1)];
 
                 game.executeMove(execMove);

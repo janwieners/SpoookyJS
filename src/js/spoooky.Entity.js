@@ -1270,6 +1270,8 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                             // Identify target coordinates
                             target = { x: destination.position.x, y: destination.position.y };
 
+                            if (target.x === null ||target.y === null) { continue; }
+
                             moveID = game.getUniqueMoveID(self_Entity.name,
                                 currentGoal.name, target.x, target.y);
 

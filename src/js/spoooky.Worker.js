@@ -1,10 +1,11 @@
 "use strict";
 
 // Import necessary scripts to build virtual SpoookyJS games
-//importScripts("deps-worker.min.js", "spoooky.js");
+importScripts("deps-worker.min.js", "spoooky.js");
 
 // Debug imports
 // ToDo: Add DEBUG flag
+/*
 importScripts("deps-worker.min.js",
     "debug/spoooky.js",
     "debug/spoooky.Models.js",
@@ -19,6 +20,7 @@ importScripts("deps-worker.min.js",
     "debug/spoooky.MetaAgent.js",
     "debug/spoooky.Entity.js",
     "debug/spoooky.AI.js");
+*/
 
 self.addEventListener("message", function(e) {
 

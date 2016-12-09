@@ -521,7 +521,6 @@ console.log('here')
          * @param game
          */
         "Highlight Dice Target Cell" : function(gameEvent, game) {
-
             game.highlightCell(gameEvent.entityLink.targeting.x, gameEvent.entityLink.targeting.y,
                 gameEvent.jobArguments, gameEvent.jobID);
         },

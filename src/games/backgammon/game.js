@@ -87,7 +87,7 @@ game.addDice(1, 6);
 game.addDice(1, 6);
 
 // Set the player who will start the game
-game.setPlayer(player2);
+game.setPlayer(player1);
 
 // Set the initial game state
 game.setGameState("WAITINGFORDICEROLL");

@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/janwieners/SpoookyJS.git"
   },
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "keywords": [
     "monte carlo simulation",

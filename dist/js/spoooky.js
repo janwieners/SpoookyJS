@@ -5210,7 +5210,6 @@ console.log('here')
          * @param game
          */
         "Highlight Dice Target Cell" : function(gameEvent, game) {
-
             game.highlightCell(gameEvent.entityLink.targeting.x, gameEvent.entityLink.targeting.y,
                 gameEvent.jobArguments, gameEvent.jobID);
         },
@@ -8805,6 +8804,8 @@ Spoooky.Entity = function(entityName, entityID, typeID, game) {
                             // Identify target coordinates
                             target = { x: destination.position.x, y: destination.position.y };
 
+                            if (target.x === null ||target.y === null) { continue; }
+
                             moveID = game.getUniqueMoveID(self_Entity.name,
                                 currentGoal.name, target.x, target.y);
 
@@ -9274,7 +9275,6 @@ Spoooky.AI = {
                 if (learn) {
                     fromState = game.gameWorld.createBoardSignature();
                 }
-
                 execMove = allMoves[_.random(0, allMoves.length-1)];
 
                 game.executeMove(execMove);
