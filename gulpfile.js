@@ -148,8 +148,8 @@ gulp.task('compress-deps', function() {
         path.components + 'angular/angular.min.js',
         path.components + 'angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
         path.components + 'bootstrap/dist/js/bootstrap.min.js',
-        path.components + 'c3/c3.min.js',
         path.components + 'd3/d3.min.js',
+        path.components + 'c3/c3.min.js',
         path.components + 'file-saver/FileSaver.min.js',
         path.components + 'underscore/underscore-min.js']
     ).pipe(concat('deps.min.js'))
