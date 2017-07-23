@@ -28,14 +28,14 @@
     "angular": "^1.6.5",
     "angular-ui-bootstrap": "^2.5.0",
     "bootstrap": "^3.3.7",
-    "c3": "^0.4.14",
+    "c3": "^0.4.15",
     "d3": "^3.5.17",
     "file-saver": "^1.3.3",
     "jquery": "^2.2.4",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "browser-sync": "^2.18.12",
+    "browser-sync": "^2.18.13",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
