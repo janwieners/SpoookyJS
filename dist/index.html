@@ -1,173 +1,177 @@
 <!DOCTYPE html>
 <html lang="de">
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="author" content="Jan G. Wieners">
-        <meta name="description" content="SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework zur Implementation browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jan G. Wieners">
+    <meta name="description"
+          content="SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework zur Implementation browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz">
 
-        <title>SpoookyJS</title>
+    <title>SpoookyJS</title>
 
-        <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="shortcut icon" href="img/favicon.ico">
 
-        <link href="css/style-frontpage.min.css" rel="stylesheet" type="text/css">
-    </head>
+    <link href="css/style-frontpage.min.css" rel="stylesheet" type="text/css">
+</head>
 
-    <body id="page-top" data-spy="scroll" data-target="spoookynavbar">
+<body id="page-top" data-spy="scroll" data-target="spoookynavbar">
 
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 
-            <div class="container">
+    <div class="container">
 
-                <div class="navbar-header page-scroll">
+        <div class="navbar-header page-scroll">
 
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".spoookynavbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#page-top">
-                        <img id="logoghost" src="img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
-                    </a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".spoookynavbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#page-top">
+                <img id="logoghost" src="img/spoooky-ghost_flat.png" alt="Spoooky Logo"> SpoookyJS
+            </a>
 
-                </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div id="spoookynavbar" class="collapse navbar-collapse navbar-right navbar-main-collapse">
-
-                    <ul class="nav navbar-nav">
-
-                        <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                        <li class="hidden">
-                            <a href="#page-top"></a>
-                        </li>
-
-                        <li class="dropdown page-scroll">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                Spiele<b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="games/amazons/index.htm">Amazons</a></li>
-                                <li><a href="games/backgammon/index.htm">Backgammon</a></li>
-                                <li><a href="games/checkers/index.htm">Dame</a></li>
-                                <li><a href="games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
-                                <li><a href="games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
-                                <li><a href="games/ninemensmorris/index.htm">Mühle</a></li>
-                                <li><a href="games/chess/index.htm">Schach</a></li>
-                                <li><a href="games/chessvariant/index.htm">Schachvariante 5x6 (Tutorial)</a></li>
-                                <li><a href="games/tictactoe/index.htm">Tic Tac Toe</a></li>
-                                <li><a href="#games"></a></li>
-                            </ul>
-                        </li>
-
-                        <li class="page-scroll">
-                            <a href="#about">Über SpoookyJS</a>
-                        </li>
-
-                        <li class="page-scroll">
-                            <a href="#download">Download</a>
-                        </li>
-
-                        <li>
-                            <a href="tutorials/index.htm">Tutorial</a>
-                        </li>
-
-                        <li>
-                            <a href="docs/index.html">API</a>
-                        </li>
-
-                        <li class="page-scroll">
-                            <a href="#contact">Impressum</a>
-                        </li>
-
-                        <li>
-                            <a href="https://github.com/janwieners/SpoookyJS">
-                                <img src="img/GitHub-Mark-64px.png" alt="GitHub" style="width: 20px;">
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-                <!-- /.navbar-collapse -->
-            </div>
-            <!-- /.container -->
         </div>
 
-        <section class="intro">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="spoookynavbar" class="collapse navbar-collapse navbar-right navbar-main-collapse">
 
-            <div class="intro-body">
-                <div class="container">
-                    <div class="row">
+            <ul class="nav navbar-nav">
 
-                        <div class="col-md-10">
+                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
 
-                            <h1 class="brand-heading">SpoookyJS</h1>
-                            <p class="intro-text">
-                                Ein multiagentenbasiertes JavaScript-Framework zur Implementation browserbasierter Brettspiele und spielübergreifender künstlicher Intelligenz
-                            </p>
-                            <div class="page-scroll" style="text-align: center">
-                                <a href="#games" class="btn btn-circle page-scroll glyphicon glyphicon-arrow-down">
-                                </a>
-                            </div>
-                        </div>
+                <li class="dropdown page-scroll">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Spiele<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="games/amazons/index.htm">Amazons</a></li>
+                        <li><a href="games/backgammon/index.htm">Backgammon</a></li>
+                        <li><a href="games/checkers/index.htm">Dame</a></li>
+                        <li><a href="games/gomoku9x9/index.htm">Gomoku 9x9</a></li>
+                        <li><a href="games/gomoku15x15/index.htm">Gomoku 15x15</a></li>
+                        <li><a href="games/ninemensmorris/index.htm">Mühle</a></li>
+                        <li><a href="games/chess/index.htm">Schach</a></li>
+                        <li><a href="games/chessvariant/index.htm">Schachvariante 5x6 (Tutorial)</a></li>
+                        <li><a href="games/tictactoe/index.htm">Tic Tac Toe</a></li>
+                        <li><a href="#games"></a></li>
+                    </ul>
+                </li>
 
+                <li class="page-scroll">
+                    <a href="#about">Über SpoookyJS</a>
+                </li>
+
+                <li class="page-scroll">
+                    <a href="#download">Download</a>
+                </li>
+
+                <li>
+                    <a href="tutorials/index.htm">Tutorial</a>
+                </li>
+
+                <li>
+                    <a href="docs/index.html">API</a>
+                </li>
+
+                <li class="page-scroll">
+                    <a href="#contact">Impressum</a>
+                </li>
+
+                <li>
+                    <a href="https://github.com/janwieners/SpoookyJS">
+                        <img src="img/GitHub-Mark-64px.png" alt="GitHub" style="width: 20px;">
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</div>
+
+<section class="intro">
+
+    <div class="intro-body">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-10">
+
+                    <h1 class="brand-heading">SpoookyJS</h1>
+                    <p class="intro-text">
+                        Ein multiagentenbasiertes JavaScript-Framework zur Implementation browserbasierter Brettspiele
+                        und spielübergreifender künstlicher Intelligenz
+                    </p>
+                    <div class="page-scroll" style="text-align: center">
+                        <a href="#games" class="btn btn-circle page-scroll glyphicon glyphicon-arrow-down">
+                        </a>
                     </div>
                 </div>
+
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
-        <section id="games" class="content-section">
-            <div class="games-section">
-                <div class="container">
-
-                    <div class="row">
-
-                        <div class="col-md-6 col-md-offset-3">
-                            <h2>Lust auf eine Partie Tic Tac Toe?</h2>
-                            <div class="linedivider"></div>
-                            Einige Spiele und Spielvariationen wurden bereits mit SpoookyJS umgesetzt - Spiele wie <a href="games/tictactoe/index.htm">Tic Tac Toe</a>,
-                            <a href="games/checkers/index.htm">Dame</a>,
-                            <a href="games/chess/index.htm">Schach</a>,
-                            <a href="games/backgammon/index.htm">Backgammon</a>,
-                            <a href="games/gomoku15x15/index.htm">Gomoku</a> oder das
-                            <a href="games/amazons/index.htm">Spiel der Amazonen</a>.
-                        </div>
-
-                    </div>
-
-                    <div class="row" style="margin-top: 25px;">
-
-                        <div class="col-md-3 col-md-offset-3 ">
-                            <a href="games/tictactoe/index.htm">
-                                <img class="img-responsive" src="img/frontpage/tictactoe.png" alt="Tic Tac Toe">
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="games/checkers/index.htm">
-                                <img class="img-responsive" src="img/frontpage/checkers.png" alt="Dame">
-                            </a>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="container content-section">
+<section id="games" class="content-section">
+    <div class="games-section">
+        <div class="container">
 
             <div class="row">
 
-            <div class="col-md-5 vcenter">
-                <h2>Einfache Spielerstellung</h2>
-                <div class="linedivider"></div>
-                Mit SpoookyJS lassen sich browserbasierte Spiele ganz einfach erstellen. Dazu braucht's einzig das aktuelle <a href="#download">Downloadpaket</a> des Frameworks - und eine gute Portion JavaScript.
-                Wie die Spielerstellung mit SpoookyJS funktioniert, darüber informieren die <a href="tutorials/index.htm">Tutorials</a>.
+                <div class="col-md-6 col-md-offset-3">
+                    <h2>Lust auf eine Partie Tic Tac Toe?</h2>
+                    <div class="linedivider"></div>
+                    Einige Spiele und Spielvariationen wurden bereits mit SpoookyJS umgesetzt - Spiele wie <a
+                        href="games/tictactoe/index.htm">Tic Tac Toe</a>,
+                    <a href="games/checkers/index.htm">Dame</a>,
+                    <a href="games/chess/index.htm">Schach</a>,
+                    <a href="games/backgammon/index.htm">Backgammon</a>,
+                    <a href="games/gomoku15x15/index.htm">Gomoku</a> oder das
+                    <a href="games/amazons/index.htm">Spiel der Amazonen</a>.
+                </div>
+
             </div>
 
-            <div class="col-md-5 col-md-offset-1 vcenter">
+            <div class="row" style="margin-top: 25px;">
+
+                <div class="col-md-3 col-md-offset-3 ">
+                    <a href="games/tictactoe/index.htm">
+                        <img class="img-responsive" src="img/frontpage/tictactoe.png" alt="Tic Tac Toe">
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="games/checkers/index.htm">
+                        <img class="img-responsive" src="img/frontpage/checkers.png" alt="Dame">
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="about" class="container content-section">
+
+    <div class="row">
+
+        <div class="col-md-5 vcenter">
+            <h2>Einfache Spielerstellung</h2>
+            <div class="linedivider"></div>
+            Mit SpoookyJS lassen sich browserbasierte Spiele ganz einfach erstellen. Dazu braucht's einzig das aktuelle
+            <a href="#download">Downloadpaket</a> des Frameworks - und eine gute Portion JavaScript.
+            Wie die Spielerstellung mit SpoookyJS funktioniert, darüber informieren die <a href="tutorials/index.htm">Tutorials</a>.
+        </div>
+
+        <div class="col-md-5 col-md-offset-1 vcenter">
             <pre class="prettyprint linenums" style="height: 300px;">
     // ************************************************* //
     // *** Game Definition (games/tictactoe/game.js) *** //
@@ -444,179 +448,192 @@
         game : game,
         cellWidth : 165,
         cellHeight : 165 });</pre>
-            </div>
+        </div>
 
-            </div>
+    </div>
 
-            <div class="row margintoprow">
+    <div class="row margintoprow">
 
-                <div class="col-md-5 vcenter">
-                    <img src="img/frontpage/monte-carlo-tictactoe.jpg" class="img-responsive" alt="Monte Carlo Spielbaum im Tic Tac Toe Spiel">
-                </div>
+        <div class="col-md-5 vcenter">
+            <img src="img/frontpage/monte-carlo-tictactoe.jpg" class="img-responsive"
+                 alt="Monte Carlo Spielbaum im Tic Tac Toe Spiel">
+        </div>
 
-                <div class="col-md-5 col-md-offset-1 vcenter">
-                    <h2>Künstliche Intelligenz</h2>
-                    <div class="linedivider"></div>
-                    Für jedes Spiel, das mit SpoookyJS erstellt wird, stellt das Framework artifizielle Gegner bereit - out of the box.
-                    Die Entscheidungsfindung der künstlichen Spieler basiert auf dem Verfahren der Monte Carlo Spielbaumsuche.
-                </div>
+        <div class="col-md-5 col-md-offset-1 vcenter">
+            <h2>Künstliche Intelligenz</h2>
+            <div class="linedivider"></div>
+            Für jedes Spiel, das mit SpoookyJS erstellt wird, stellt das Framework artifizielle Gegner bereit - out of
+            the box.
+            Die Entscheidungsfindung der künstlichen Spieler basiert auf dem Verfahren der Monte Carlo Spielbaumsuche.
+        </div>
 
-            </div>
+    </div>
 
-            <div class="row margintoprow">
+    <div class="row margintoprow">
 
-                <div class="col-md-5 vcenter">
+        <div class="col-md-5 vcenter">
 
-                    <h2>Multiagentensystem</h2>
-                    <div class="linedivider"></div>
-                    In SpoookyJS entscheidet nicht eine einzige künstliche Intelligenz über sinnvolle Züge, sondern ein Agentenensemble.
-                    Jeder Agent des Agententeams analysiert den aktuellen Spielzustand auf unterschiedliche Art und Weise und unterbreitet einem übergeordneten Meta Agenten
-                    Zugvorschläge.
+            <h2>Multiagentensystem</h2>
+            <div class="linedivider"></div>
+            In SpoookyJS entscheidet nicht eine einzige künstliche Intelligenz über sinnvolle Züge, sondern ein
+            Agentenensemble.
+            Jeder Agent des Agententeams analysiert den aktuellen Spielzustand auf unterschiedliche Art und Weise und
+            unterbreitet einem übergeordneten Meta Agenten
+            Zugvorschläge.
 
-                </div>
+        </div>
 
-                <div class="col-md-5 col-md-offset-1 vcenter">
-                    <img src="img/frontpage/meta-agent-agentenensemble.jpg" class="img-responsive" alt="Agentenensemble">
-                </div>
+        <div class="col-md-5 col-md-offset-1 vcenter">
+            <img src="img/frontpage/meta-agent-agentenensemble.jpg" class="img-responsive" alt="Agentenensemble">
+        </div>
 
-            </div>
+    </div>
 
-            <div class="row margintoprow">
+    <div class="row margintoprow">
 
-                <div class="col-md-5 vcenter">
+        <div class="col-md-5 vcenter">
 
-                    <img src="img/frontpage/mechanical-turk.jpg" class="img-responsive" alt="Kempelens Schachtürke">
+            <img src="img/frontpage/mechanical-turk.jpg" class="img-responsive" alt="Kempelens Schachtürke">
 
 
-                </div>
+        </div>
 
-                <div class="col-md-5 col-md-offset-1 vcenter">
-                    <h2>Proof of Concept</h2>
-                    <div class="linedivider"></div>
-                    Künstliche Intelligenz in digitalen Spielen impliziert zumeist die Verwendung system- und hardwarenaher Programmiersprachen wie C++.
-                    SpoookyJS verfolgt den Ansatz einer Machbarkeitsstudie: Zwar sind die spielübergreifenden Gegner in SpoookyJS weit davon entfernt, gut - oder gar perfekt - zu spielen.
-                    Mit SpoookyJS steht jedoch ein wiederverwendbares Framework bereit, das Experimente um multiagentenbasierte künstliche Intelligenz in browserbasierten Spielen ermöglicht.
-                </div>
+        <div class="col-md-5 col-md-offset-1 vcenter">
+            <h2>Proof of Concept</h2>
+            <div class="linedivider"></div>
+            Künstliche Intelligenz in digitalen Spielen impliziert zumeist die Verwendung system- und hardwarenaher
+            Programmiersprachen wie C++.
+            SpoookyJS verfolgt den Ansatz einer Machbarkeitsstudie: Zwar sind die spielübergreifenden Gegner in
+            SpoookyJS weit davon entfernt, gut - oder gar perfekt - zu spielen.
+            Mit SpoookyJS steht jedoch ein wiederverwendbares Framework bereit, das Experimente um multiagentenbasierte
+            künstliche Intelligenz in browserbasierten Spielen ermöglicht.
+        </div>
 
-            </div>
+    </div>
 
-            <div class="row margintoprow">
+    <div class="row margintoprow">
 
-                <div class="col-md-5 vcenter">
+        <div class="col-md-5 vcenter">
 
-                    <h2>Flexible Systemarchitektur</h2>
-                    <div class="linedivider"></div>
-                    SpoookyJS ist modular aufgebaut und intendiert die Wiederverwendbarkeit seiner Komponenten und Module.
+            <h2>Flexible Systemarchitektur</h2>
+            <div class="linedivider"></div>
+            SpoookyJS ist modular aufgebaut und intendiert die Wiederverwendbarkeit seiner Komponenten und Module.
 
-                </div>
+        </div>
 
-                <div class="col-md-5 col-md-offset-1 vcenter">
-                    <img src="img/frontpage/systemskizze.jpg" class="img-responsive" alt="Systemskizze SpoookyJS">
-                </div>
+        <div class="col-md-5 col-md-offset-1 vcenter">
+            <img src="img/frontpage/systemskizze.jpg" class="img-responsive" alt="Systemskizze SpoookyJS">
+        </div>
 
-            </div>
+    </div>
 
-        </section>
+</section>
 
-        <section id="download" class="content-section">
+<section id="download" class="content-section">
 
-            <div class="download-section vcenter">
+    <div class="download-section vcenter">
 
-                <div class="container">
+        <div class="container">
 
-                    <a href="https://github.com/janwieners/SpoookyJS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+            <a href="https://github.com/janwieners/SpoookyJS"><img
+                    style="position: absolute; top: 0; right: 0; border: 0;"
+                    src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+                    alt="Fork me on GitHub"
+                    data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
-                    <a href="https://github.com/janwieners/SpoookyJS/releases/tag/v0.5.0">
-                        <button type="button" class="btn btn-success btn-lg">
+            <a href="https://github.com/janwieners/SpoookyJS/releases/tag/v0.5.0">
+                <button type="button" class="btn btn-success btn-lg">
 
-                            <div class="dwnheading">
-                                Download SpoookyJS 0.5.0
-                            </div>
-                            <div class="dwntext">
-                                "The Erlenmeyer Flask" (Dezember 2015)
-                                <br>
-                                via GitHub
-                            </div>
-                        </button>
-                    </a>
-                    <br><br>
-                    <img src="img/spoooky-ghost_2.png" alt="spoooky ghost 1" width="35">
-                    <img src="img/spoooky-ghost_5.png" alt="spoooky ghost 1" width="35">
-                    <img src="img/spoooky-ghost_1.png" alt="spoooky ghost 1" width="35">
-                    <img src="img/spoooky-ghost_0.png" alt="spoooky ghost 1" width="35">
-                    <img src="img/spoooky-ghost_4.png" alt="spoooky ghost 1" width="35">
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section id="contact" class="container content-section">
-
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Kontakt und Impressum</h2>
-                    <div class="linedivider"></div>
-
-                        SpoookyJS entstand im Rahmen der Dissertation "SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework
-                        zur flexiblen Implementation digitaler browserbasierter Spiele und spielübergreifender künstlicher Intelligenz"
-                        am <a href="http://www.hki.uni-koeln.de">Institut für Historisch-Kulturwissenschaftliche Informationsverarbeitung</a> der Universität zu Köln.
-                        <br><br>
-                        Zu finden ist die Dissertation unter <a href="http://www.spoooky.jan-wieners.de">http://www.spoooky.jan-wieners.de</a>.
-                        <br><br>
-                        Jan G. Wieners, Münstereifeler Str., 50937 Köln, <a href="mailto:mail@spoookyjs.de">mail@spoookyjs.de</a>
+                    <div class="dwnheading">
+                        Download SpoookyJS 0.5.0
+                    </div>
+                    <div class="dwntext">
+                        "The Erlenmeyer Flask" (Dezember 2015)
                         <br>
-                        <br>
-                        &copy; 2012-2018 Jan G. Wieners
+                        via GitHub
+                    </div>
+                </button>
+            </a>
+            <br><br>
+            <img src="img/spoooky-ghost_2.png" alt="spoooky ghost 1" width="35">
+            <img src="img/spoooky-ghost_5.png" alt="spoooky ghost 1" width="35">
+            <img src="img/spoooky-ghost_1.png" alt="spoooky ghost 1" width="35">
+            <img src="img/spoooky-ghost_0.png" alt="spoooky ghost 1" width="35">
+            <img src="img/spoooky-ghost_4.png" alt="spoooky ghost 1" width="35">
 
-                </div>
-            </div>
+        </div>
 
-        </section>
+    </div>
 
-        <!-- Core JavaScript Files -->
-        <script src="js/deps-frontpage.min.js"></script>
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+</section>
 
-        <script>
+<section id="contact" class="container content-section">
 
-            !function ($) {
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Kontakt und Impressum</h2>
+            <div class="linedivider"></div>
 
-                $(function(){
-                    window.prettyPrint && prettyPrint()
-                })
-            }(window.jQuery);
+            SpoookyJS entstand im Rahmen der Dissertation "SpoookyJS - Ein multiagentenbasiertes JavaScript-Framework
+            zur flexiblen Implementation digitaler browserbasierter Spiele und spielübergreifender künstlicher
+            Intelligenz"
+            am <a href="http://www.hki.uni-koeln.de">Institut für Historisch-Kulturwissenschaftliche
+            Informationsverarbeitung</a> der Universität zu Köln.
+            <br><br>
+            Zu finden ist die Dissertation unter <a href="http://www.jan-wieners.de/diss/dissertation_jan-wieners.pdf">http://www.jan-wieners.de/diss/dissertation_jan-wieners.pdf</a>.
+            <br><br>
+            Jan G. Wieners, Münstereifeler Str., 50937 Köln, <a href="mailto:mail@spoookyjs.de">mail@spoookyjs.de</a>
+            <br>
+            <br>
+            &copy; 2012-2018 Jan G. Wieners
 
-            // use jQuery to collapse the navbar on scroll
-            $(window).scroll(function() {
-                if ($(".navbar").offset().top > 50) {
-                    $(".navbar-fixed-top").addClass("top-nav-collapse");
-                } else {
-                    $(".navbar-fixed-top").removeClass("top-nav-collapse");
-                }
-            });
+        </div>
+    </div>
 
-            //jQuery for page scrolling feature - requires jQuery Easing plugin
-            $(function() {
+</section>
 
-                $('.page-scroll a').bind('click', function(event) {
+<!-- Core JavaScript Files -->
+<script src="js/deps-frontpage.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
-                    var $anchor = $(this);
+<script>
 
-                    $('html, body').stop().animate({
-                        scrollTop: $($anchor.attr('href')).offset().top-50
-                    }, 1500, 'easeInOutExpo');
+    !function ($) {
 
-                    event.preventDefault();
-                });
+        $(function () {
+            window.prettyPrint && prettyPrint()
+        })
+    }(window.jQuery);
 
-            });
+    // use jQuery to collapse the navbar on scroll
+    $(window).scroll(function () {
+        if ($(".navbar").offset().top > 50) {
+            $(".navbar-fixed-top").addClass("top-nav-collapse");
+        } else {
+            $(".navbar-fixed-top").removeClass("top-nav-collapse");
+        }
+    });
 
-            $('body').scrollspy({ target: '#spoookynavbar', offset: 250 });
-        </script>
+    //jQuery for page scrolling feature - requires jQuery Easing plugin
+    $(function () {
 
-    </body>
+        $('.page-scroll a').bind('click', function (event) {
+
+            var $anchor = $(this);
+
+            $('html, body').stop().animate({
+                scrollTop: $($anchor.attr('href')).offset().top - 50
+            }, 1500, 'easeInOutExpo');
+
+            event.preventDefault();
+        });
+
+    });
+
+    $('body').scrollspy({target: '#spoookynavbar', offset: 250});
+</script>
+
+</body>
 
 </html>
