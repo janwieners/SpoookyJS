@@ -30,7 +30,7 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('templates/footer.htm',
-    '<div class="container fixed"><p class="text-muted credit">&copy; 2012-2018 Jan G. Wieners <a href=mailto:jan@jan-wieners.de>jan@jan-wieners.de</a> | <a href=http://www.spoookyjs.de/index.html#contact>Impressum</a></p></div>');
+    '<div class="container fixed"><p class="text-muted credit">&copy; 2012-2019 Jan G. Wieners <a href=mailto:jan@jan-wieners.de>jan@jan-wieners.de</a> | <a href=http://www.spoookyjs.de/index.html#contact>Impressum</a></p></div>');
 }]);
 })();
 
