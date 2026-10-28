@@ -27,9 +27,10 @@ export class Board {
 
   evalAt(index: number): EvalCell | undefined { return this.evalByIndex().get(index); }
 
-  /** Win rate 0..1 -> background tint (red low, green high), mixed with the surface for light/dark readability. */
+  /** Signed score [-1, 1] -> background tint (red low, yellow neutral, green high), mixed with the surface for light/dark readability. */
   heatStyle(cell: EvalCell): Record<string, string> {
-    const hue = Math.round(cell.winRate * 120); // 0=red .. 120=green
+    const w = Math.max(-1, Math.min(1, cell.winRate));
+    const hue = Math.round(((w + 1) / 2) * 120); // -1 -> 0 (red), 0 -> 60 (yellow), 1 -> 120 (green)
     return { 'background-color': `color-mix(in srgb, hsl(${hue} 70% 50%) 45%, var(--surface, #fff))` };
   }
 

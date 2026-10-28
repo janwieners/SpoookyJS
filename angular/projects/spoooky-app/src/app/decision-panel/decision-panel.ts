@@ -14,11 +14,11 @@ import { GameEngineService } from '../game-engine.service';
           <strong>{{ ev.stats.simulations | number }}</strong> Simulationen
           (<strong>{{ ev.stats.steps | number }}</strong> Schritte).
           Gewählt: <strong>{{ ev.stats.chosen }}</strong>
-          (Gewinnrate {{ (ev.stats.chosenWinRate ?? 0) * 100 | number:'1.0-0' }}%).
+          (Bewertung {{ (ev.stats.chosenWinRate ?? 0) * 100 | number:'1.0-0' }}%).
         </p>
         <p class="legend">
           <span class="swatch low"></span> niedrige
-          <span class="swatch high"></span> hohe Gewinnrate
+          <span class="swatch high"></span> hohe Bewertung
         </p>
       </section>
     } @else {
