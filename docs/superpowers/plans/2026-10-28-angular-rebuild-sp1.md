@@ -18,6 +18,17 @@
 - RNG-Parität: `rng.int(min, max)` liefert ganze Zahlen **inklusive** beider Grenzen — exakt wie `_.random(min, max)` aus underscore.
 - Arbeitszweig: `angular-rebuild/sp1-foundation` (bereits angelegt). Jeder Task endet mit Commit.
 
+### Angular-22-Konventionen (gelten für JEDEN Task — korrigiert nach Task 1)
+
+Der Workspace ist Angular **22.2** mit TypeScript ~6.0. Das weicht von den ursprünglich angenommenen Karma/Jasmine-Konventionen ab. Für alle Tasks 2–8 gilt daher verbindlich:
+
+- **Test-Runner ist Vitest (jsdom), nicht Karma.** Tests laufen mit `npx ng test spoooky-core --watch=false` bzw. `npx ng test spoooky-app --watch=false` — **ohne** `--browsers=ChromeHeadless`, ohne `CHROME_BIN`. Wo Plan-Schritte `--browsers=ChromeHeadless` nennen, diesen Flag weglassen.
+- **Test-Globals** (`describe`, `it`, `expect`, `beforeEach`) sind ohne Import verfügbar. Für Spies/Mocks `vi` verwenden (`vi.spyOn`, `vi.fn`); `import { vi } from 'vitest'`, falls nicht global.
+- **Vitest-Matcher statt Jasmine:** `toBe(true)`/`toBe(false)` statt `toBeTrue()`/`toBeFalse()`. Alle Plan-Snippets, die `toBeTrue()`/`toBeFalse()` zeigen, entsprechend übersetzen. `toBeTruthy`/`toContain`/`toEqual`/`toBe` sind unverändert gültig.
+- **Zoneless Change Detection:** Nach `TestBed.createComponent(...)` und nach UI-Interaktionen `await fixture.whenStable()` verwenden, **nicht** `fixture.detectChanges()`.
+- **Component-Naming ohne Suffix** (Angular-22-Default): `ng generate component board` erzeugt `board/board.ts` (Klasse `Board`), `board.html`, `board.scss`, `board.spec.ts`. Die im Plan genannten Namen bilden sich so ab: `BoardComponent`→`Board` (`board.ts`), `GameLogComponent`→`GameLog` (`game-log.ts`), `AppComponent`→`App` (`app.ts`). Selektoren bleiben `app-board`, `app-game-log`, `app-root`. Den vorhandenen generierten App-Root (`projects/spoooky-app/src/app/app.ts`, Klasse `App`, mit `app.html`) **bearbeiten**, nicht neue `app.component.*` anlegen. Templates/Styles als separate `templateUrl`/`styleUrl`-Dateien wie generiert.
+- `underscore` ist als `^1.13.6` eingetragen (löst auf 1.13.6 auf) — akzeptiert.
+
 ---
 
 ## File Structure
