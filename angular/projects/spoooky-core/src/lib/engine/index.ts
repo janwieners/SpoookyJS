@@ -11,4 +11,5 @@ import './spoooky.Agent';
 import './spoooky.MetaAgent';
 import './spoooky.Entity';
 import './spoooky.AI';
+import './spoooky.Modules';
 export { Spoooky };

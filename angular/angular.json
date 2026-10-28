@@ -53,6 +53,11 @@
               {
                 "glob": "**/*",
                 "input": "projects/spoooky-app/public"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/spoooky-app/src/assets",
+                "output": "/assets"
               }
             ],
             "styles": ["projects/spoooky-app/src/styles.scss"]
