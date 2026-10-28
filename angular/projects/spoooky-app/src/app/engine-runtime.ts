@@ -27,6 +27,10 @@ let aiDecisionSink: AiDecisionSink | null = null;
 /** Registriert den Empfänger der Einzelentscheidungen je Ensemble-Agent (SP2-Bewertung). */
 export function setAiDecisionSink(sink: AiDecisionSink | null): void { aiDecisionSink = sink; }
 
+let aiErrorHandler: (() => void) | null = null;
+/** Registriert den Empfänger für Worker-Fehler (sonst bliebe die UI unter "KI denkt" gesperrt, Spec §5). */
+export function setAiErrorHandler(cb: (() => void) | null): void { aiErrorHandler = cb; }
+
 let workerMode: 'real' | 'sync' = 'real';
 /** 'real' = echter Off-Thread-Module-Worker (Produktion), 'sync' = In-Thread-Fallback (jsdom-Tests). */
 export function setWorkerMode(mode: 'real' | 'sync'): void { workerMode = mode; }
@@ -57,6 +61,7 @@ class EngineWorker {
       const Worker = (globalThis as any).__RealWorker;
       this.real = new Worker(new URL('./ai.worker', import.meta.url), { type: 'module' });
       this.real!.addEventListener('message', (e: MessageEvent<AiWorkerDecision>) => { decisionSinkFrom(e.data); this.emit(e.data); });
+      this.real!.addEventListener('error', (e) => { console.error('AI worker error', e); aiErrorHandler?.(); });
     }
   }
 

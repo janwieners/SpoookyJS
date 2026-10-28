@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { SpooookyGame, PlayerType, Spoooky } from 'spoooky-core';
-import { installEngineRuntime, connectNoopViews, setAiDecisionSink, runAnalysis } from './engine-runtime';
+import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, runAnalysis } from './engine-runtime';
 import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +25,10 @@ export class GameEngineService {
   constructor() {
     installEngineRuntime();
     setAiDecisionSink((d) => this.decisionBuffer.push(d));
+    setAiErrorHandler(() => {
+      this.error.set('Die KI-Berechnung ist fehlgeschlagen. Bitte starte ein neues Spiel.');
+      this.aiThinking.set(false);
+    });
   }
 
   newGame(factory: () => SpooookyGame): void {

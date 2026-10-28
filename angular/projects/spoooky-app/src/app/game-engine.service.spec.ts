@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
-import { setWorkerMode } from './engine-runtime';
+import { setWorkerMode, setAiErrorHandler } from './engine-runtime';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
@@ -163,6 +163,47 @@ describe('GameEngineService Analyse', () => {
     const cols = 3;
     for (const c of ev!.cells) {
       expect(occupiedIdx).not.toContain(c.y * cols + c.x);
+    }
+  });
+});
+
+describe('GameEngineService worker error handling', () => {
+  afterEach(() => {
+    setWorkerMode('sync');
+    delete (globalThis as any).__RealWorker;
+  });
+
+  it('ein Fehler im echten Worker setzt error und entsperrt die UI (aiThinking=false)', () => {
+    setWorkerMode('sync');
+    const svc = new GameEngineService(); // installiert die Shims und registriert den Fehler-Handler
+    svc.newGame(createTicTacToe);
+
+    // Gefälschter Browser-Worker, der die registrierten Listener festhält.
+    const fakes: Array<{ listeners: Record<string, Array<(e: any) => void>> }> = [];
+    class FakeWorker {
+      listeners: Record<string, Array<(e: any) => void>> = {};
+      constructor() { fakes.push(this); }
+      addEventListener(t: string, fn: (e: any) => void) { (this.listeners[t] ??= []).push(fn); }
+      postMessage() {}
+      terminate() {}
+    }
+    (globalThis as any).__RealWorker = FakeWorker;
+    setWorkerMode('real');
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      new (globalThis as any).Worker(); // EngineWorker im Modus 'real'
+      expect(fakes.length).toBe(1);
+
+      svc.aiThinking.set(true); // simuliert: Anfrage an den Worker ist unterwegs
+      expect(svc.error()).toBeNull();
+
+      fakes[0].listeners['error'].forEach((fn) => fn(new Event('error')));
+
+      expect(svc.error()).not.toBeNull();
+      expect(svc.aiThinking()).toBe(false);
+    } finally {
+      consoleSpy.mockRestore();
+      setAiErrorHandler(null);
     }
   });
 });
