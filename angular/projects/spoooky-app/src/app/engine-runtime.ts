@@ -1,5 +1,6 @@
 import { Spoooky } from 'spoooky-core';
 import { AgentDecision } from './evaluation-adapter';
+import { AiConfig, DEFAULT_AI_CONFIG } from './ai-config';
 
 /**
  * Produktions-Laufzeit für die Legacy-Engine im Browser (SP1).
@@ -13,8 +14,12 @@ import { AgentDecision } from './evaluation-adapter';
  *        (echte Uhr, kurzes Zeitbudget). Ein echter Off-Thread-Worker folgt in SP3.
  */
 
-/** Zeitbudget der UCT-Suche pro KI-Entscheidung in Millisekunden (blockiert den Thread so lange). */
-export const AI_TIME_BUDGET_MS = 300;
+/**
+ * Aktuelle KI-Konfiguration (Zeitbudget je Entscheidung, UCT-Konstante). Sie überschreibt an der
+ * Worker-Grenze die Engine-Standardwerte (thinkingTime=10000ms, uctConstant=0.9) der Agenten.
+ */
+let currentAiConfig: AiConfig = DEFAULT_AI_CONFIG;
+export function setAiConfig(config: AiConfig): void { currentAiConfig = config; }
 
 export type AiDecisionSink = (d: AgentDecision) => void;
 let aiDecisionSink: AiDecisionSink | null = null;
@@ -34,16 +39,18 @@ class SyncWorker {
     const S: any = Spoooky;
     if (data.command === 'monte carlo tree search with uct') {
       const model = new S.Game().clone(data.gameModel);
-      const res = S.AI.UCT(model, data.agentFocus, data.maxSteps, AI_TIME_BUDGET_MS,
-        data.learn, data.uctConstant, data.generateMctsGraph);
+      const maxTime = currentAiConfig.thinkingTimeMs;
+      const uctConstant = currentAiConfig.uctConstant;
+      const res = S.AI.UCT(model, data.agentFocus, data.maxSteps, maxTime,
+        data.learn, uctConstant, data.generateMctsGraph);
       this.emit({
         type: 'decision', agentID: data.agentID, agentRole: data.agentRole, agentFocus: data.agentFocus,
-        results: res.results, simCount: res.simCount, uctConstant: data.uctConstant,
+        results: res.results, simCount: res.simCount, uctConstant,
         simSteps: res.simSteps, mctsGraph: res.mctsGraph, QLearner: JSON.stringify(res.QLearner),
       });
       aiDecisionSink?.({
         agentID: data.agentID,
-        uctConstant: data.uctConstant,
+        uctConstant,
         results: res.results ?? [],
         simCount: res.simCount ?? 0,
         simSteps: res.simSteps ?? 0,
