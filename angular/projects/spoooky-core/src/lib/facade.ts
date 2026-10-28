@@ -15,6 +15,7 @@ export class SpooookyGame {
   getColumns(): number { return this.raw.gameWorld.getColumns(); }
   getState(): string { return this.raw.getGameState(); }
   getCurrentPlayerType(): PlayerType { return this.raw.getCurrentPlayerType(); }
+  serialize(): string { return this.raw.stringifyModels(); }
   getEntityAt(cell: any): { name: string; view: any } | null {
     if (!cell.contains || cell.contains.length === 0) { return null; }
     const ref = cell.contains[cell.contains.length - 1];

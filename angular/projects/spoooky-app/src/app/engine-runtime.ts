@@ -85,6 +85,35 @@ class EngineWorker {
   terminate(): void { this.real?.terminate(); }
 }
 
+/**
+ * Einmalige Analyse einer Stellung (ohne Zug): Monte-Carlo-Suche über ALLE Züge des Spielers am Zug.
+ * Im Modus 'real' in einem eigenen Off-Thread-Worker, im Modus 'sync' inline (Tests).
+ */
+export function runAnalysis(modelString: string, agentFocus: string): Promise<AgentDecision | null> {
+  const S: any = Spoooky;
+  const req = withConfig({
+    command: 'monte carlo tree search with uct', agentID: -1, agentRole: 'ANALYZE POSSIBLE MOVES',
+    agentFocus, maxSteps: 10000, learn: false, generateMctsGraph: false, gameModel: modelString,
+  });
+  if (workerMode === 'real') {
+    return new Promise((resolve) => {
+      // Lokaler Bezeichner `Worker`, damit der esbuild-Transformer den Worker syntaktisch erkennt (siehe EngineWorker).
+      const Worker = (globalThis as any).__RealWorker;
+      const w: Worker = new Worker(new URL('./ai.worker', import.meta.url), { type: 'module' });
+      w.addEventListener('message', (e: MessageEvent) => {
+        const d = e.data;
+        w.terminate();
+        resolve({ agentID: d.agentID, uctConstant: d.uctConstant, results: d.results ?? [], simCount: d.simCount ?? 0, simSteps: d.simSteps ?? 0 });
+      });
+      w.addEventListener('error', () => { w.terminate(); resolve(null); });
+      w.postMessage(req);
+    });
+  }
+  const model = new S.Game().clone(req.gameModel);
+  const res = S.AI.UCT(model, req.agentFocus, req.maxSteps, req.maxTime, req.learn, req.uctConstant, req.generateMctsGraph);
+  return Promise.resolve({ agentID: -1, uctConstant: req.uctConstant, results: res.results ?? [], simCount: res.simCount ?? 0, simSteps: res.simSteps ?? 0 });
+}
+
 const jqueryShim = {
   ajax: (opts: any) => { opts.error?.(); opts.complete?.(); },
   each: (arr: any[], fn: (i: number, v: any) => void) => arr.forEach((v, i) => fn(i, v)),

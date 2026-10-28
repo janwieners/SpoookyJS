@@ -107,3 +107,62 @@ describe('GameEngineService – evaluation', () => {
     expect(svc.evaluation()).toBeNull();
   });
 });
+
+describe('GameEngineService Analyse', () => {
+  const flush = async () => { for (let i = 0; i < 5; i++) { await Promise.resolve(); } };
+
+  beforeEach(() => {
+    setWorkerMode('sync');
+    setSeed(42);
+    localStorage.clear();
+    TestBed.configureTestingModule({});
+  });
+  afterEach(() => localStorage.clear());
+
+  it('ist standardmäßig aus und analysiert dann nicht', async () => {
+    const svc = TestBed.inject(GameEngineService);
+    expect(svc.showAnalysis()).toBe(false);
+    svc.newGame(createTicTacToe);
+    await flush();
+    expect(svc.evaluation()).toBeNull();
+  });
+
+  it('analysiert die Eröffnungsstellung, wenn die Analyse an ist, ohne zu ziehen', async () => {
+    localStorage.setItem('spoooky.showAnalysis', 'true');
+    const svc = TestBed.inject(GameEngineService);
+    svc.newGame(createTicTacToe);
+    await flush();
+    expect(svc.currentPlayerType()).toBe('HUMAN');
+    expect(svc.gameState()).not.toBe('END');
+    expect(svc.evaluation()).not.toBeNull();
+    expect(svc.board().every((c) => !c.image)).toBe(true);
+  });
+
+  it('toggleAnalysis persistiert und löst eine Analyse aus', async () => {
+    const svc = TestBed.inject(GameEngineService);
+    svc.newGame(createTicTacToe);
+    svc.toggleAnalysis(true);
+    expect(localStorage.getItem('spoooky.showAnalysis')).toBe('true');
+    await flush();
+    expect(svc.evaluation()).not.toBeNull();
+  });
+
+  it('analysiert nach dem Zug des Menschen erneut die neue Stellung', async () => {
+    localStorage.setItem('spoooky.showAnalysis', 'true');
+    const svc = TestBed.inject(GameEngineService);
+    svc.newGame(createTicTacToe);
+    await flush();
+    svc.cellClicked(0, 0);
+    await flush();
+    expect(svc.currentPlayerType()).toBe('HUMAN');
+    const ev = svc.evaluation();
+    expect(ev).not.toBeNull();
+    // Besetzte Felder dürfen nicht als Kandidaten bewertet werden (Analyse der aktuellen Stellung).
+    const occupiedIdx = svc.board().map((c, i) => (c.image ? i : -1)).filter((i) => i >= 0);
+    expect(occupiedIdx.length).toBe(2);
+    const cols = 3;
+    for (const c of ev!.cells) {
+      expect(occupiedIdx).not.toContain(c.y * cols + c.x);
+    }
+  });
+});
