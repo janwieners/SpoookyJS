@@ -1,0 +1,14 @@
+:root {
+  --bg: #f7f7f8; --surface: #ffffff; --border: #d8d8de;
+  --text: #1c1c1f; --accent: #5b4b8a;
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --cell-size: 96px;
+  font-family: system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171a; --surface: #1f1f24; --border: #34343c;
+    --text: #ececf0; --accent: #a99bd6;
+  }
+}
+body { margin: 0; background: var(--bg); color: var(--text); }

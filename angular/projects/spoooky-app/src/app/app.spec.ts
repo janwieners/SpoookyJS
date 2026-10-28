@@ -1,23 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { setSeed } from 'spoooky-core';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-    }).compileComponents();
+    await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
+    setSeed(42);
   });
 
-  it('should create the app', () => {
+  it('creates the app', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('mounts the board (9 cells) after init', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, spoooky-app');
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('app-board')).toBeTruthy();
+    expect(el.querySelectorAll('.cell').length).toBe(9);
   });
 });
