@@ -1,0 +1,17 @@
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size, 96px));
+  gap: var(--space-xs, 4px);
+  .cell {
+    width: var(--cell-size, 96px); height: var(--cell-size, 96px);
+    background: var(--surface, #fff); border: 1px solid var(--border, #ccc);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    img { width: 80%; height: 80%; }
+  }
+  .overlay {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--surface, #fff) 70%, transparent); font-weight: 600;
+  }
+  &.thinking .cell { pointer-events: none; }
+}
