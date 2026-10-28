@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
+import { setWorkerMode } from './engine-runtime';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
@@ -14,6 +15,7 @@ describe('GameEngineService', () => {
   let svc: GameEngineService;
 
   beforeEach(() => {
+    setWorkerMode('sync');
     setSeed(12345);
     svc = new GameEngineService();
     svc.newGame(createTicTacToe);
@@ -92,6 +94,7 @@ describe('GameEngineService', () => {
 describe('GameEngineService – evaluation', () => {
   let svc: GameEngineService;
   beforeEach(() => {
+    setWorkerMode('sync');
     TestBed.configureTestingModule({});
     svc = TestBed.inject(GameEngineService);
     setSeed(42);

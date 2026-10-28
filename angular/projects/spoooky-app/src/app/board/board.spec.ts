@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from '../games/tictactoe.game';
+import { setWorkerMode } from '../engine-runtime';
 import { GameEngineService } from '../game-engine.service';
 import { Board } from './board';
 
@@ -15,6 +16,7 @@ describe('Board', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
+    setWorkerMode('sync');
     setSeed(42);
     await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
     engine = TestBed.inject(GameEngineService);
@@ -63,6 +65,7 @@ describe('Board – evaluation overlay', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
+    setWorkerMode('sync');
     setSeed(42);
     localStorage.clear();
     svc = TestBed.inject(GameEngineService);

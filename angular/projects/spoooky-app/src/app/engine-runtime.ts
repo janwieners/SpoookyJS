@@ -10,8 +10,8 @@ import { AiConfig, DEFAULT_AI_CONFIG } from './ai-config';
  *     -> Shim, der "keine Erinnerungsdatei vorhanden" meldet (Standard-Agenten-Ensemble).
  *        Echtes Laden der Agenten-Erinnerungen folgt in SP3; jQuery wird bewusst nicht eingebunden.
  *  2. Agent.createBrain startet einen Web Worker (`new Worker(...)`) für die Monte-Carlo-Suche.
- *     -> Synchroner In-Thread-Ersatz, der denselben Code wie spoooky.Worker.js ausführt
- *        (echte Uhr, kurzes Zeitbudget). Ein echter Off-Thread-Worker folgt in SP3.
+ *     -> EngineWorker: im Modus 'real' ein gebündelter Off-Thread-Module-Worker (ai.worker.ts),
+ *        im Modus 'sync' ein In-Thread-Fallback (Tests). Die KI-Konfiguration wird auf dem Main-Thread angewendet.
  */
 
 /**
@@ -26,8 +26,38 @@ let aiDecisionSink: AiDecisionSink | null = null;
 /** Registriert den Empfänger der Einzelentscheidungen je Ensemble-Agent (SP2-Bewertung). */
 export function setAiDecisionSink(sink: AiDecisionSink | null): void { aiDecisionSink = sink; }
 
-class SyncWorker {
+let workerMode: 'real' | 'sync' = 'real';
+/** 'real' = echter Off-Thread-Module-Worker (Produktion), 'sync' = In-Thread-Fallback (jsdom-Tests). */
+export function setWorkerMode(mode: 'real' | 'sync'): void { workerMode = mode; }
+
+/** Wendet die aktuelle KI-Konfiguration auf der Main-Thread-Seite an, bevor die Anfrage den Worker erreicht. */
+function withConfig(data: any) {
+  return { ...data, maxTime: currentAiConfig.thinkingTimeMs, uctConstant: currentAiConfig.uctConstant };
+}
+function decisionSinkFrom(msg: any): void {
+  aiDecisionSink?.({
+    agentID: msg.agentID,
+    uctConstant: msg.uctConstant,
+    results: msg.results ?? [],
+    simCount: msg.simCount ?? 0,
+    simSteps: msg.simSteps ?? 0,
+  });
+}
+
+class EngineWorker {
   private listeners: Array<(e: { data: any }) => void> = [];
+  private real: Worker | null = null;
+
+  constructor() {
+    if (workerMode === 'real') {
+      // Der Angular-esbuild-Transformer erkennt Worker nur syntaktisch als `new Worker(new URL('<lit>', import.meta.url))`.
+      // Daher der lokale Bezeichner `Worker`, der auf den gesicherten ECHTEN Browser-Worker zeigt
+      // (der globale `Worker` ist durch EngineWorker ersetzt).
+      const Worker = (globalThis as any).__RealWorker;
+      this.real = new Worker(new URL('./ai.worker', import.meta.url), { type: 'module' });
+      this.real!.addEventListener('message', (e: MessageEvent) => { decisionSinkFrom(e.data); this.emit(e.data); });
+    }
+  }
 
   addEventListener(type: string, fn: (e: { data: any }) => void): void {
     if (type === 'message') { this.listeners.push(fn); }
@@ -36,29 +66,23 @@ class SyncWorker {
   private emit(data: any): void { this.listeners.forEach((fn) => fn({ data })); }
 
   postMessage(data: any): void {
+    if (data?.command !== 'monte carlo tree search with uct') { return; }
+    const req = withConfig(data);
+    if (this.real) { this.real.postMessage(req); return; }
+    // Synchroner Fallback (Tests): UCT inline ausfuehren.
     const S: any = Spoooky;
-    if (data.command === 'monte carlo tree search with uct') {
-      const model = new S.Game().clone(data.gameModel);
-      const maxTime = currentAiConfig.thinkingTimeMs;
-      const uctConstant = currentAiConfig.uctConstant;
-      const res = S.AI.UCT(model, data.agentFocus, data.maxSteps, maxTime,
-        data.learn, uctConstant, data.generateMctsGraph);
-      this.emit({
-        type: 'decision', agentID: data.agentID, agentRole: data.agentRole, agentFocus: data.agentFocus,
-        results: res.results, simCount: res.simCount, uctConstant,
-        simSteps: res.simSteps, mctsGraph: res.mctsGraph, QLearner: JSON.stringify(res.QLearner),
-      });
-      aiDecisionSink?.({
-        agentID: data.agentID,
-        uctConstant,
-        results: res.results ?? [],
-        simCount: res.simCount ?? 0,
-        simSteps: res.simSteps ?? 0,
-      });
-    }
+    const model = new S.Game().clone(req.gameModel);
+    const res = S.AI.UCT(model, req.agentFocus, req.maxSteps, req.maxTime, req.learn, req.uctConstant, req.generateMctsGraph);
+    const msg = {
+      type: 'decision', agentID: req.agentID, agentRole: req.agentRole, agentFocus: req.agentFocus,
+      results: res.results, simCount: res.simCount, uctConstant: req.uctConstant,
+      simSteps: res.simSteps, mctsGraph: res.mctsGraph, QLearner: JSON.stringify(res.QLearner),
+    };
+    decisionSinkFrom(msg);
+    this.emit(msg);
   }
 
-  terminate(): void {}
+  terminate(): void { this.real?.terminate(); }
 }
 
 const jqueryShim = {
@@ -72,7 +96,9 @@ let installed = false;
 export function installEngineRuntime(): void {
   if (installed) { return; }
   (globalThis as any).$ = jqueryShim;
-  (globalThis as any).Worker = SyncWorker;
+  // Den ECHTEN Browser-Worker sichern, bevor er durch den EngineWorker ersetzt wird.
+  (globalThis as any).__RealWorker = (globalThis as any).Worker;
+  (globalThis as any).Worker = EngineWorker;
   installed = true;
 }
 

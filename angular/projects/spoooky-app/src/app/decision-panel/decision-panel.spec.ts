@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { DecisionPanel } from './decision-panel';
+import { setWorkerMode } from '../engine-runtime';
 import { GameEngineService } from '../game-engine.service';
 import { createTicTacToe } from '../games/tictactoe.game';
 
@@ -9,6 +10,7 @@ describe('DecisionPanel', () => {
   let svc: GameEngineService;
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [DecisionPanel] }).compileComponents();
+    setWorkerMode('sync');
     setSeed(42); localStorage.clear();
     svc = TestBed.inject(GameEngineService);
     svc.newGame(createTicTacToe);
