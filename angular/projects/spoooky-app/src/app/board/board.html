@@ -1,8 +1,17 @@
 <div class="board" [class.thinking]="aiThinking()">
   @for (cell of cells(); track $index) {
-    <button class="cell" type="button" (click)="onCellClick($index)">
+    <button class="cell" type="button" (click)="onCellClick($index)"
+            [class.candidate]="evalAt($index)"
+            [class.chosen]="evalAt($index)?.chosen"
+            [style]="evalAt($index) ? heatStyle(evalAt($index)!) : null">
       @if (cell.image) {
         <img [src]="cell.image" alt="" />
+      }
+      @if (evalAt($index); as e) {
+        <span class="eval">
+          <span class="rate">{{ (e.winRate * 100) | number:'1.0-0' }}%</span>
+          <span class="visits">{{ e.visits }}×</span>
+        </span>
       }
     </button>
   }
