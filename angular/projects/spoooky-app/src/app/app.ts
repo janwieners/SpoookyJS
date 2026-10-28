@@ -13,7 +13,11 @@ import { createTicTacToe } from './games/tictactoe.game';
 export class App implements OnInit {
   private readonly engine = inject(GameEngineService);
 
+  readonly error = this.engine.error;
+
   ngOnInit(): void { this.engine.newGame(createTicTacToe); }
+
+  restart(): void { this.engine.restart(); }
 
   // Warn before leaving while the AI is mid-turn (ported intent from the old app).
   @HostListener('window:beforeunload', ['$event'])

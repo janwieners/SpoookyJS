@@ -1,5 +1,9 @@
 <main class="layout">
   <h1>SpoookyJS — Tic Tac Toe</h1>
+  <button type="button" class="restart" (click)="restart()">Neues Spiel</button>
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
   <app-board />
   <app-game-log />
 </main>

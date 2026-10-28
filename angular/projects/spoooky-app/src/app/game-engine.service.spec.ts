@@ -27,6 +27,22 @@ describe('GameEngineService', () => {
     expect(svc.aiThinking()).toBe(false);
   });
 
+  it('newGame startet mit leerem Protokoll und ohne Fehler', () => {
+    expect(svc.log().length).toBe(0);
+    expect(svc.error()).toBeNull();
+  });
+
+  it('restart setzt Brett und Protokoll zurück', () => {
+    useDeferralTimers();
+    svc.cellClicked(1, 1);
+    vi.runAllTimers();
+    expect(svc.log().length).toBeGreaterThanOrEqual(1);
+    svc.restart();
+    expect(svc.log().length).toBe(0);
+    expect(occupied(svc.board()).reduce((a, b) => a + b, 0)).toBe(0);
+    expect(svc.error()).toBeNull();
+  });
+
   it('ein Menschenzug verändert das Brett und löscht aiThinking wieder', () => {
     useDeferralTimers();
     const before = occupied(svc.board());

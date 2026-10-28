@@ -11,10 +11,19 @@ export class GameEngineService {
   readonly gameState = signal<string>('INGAME');
   readonly log = signal<string[]>([]);
   readonly aiThinking = signal<boolean>(false);
+  readonly error = signal<string | null>(null);
+  private lastFactory: (() => SpooookyGame) | null = null;
 
   constructor() { installEngineRuntime(); }
 
   newGame(factory: () => SpooookyGame): void {
+    this.lastFactory = factory;
+    // The engine keeps its logs in global singletons; start every game with clean logs.
+    const gp = (Spoooky as any)?.GameProcess?.messages;
+    if (Array.isArray(gp)) { gp.length = 0; }
+    const al = (Spoooky as any)?.AgentLog?.messages;
+    if (Array.isArray(al)) { al.length = 0; }
+    this.error.set(null);
     const game = factory();
     this.game = game;
     connectNoopViews(game.raw);
@@ -23,13 +32,22 @@ export class GameEngineService {
     this.sync();
   }
 
+  restart(): void {
+    if (this.lastFactory) { this.newGame(this.lastFactory); }
+  }
+
   cellClicked(x: number, y: number): void {
     const game = this.game;
     if (!game || this.gameState() === 'END' || game.getCurrentPlayerType() !== 'HUMAN') { return; }
     // AI runs synchronously inside clickCell (~300ms); defer so the overlay can paint.
+    this.error.set(null);
     this.aiThinking.set(true);
     setTimeout(() => {
       try { game.clickCell(x, y); }
+      catch (e) {
+        this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
+        console.error(e);
+      }
       finally { this.sync(); this.aiThinking.set(false); }
     }, 0);
   }
