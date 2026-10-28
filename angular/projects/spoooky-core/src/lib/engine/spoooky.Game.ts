@@ -60,9 +60,15 @@ Spoooky.Game = function() {
      * Extend the angularjs game view with specific functions
      * @param scope
      */
-    self_Game.connectGridWeltView = function(scope) {
+    self_Game.viewListener = null;
 
-        // Connect the game with the view to allow a view refresh
+    // Neutraler Change-Listener (ersetzt die AngularJS-Anbindung)
+    self_Game.connectView = function(listener) {
+        self_Game.viewListener = listener;
+    };
+
+    // Rückwärtskompatibel beibehalten; nutzt jetzt den neutralen Mechanismus
+    self_Game.connectGridWeltView = function(scope) {
         self_Game.viewScope = scope;
     };
 
@@ -2643,8 +2649,8 @@ Spoooky.Game = function() {
      */
     self_Game.refreshView = function() {
 
-        if (!self_Game.models.playVirtual) {
-            self_Game.viewScope.$apply();
+        if (!self_Game.models.playVirtual && self_Game.viewListener) {
+            self_Game.viewListener();
         }
     };
 
