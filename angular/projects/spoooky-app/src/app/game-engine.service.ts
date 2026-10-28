@@ -6,7 +6,7 @@ import { installEngineRuntime, connectNoopViews } from './engine-runtime';
 export class GameEngineService {
   private game: SpooookyGame | null = null;
 
-  readonly board = signal<any[]>([]);
+  readonly board = signal<Array<{ image: string | null }>>([]);
   readonly currentPlayerType = signal<PlayerType>('HUMAN');
   readonly gameState = signal<string>('INGAME');
   readonly log = signal<string[]>([]);
@@ -40,7 +40,9 @@ export class GameEngineService {
     // GameGrid is an array of ROWS (grid[y][x]); expose a flat, row-major cell array
     // (index = y * columns + x) so the board component can render it directly.
     const grid = game.getGrid();
-    this.board.set(Array.isArray(grid) ? grid.flat() : []);
+    const cells = Array.isArray(grid) ? grid.flat() : [];
+    // Resolve each piece's image via the engine (entity INSTANCE id -> view), not by guessing.
+    this.board.set(cells.map((cell: any) => ({ image: game.getEntityAt(cell)?.view ?? null })));
     this.currentPlayerType.set(game.getCurrentPlayerType());
     this.gameState.set(game.getState());
     const msgs = (Spoooky as any)?.GameProcess?.messages;

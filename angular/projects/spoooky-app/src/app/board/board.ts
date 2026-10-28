@@ -18,11 +18,4 @@ export class Board {
     const y = Math.floor(index / this.columns);
     this.engine.cellClicked(x, y);
   }
-
-  /** Image of the topmost piece in the cell ('W' = white, otherwise black); null if empty. */
-  imageFor(cell: any): string | null {
-    const ref = cell?.contains?.[cell.contains.length - 1];
-    if (!ref) { return null; }
-    return ref.entityID === 'W' ? 'assets/tictactoe/white.png' : 'assets/tictactoe/black.png';
-  }
 }

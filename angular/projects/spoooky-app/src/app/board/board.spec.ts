@@ -7,7 +7,7 @@ import { Board } from './board';
 
 // Nur setTimeout fälschen: die UCT-Suche läuft bis `Date.now() >= endTime`; eine eingefrorene
 // Date.now() würde sie endlos laufen lassen.
-const occupied = (board: any[]): number[] => board.map((c) => (c?.contains?.length ? 1 : 0));
+const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
 
 describe('Board', () => {
   let fixture: ComponentFixture<Board>;

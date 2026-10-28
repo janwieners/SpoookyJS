@@ -3,7 +3,7 @@ import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
 import { GameEngineService } from './game-engine.service';
 
-const occupied = (board: any[]): number[] => board.map((c) => (c?.contains?.length ? 1 : 0));
+const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
 
 // Nur setTimeout fälschen: die UCT-Suche läuft bis `Date.now() >= endTime`; eine eingefrorene
 // Date.now() würde sie endlos laufen lassen.
@@ -60,5 +60,14 @@ describe('GameEngineService', () => {
     }
     expect(occupied(svc.board())).toEqual(snapshot);
     expect(svc.aiThinking()).toBe(false);
+  });
+
+  it('Mensch (weiß) und KI (schwarz) werden auf unterschiedliche Bilder aufgelöst', () => {
+    useDeferralTimers();
+    svc.cellClicked(1, 1);
+    vi.runAllTimers();
+    const images = svc.board().map((c) => c.image).filter((i): i is string => !!i);
+    expect(images.some((i) => i.endsWith('white.png'))).toBe(true);
+    expect(images.some((i) => i.endsWith('black.png'))).toBe(true);
   });
 });
