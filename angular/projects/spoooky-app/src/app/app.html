@@ -1,9 +1,21 @@
 <main class="layout">
-  <h1>SpoookyJS — Tic Tac Toe</h1>
-  <button type="button" class="restart" (click)="restart()">Neues Spiel</button>
+  <header class="appbar">
+    <h1>SpoookyJS — Tic Tac Toe</h1>
+    <div class="controls">
+      <app-evaluation-toggle />
+      <button type="button" class="restart" (click)="restart()">Neues Spiel</button>
+    </div>
+  </header>
+
   @if (error()) {
     <p class="error" role="alert">{{ error() }}</p>
   }
-  <app-board />
-  <app-game-log />
+
+  <div class="content">
+    <section class="board-area"><app-board /></section>
+    <aside class="side">
+      <app-decision-panel />
+      <app-game-log />
+    </aside>
+  </div>
 </main>
