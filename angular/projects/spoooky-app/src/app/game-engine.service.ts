@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { SpooookyGame, PlayerType, Spoooky } from 'spoooky-core';
-import { installEngineRuntime, connectNoopViews } from './engine-runtime';
+import { installEngineRuntime, connectNoopViews, setAiDecisionSink } from './engine-runtime';
+import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
 
 @Injectable({ providedIn: 'root' })
 export class GameEngineService {
@@ -12,12 +13,20 @@ export class GameEngineService {
   readonly log = signal<string[]>([]);
   readonly aiThinking = signal<boolean>(false);
   readonly error = signal<string | null>(null);
+  readonly evaluation = signal<Evaluation | null>(null);
+  readonly showEvaluation = signal<boolean>(this.readShowEvaluation());
+  private decisionBuffer: AgentDecision[] = [];
   private lastFactory: (() => SpooookyGame) | null = null;
 
-  constructor() { installEngineRuntime(); }
+  constructor() {
+    installEngineRuntime();
+    setAiDecisionSink((d) => this.decisionBuffer.push(d));
+  }
 
   newGame(factory: () => SpooookyGame): void {
     this.lastFactory = factory;
+    this.decisionBuffer = [];
+    this.evaluation.set(null);
     // The engine keeps its logs in global singletons; start every game with clean logs.
     const gp = (Spoooky as any)?.GameProcess?.messages;
     if (Array.isArray(gp)) { gp.length = 0; }
@@ -48,8 +57,25 @@ export class GameEngineService {
         this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
         console.error(e);
       }
-      finally { this.sync(); this.aiThinking.set(false); }
+      finally { this.sync(); this.applyEvaluation(); this.aiThinking.set(false); }
     }, 0);
+  }
+
+  toggleEvaluation(on: boolean): void {
+    this.showEvaluation.set(on);
+    try { localStorage.setItem('spoooky.showEvaluation', String(on)); } catch { /* ignore */ }
+  }
+
+  private readShowEvaluation(): boolean {
+    try { return localStorage.getItem('spoooky.showEvaluation') !== 'false'; } catch { return true; }
+  }
+
+  private applyEvaluation(): void {
+    const game = this.game;
+    if (!game || this.decisionBuffer.length === 0) { return; }
+    const ev = aggregateDecision(this.decisionBuffer, game.getColumns(), game.getRows());
+    this.decisionBuffer = [];
+    if (ev) { this.evaluation.set(ev); }
   }
 
   private sync(): void {
