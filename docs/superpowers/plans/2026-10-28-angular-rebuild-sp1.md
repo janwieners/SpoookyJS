@@ -1070,3 +1070,24 @@ git commit -m "feat(sp1): wire TicTacToe app, design tokens and navigation guard
 - [ ] Unit-Tests `GameEngineService` + `BoardComponent` grün. → Task 6, 7
 - [ ] Deploybares statisches Build + `ng serve`. → Task 8
 - [ ] Alter `src/`/gulp-Stand unverändert. → Global Constraints (nie angefasst)
+
+---
+
+## Revision nach Task 5 (2026-10-28): KI-Laufzeit
+
+Task 5 hat gezeigt, dass die ursprüngliche Annahme „KI läuft synchron im Main-Thread ohne Worker/jQuery" falsch war. Reale Laufzeit-Abhängigkeiten der TicTacToe-KI:
+
+- `MetaAgent.assembleAgents` lädt `agentmemory_<ID>.json` per globalem `$.ajax` (synchron); bei Fehler → Fallback auf Standard-Agenten.
+- `Agent.createBrain` rechnet die MCTS in `new Worker("spoooky.Worker.min.js")`; die UCT-Suche ist zeitbudgetiert (`Date.now() < endTime`, Original ~1,5 s).
+- Die Engine ruft nach jeder KI-Entscheidung `connectStatsView(...).update()` und `connectGraphView(...).updateGraphs()` (zusätzliche View-Nähte).
+
+**Entscheidung (vom Autor gewählt): Option A — synchron, kurzes Budget.** Tasks 6–8 werden danach umgesetzt:
+
+- Eine **App-Laufzeit** (`engine-runtime.ts`) installiert vor Spielstart zwei Shims auf `globalThis`:
+  - `Worker` = synchroner In-Thread-Ersatz, **identische Logik wie der bewährte `SyncWorkerFake` in `projects/spoooky-app/src/app/games/engine-test-env.ts`**, aber mit **echter Uhr** (kein virtueller Takt) und **kurzem Budget** `AI_TIME_BUDGET_MS = 300`. Führt real `Spoooky.AI.UCT(...)` aus.
+  - `$` = Minimal-Shim: `ajax(opts)` ruft sofort `opts.error?.()`/`opts.complete?.()` (→ keine Erinnerungsdatei → Standard-Agenten); `each(arr, fn)`. **Kein jQuery-Paket.** (Echtes Laden der Agentenerinnerung = SP3.)
+- `connectStatsView`/`connectGraphView` werden mit **No-op-Stubs** verbunden (echte Visualisierung = SP2).
+- Weil die KI synchron im `game.loop` mitläuft (~300 ms), führt der `GameEngineService.cellClicked` den Zug **deferred** aus (`aiThinking=true` setzen → `setTimeout(0)` → `clickCell` → `sync()` → `aiThinking=false`), damit das Overlay rendern kann.
+- Tests der App-Schicht nutzen **Invarianten** statt exakter KI-Ergebnisse (echte Uhr ⇒ nicht bit-deterministisch): Brett ändert sich nach Zug, Spieler wechselt zurück, Spiel terminiert in gültigem Zustand, 9 Zellen gerendert, Klick platziert ein Zeichen.
+
+Die verbindlichen Task-Briefs für 6–8 liegen in `.superpowers/sdd/task-{6,7,8}-brief.md` und setzen diese Revision um (sie ersetzen die ursprünglichen Task-6–8-Texte oben).
