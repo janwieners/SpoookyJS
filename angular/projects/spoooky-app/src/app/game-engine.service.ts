@@ -48,17 +48,13 @@ export class GameEngineService {
   cellClicked(x: number, y: number): void {
     const game = this.game;
     if (!game || this.gameState() === 'END' || game.getCurrentPlayerType() !== 'HUMAN') { return; }
-    // AI runs synchronously inside clickCell (~300ms); defer so the overlay can paint.
     this.error.set(null);
-    this.aiThinking.set(true);
-    setTimeout(() => {
-      try { game.clickCell(x, y); }
-      catch (e) {
-        this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
-        console.error(e);
-      }
-      finally { this.sync(); this.applyEvaluation(); this.aiThinking.set(false); }
-    }, 0);
+    try { game.clickCell(x, y); }
+    catch (e) {
+      this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
+      console.error(e);
+    }
+    this.sync();
   }
 
   toggleEvaluation(on: boolean): void {
@@ -92,5 +88,11 @@ export class GameEngineService {
     const msgs = (Spoooky as any)?.GameProcess?.messages;
     // Entries are objects ({ message, id, type }); the log signal exposes just the text.
     if (Array.isArray(msgs)) { this.log.set(msgs.map((m: any) => (typeof m === 'string' ? m : String(m?.message ?? '')))); }
+    // Sync worker: the AI move completes inside clickCell, so the turn is already HUMAN here.
+    // Async worker: clickCell returns while it is ARTIFICIAL's turn; the worker callback later
+    // triggers refreshView -> sync(), which then sees HUMAN/END, clears the flag and applies the decision.
+    const aiTurn = this.gameState() !== 'END' && game.getCurrentPlayerType() === 'ARTIFICIAL';
+    this.aiThinking.set(aiTurn);
+    if (!aiTurn) { this.applyEvaluation(); }
   }
 }

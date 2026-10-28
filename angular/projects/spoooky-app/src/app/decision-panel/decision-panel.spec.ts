@@ -23,8 +23,7 @@ describe('DecisionPanel', () => {
   });
 
   it('fasst die letzte Entscheidung zusammen (gewähltes Feld erscheint)', async () => {
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    svc.cellClicked(0, 0); vi.runAllTimers(); vi.useRealTimers();
+    svc.cellClicked(0, 0);
     await fixture.whenStable();
     const ev = svc.evaluation()!;
     expect(fixture.nativeElement.textContent).toContain(ev.stats.chosen!);
