@@ -152,3 +152,16 @@ SP2 baut auf SP1-Code, der noch nicht in `master` ist. Arbeit auf einem eigenen 
 `angular-rebuild/sp2-visualization`, abgezweigt vom SP1-Branch-Tip. Der SP2-PR richtet sich nach
 `master`, sobald SP1 gemergt ist, oder als gestapelter PR gegen den SP1-Branch — das entscheidet
 der Autor beim Abschluss.
+
+---
+
+## 9. Nachtrag (Planungsphase): präzisierte Datenquelle
+
+Bei der Planung zeigte sich, dass `refreshGraphView(mctsData, …)` NUR `{agentID, mctsGraph, uctConstant}`
+überträgt — die eigentlichen Zug-Bewertungen (`results`: wins/visits/target) stecken NICHT darin.
+Sie liefert `Spoooky.AI.UCT` und werden bereits vom app-eigenen `SyncWorker` (`engine-runtime.ts`,
+`res.results`) berechnet. Statt über `connectGraphView` (§3.1) holen wir die Daten daher sauber über
+einen **Decision-Sink am `SyncWorker`**: der Shim meldet pro Agent `{agentID, results, simCount,
+simSteps, uctConstant}`; der `GameEngineService` puffert diese und wertet sie nach jedem KI-Zug via
+Adapter aus (Aggregation über Ensemble-Agenten). Engine bleibt weiterhin unangetastet; `connectNoopViews`
+bleibt bestehen. Ziel, Scope und DoD ändern sich dadurch nicht.
