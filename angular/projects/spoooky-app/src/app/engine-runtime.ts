@@ -1,6 +1,7 @@
 import { Spoooky } from 'spoooky-core';
 import { AgentDecision } from './evaluation-adapter';
 import { AiConfig, DEFAULT_AI_CONFIG } from './ai-config';
+import { AiWorkerDecision, AiWorkerRequest } from './ai-worker-protocol';
 
 /**
  * Produktions-Laufzeit für die Legacy-Engine im Browser (SP1).
@@ -31,10 +32,10 @@ let workerMode: 'real' | 'sync' = 'real';
 export function setWorkerMode(mode: 'real' | 'sync'): void { workerMode = mode; }
 
 /** Wendet die aktuelle KI-Konfiguration auf der Main-Thread-Seite an, bevor die Anfrage den Worker erreicht. */
-function withConfig(data: any) {
+function withConfig(data: Omit<AiWorkerRequest, 'maxTime' | 'uctConstant'>): AiWorkerRequest {
   return { ...data, maxTime: currentAiConfig.thinkingTimeMs, uctConstant: currentAiConfig.uctConstant };
 }
-function decisionSinkFrom(msg: any): void {
+function decisionSinkFrom(msg: AiWorkerDecision): void {
   aiDecisionSink?.({
     agentID: msg.agentID,
     uctConstant: msg.uctConstant,
@@ -45,7 +46,7 @@ function decisionSinkFrom(msg: any): void {
 }
 
 class EngineWorker {
-  private listeners: Array<(e: { data: any }) => void> = [];
+  private listeners: Array<(e: { data: AiWorkerDecision }) => void> = [];
   private real: Worker | null = null;
 
   constructor() {
@@ -55,17 +56,17 @@ class EngineWorker {
       // (der globale `Worker` ist durch EngineWorker ersetzt).
       const Worker = (globalThis as any).__RealWorker;
       this.real = new Worker(new URL('./ai.worker', import.meta.url), { type: 'module' });
-      this.real!.addEventListener('message', (e: MessageEvent) => { decisionSinkFrom(e.data); this.emit(e.data); });
+      this.real!.addEventListener('message', (e: MessageEvent<AiWorkerDecision>) => { decisionSinkFrom(e.data); this.emit(e.data); });
     }
   }
 
-  addEventListener(type: string, fn: (e: { data: any }) => void): void {
+  addEventListener(type: string, fn: (e: { data: AiWorkerDecision }) => void): void {
     if (type === 'message') { this.listeners.push(fn); }
   }
 
-  private emit(data: any): void { this.listeners.forEach((fn) => fn({ data })); }
+  private emit(data: AiWorkerDecision): void { this.listeners.forEach((fn) => fn({ data })); }
 
-  postMessage(data: any): void {
+  postMessage(data: AiWorkerRequest): void {
     if (data?.command !== 'monte carlo tree search with uct') { return; }
     const req = withConfig(data);
     if (this.real) { this.real.postMessage(req); return; }
@@ -73,7 +74,7 @@ class EngineWorker {
     const S: any = Spoooky;
     const model = new S.Game().clone(req.gameModel);
     const res = S.AI.UCT(model, req.agentFocus, req.maxSteps, req.maxTime, req.learn, req.uctConstant, req.generateMctsGraph);
-    const msg = {
+    const msg: AiWorkerDecision = {
       type: 'decision', agentID: req.agentID, agentRole: req.agentRole, agentFocus: req.agentFocus,
       results: res.results, simCount: res.simCount, uctConstant: req.uctConstant,
       simSteps: res.simSteps, mctsGraph: res.mctsGraph, QLearner: JSON.stringify(res.QLearner),
@@ -100,7 +101,7 @@ export function runAnalysis(modelString: string, agentFocus: string): Promise<Ag
       // Lokaler Bezeichner `Worker`, damit der esbuild-Transformer den Worker syntaktisch erkennt (siehe EngineWorker).
       const Worker = (globalThis as any).__RealWorker;
       const w: Worker = new Worker(new URL('./ai.worker', import.meta.url), { type: 'module' });
-      w.addEventListener('message', (e: MessageEvent) => {
+      w.addEventListener('message', (e: MessageEvent<AiWorkerDecision>) => {
         const d = e.data;
         w.terminate();
         resolve({ agentID: d.agentID, uctConstant: d.uctConstant, results: d.results ?? [], simCount: d.simCount ?? 0, simSteps: d.simSteps ?? 0 });
