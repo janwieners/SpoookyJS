@@ -53,13 +53,22 @@ export class GameEngineService {
   }
 
   private preloaded = false;
+  private preloading: Promise<void> | null = null;
   /** Lädt die mitgelieferte Erinnerung in den Cache; die Engine liest sie synchron beim Spielaufbau. */
-  private async ensurePreloaded(): Promise<void> {
-    if (this.preloaded) { return; }
-    await preloadMemory([{ key: MEMORY_KEY, assetUrl: MEMORY_ASSET }]);
-    this.preloaded = true;
-    this.refreshMemoryStatus();
+  private ensurePreloaded(): Promise<void> {
+    if (this.preloaded) { return Promise.resolve(); }
+    if (this.preloading) { return this.preloading; }
+    const p = preloadMemory([{ key: MEMORY_KEY, assetUrl: MEMORY_ASSET }]).then(() => {
+      this.preloaded = true;
+      this.preloading = null;
+      this.refreshMemoryStatus();
+    });
+    this.preloading = p;
+    return p;
   }
+
+  /** Löst auf, sobald ein laufendes Vorladen der Erinnerung fertig ist (sofort, wenn keins läuft). */
+  whenMemoryReady(): Promise<void> { return this.preloading ?? Promise.resolve(); }
 
   private readFlag(k: string, dflt: boolean): boolean {
     try { const v = localStorage.getItem(k); return v === null ? dflt : v === 'true'; } catch { return dflt; }

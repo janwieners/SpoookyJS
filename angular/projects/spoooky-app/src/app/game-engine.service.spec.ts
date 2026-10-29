@@ -268,9 +268,10 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
     try { localStorage.clear(); } catch { /* ignore */ }
     setSeed(12345);
     // Asset für den Preload bereitstellen (3-Agenten-Ensemble, 0 gelernte Zustände)
-    (globalThis as any).fetch = vi.fn(async () => ({ ok: true, json: async () => ensembleAsset() }));
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ensembleAsset() })));
   });
   afterEach(() => {
+    vi.unstubAllGlobals();
     try { localStorage.clear(); } catch { /* ignore */ }
     resetMemory('1');
     setMemoryEnabled(false);
@@ -304,6 +305,18 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
     svc.newGame(createTicTacToe);
     const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
     expect(ai.agents.length).toBe(3);
+  });
+
+  it('resetMemory lädt die mitgelieferte Erinnerung neu (3 Agenten, kein localStorage-Eintrag)', async () => {
+    const svc = new GameEngineService();
+    svc.toggleUseMemory(true);
+    await flush();
+    svc.resetMemory();
+    await flush();
+    svc.newGame(createTicTacToe);
+    const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
+    expect(ai.agents.length).toBe(3);
+    expect(svc.hasStoredMemory()).toBe(false);
   });
 
   it('ohne Erinnerung nutzt ein neues Spiel das Standard-Ensemble (Fallback)', () => {

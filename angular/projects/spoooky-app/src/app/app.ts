@@ -19,7 +19,9 @@ export class App implements OnInit {
 
   readonly error = this.engine.error;
 
-  ngOnInit(): void { this.engine.newGame(createTicTacToe); }
+  ngOnInit(): void {
+    void this.engine.whenMemoryReady().then(() => this.engine.newGame(createTicTacToe));
+  }
 
   restart(): void { this.engine.restart(); }
 
