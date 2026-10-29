@@ -88,4 +88,15 @@ describe('AiConfigPanel', () => {
     await fixture.whenStable();
     expect(spy).toHaveBeenCalledWith(true);
   });
+
+  it('blendet die Erinnerungs-Bedienelemente aus, wenn das Spiel kein Memory hat', async () => {
+    const { fixture, el } = await setup();
+    const engine = TestBed.inject(GameEngineService);
+    engine.hasMemory.set(false);
+    await fixture.whenStable();
+    expect(el.querySelector('input[data-test="use-memory"]')).toBeNull();
+    expect(el.querySelector('input[data-test="learn-mode"]')).toBeNull();
+    expect(el.querySelector('.memory-status')).toBeNull();
+    expect(el.querySelector('.memory-actions')).toBeNull();
+  });
 });

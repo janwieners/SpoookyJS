@@ -39,28 +39,30 @@ import { Difficulty } from '../ai-config';
         MCTS-Baum anzeigen
       </label>
 
-      <label class="toggle">
-        <input type="checkbox" data-test="use-memory" [checked]="engine.useMemory()"
-               (change)="engine.toggleUseMemory($any($event.target).checked)" />
-        Gelernte KI verwenden
-      </label>
+      @if (engine.hasMemory()) {
+        <label class="toggle">
+          <input type="checkbox" data-test="use-memory" [checked]="engine.useMemory()"
+                 (change)="engine.toggleUseMemory($any($event.target).checked)" />
+          Gelernte KI verwenden
+        </label>
 
-      <label class="toggle">
-        <input type="checkbox" data-test="learn-mode" [checked]="engine.learnMode()"
-               (change)="engine.toggleLearnMode($any($event.target).checked)" />
-        Lern-Modus (lernt am Spielende)
-      </label>
+        <label class="toggle">
+          <input type="checkbox" data-test="learn-mode" [checked]="engine.learnMode()"
+                 (change)="engine.toggleLearnMode($any($event.target).checked)" />
+          Lern-Modus (lernt am Spielende)
+        </label>
 
-      <p class="memory-status">{{ engine.memoryStatus() }}</p>
+        <p class="memory-status">{{ engine.memoryStatus() }}</p>
 
-      <div class="memory-actions">
-        <button type="button" (click)="engine.exportMemory()" [disabled]="!engine.hasStoredMemory()">
-          Erinnerung exportieren
-        </button>
-        <button type="button" (click)="engine.resetMemory()" [disabled]="!engine.hasStoredMemory()">
-          Auf Standard zurücksetzen
-        </button>
-      </div>
+        <div class="memory-actions">
+          <button type="button" (click)="engine.exportMemory()" [disabled]="!engine.hasStoredMemory()">
+            Erinnerung exportieren
+          </button>
+          <button type="button" (click)="engine.resetMemory()" [disabled]="!engine.hasStoredMemory()">
+            Auf Standard zurücksetzen
+          </button>
+        </div>
+      }
     </section>
   `,
   styles: [`
