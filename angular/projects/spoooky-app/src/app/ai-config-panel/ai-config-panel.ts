@@ -32,6 +32,12 @@ import { Difficulty } from '../ai-config';
                (change)="engine.toggleAnalysis($any($event.target).checked)" />
         KI-Analyse meiner Züge
       </label>
+
+      <label class="toggle">
+        <input type="checkbox" [checked]="engine.showTree()"
+               (change)="engine.toggleTree($any($event.target).checked)" />
+        MCTS-Baum anzeigen
+      </label>
     </section>
   `,
   styles: [`

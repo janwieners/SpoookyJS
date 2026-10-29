@@ -3,13 +3,14 @@ import { Board } from './board/board';
 import { GameLog } from './game-log/game-log';
 import { DecisionPanel } from './decision-panel/decision-panel';
 import { EvaluationToggle } from './evaluation-toggle/evaluation-toggle';
+import { MctsTree } from './mcts-tree/mcts-tree';
 import { AiConfigPanel } from './ai-config-panel/ai-config-panel';
 import { GameEngineService } from './game-engine.service';
 import { createTicTacToe } from './games/tictactoe.game';
 
 @Component({
   selector: 'app-root',
-  imports: [Board, GameLog, DecisionPanel, EvaluationToggle, AiConfigPanel],
+  imports: [Board, GameLog, DecisionPanel, EvaluationToggle, AiConfigPanel, MctsTree],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
