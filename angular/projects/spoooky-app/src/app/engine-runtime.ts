@@ -2,6 +2,7 @@ import { Spoooky } from 'spoooky-core';
 import { AgentDecision } from './evaluation-adapter';
 import { AiConfig, DEFAULT_AI_CONFIG } from './ai-config';
 import { AiWorkerDecision, AiWorkerRequest } from './ai-worker-protocol';
+import { getMemory, saveMemory } from './agent-memory';
 
 /**
  * Produktions-Laufzeit für die Legacy-Engine im Browser (SP1).
@@ -35,13 +36,25 @@ let generateTree = false;
 /** Schaltet die MCTS-Graph-Erzeugung NUR für den KI-Zug ein/aus (SP3b-Baumansicht); die Analyse bleibt ohne Graph. */
 export function setGenerateTree(on: boolean): void { generateTree = on; }
 
+let respectAgentTuning = false;
+/** Wenn an (Erinnerung aktiv): die per-Agent-uctConstant der Anfrage behalten statt mit der Config zu überschreiben. */
+export function setRespectAgentTuning(on: boolean): void { respectAgentTuning = on; }
+
 let workerMode: 'real' | 'sync' = 'real';
 /** 'real' = echter Off-Thread-Module-Worker (Produktion), 'sync' = In-Thread-Fallback (jsdom-Tests). */
 export function setWorkerMode(mode: 'real' | 'sync'): void { workerMode = mode; }
 
-/** Wendet die aktuelle KI-Konfiguration auf der Main-Thread-Seite an, bevor die Anfrage den Worker erreicht. */
-function withConfig(data: Omit<AiWorkerRequest, 'maxTime' | 'uctConstant'>): AiWorkerRequest {
-  return { ...data, maxTime: currentAiConfig.thinkingTimeMs, uctConstant: currentAiConfig.uctConstant };
+/**
+ * Wendet die KI-Konfiguration auf der Main-Thread-Seite an, bevor die Anfrage den Worker erreicht.
+ * Das Zeitbudget (maxTime) kommt immer aus der Config (Schwierigkeits-Regler), damit Züge zügig bleiben.
+ * Die uctConstant kommt bei aktiver Erinnerung aus der Anfrage selbst (gelerntes Ensemble spielt wie abgestimmt),
+ * sonst aus der Config.
+ */
+function withConfig(data: AiWorkerRequest): AiWorkerRequest {
+  const uctConstant = respectAgentTuning && typeof (data as any).uctConstant === 'number'
+    ? (data as any).uctConstant
+    : currentAiConfig.uctConstant;
+  return { ...data, maxTime: currentAiConfig.thinkingTimeMs, uctConstant };
 }
 function decisionSinkFrom(msg: AiWorkerDecision): void {
   aiDecisionSink?.({
@@ -106,6 +119,7 @@ export function runAnalysis(modelString: string, agentFocus: string): Promise<Ag
   const req = withConfig({
     command: 'monte carlo tree search with uct', agentID: -1, agentRole: 'ANALYZE POSSIBLE MOVES',
     agentFocus, maxSteps: 10000, learn: false, generateMctsGraph: false, gameModel: modelString,
+    maxTime: currentAiConfig.thinkingTimeMs, uctConstant: currentAiConfig.uctConstant,
   });
   if (workerMode === 'real') {
     return new Promise((resolve) => {
@@ -127,7 +141,11 @@ export function runAnalysis(modelString: string, agentFocus: string): Promise<Ag
 }
 
 const jqueryShim = {
-  ajax: (opts: any) => { opts.error?.(); opts.complete?.(); },
+  ajax: (opts: any) => {
+    const data = opts?.url ? getMemory(opts.url) : null;
+    if (data !== null) { opts.success?.(data); } else { opts.error?.(); }
+    opts.complete?.();
+  },
   each: (arr: any[], fn: (i: number, v: any) => void) => arr.forEach((v, i) => fn(i, v)),
 };
 
@@ -140,6 +158,13 @@ export function installEngineRuntime(): void {
   // Den ECHTEN Browser-Worker sichern, bevor er durch den EngineWorker ersetzt wird.
   (globalThis as any).__RealWorker = (globalThis as any).Worker;
   (globalThis as any).Worker = EngineWorker;
+  // Die Engine speichert gelernte Erinnerungen per FileSaver-`saveAs`; hier in den Memory-Cache (localStorage) umgeleitet.
+  (globalThis as any).saveAs = async (blob: Blob, filename: string) => {
+    try {
+      const text = typeof blob.text === 'function' ? await blob.text() : String(blob);
+      saveMemory(filename, text);
+    } catch { /* ignore */ }
+  };
   installed = true;
 }
 

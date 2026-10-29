@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
-import { setWorkerMode, setAiErrorHandler, setGenerateTree } from './engine-runtime';
+import { setWorkerMode, setAiErrorHandler, setGenerateTree, setAiConfig, setAiDecisionSink } from './engine-runtime';
+import { DEFAULT_AI_CONFIG } from './ai-config';
+import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory } from './agent-memory';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
@@ -246,5 +248,127 @@ describe('GameEngineService worker error handling', () => {
       consoleSpy.mockRestore();
       setAiErrorHandler(null);
     }
+  });
+});
+
+describe('GameEngineService: Erinnerung + Lernen', () => {
+  const flush = async () => { for (let i = 0; i < 5; i++) { await Promise.resolve(); } };
+  const ensembleAsset = () => ({
+    game: 'Tic Tac Toe', metaAgentID: 1,
+    bestAgentEnsemble: [
+      { ID: 1, role: 'ANALYZE POSSIBLE MOVES', focus: 'ALL MOVES', fitness: 5, uctConstant: 1.0, thinkingTime: 5000, maximumSteps: 5000 },
+      { ID: 2, role: 'ANALYZE POSSIBLE MOVES', focus: 'ALL MOVES', fitness: 5, uctConstant: 0.5, thinkingTime: 5000, maximumSteps: 5000 },
+      { ID: 3, role: 'ANALYZE POSSIBLE MOVES', focus: 'ALL MOVES', fitness: 5, uctConstant: 0, thinkingTime: 5000, maximumSteps: 5000 },
+    ],
+    learnModule: { rewards: {}, gameStates: {} },
+  });
+
+  beforeEach(() => {
+    setWorkerMode('sync');
+    try { localStorage.clear(); } catch { /* ignore */ }
+    setSeed(12345);
+    // Asset für den Preload bereitstellen (3-Agenten-Ensemble, 0 gelernte Zustände)
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ensembleAsset() })));
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory('1');
+    setMemoryEnabled(false);
+    setAiConfig(DEFAULT_AI_CONFIG);
+    setAiDecisionSink(null);
+  });
+
+  it('toggleUseMemory persistiert und aktiviert den Speicher', async () => {
+    const svc = new GameEngineService();
+    svc.toggleUseMemory(true);
+    await flush();
+    expect(svc.useMemory()).toBe(true);
+    expect(localStorage.getItem('spoooky.useMemory')).toBe('true');
+    expect(isMemoryEnabled()).toBe(true);
+  });
+
+  it('toggleLearnMode persistiert; neues Spiel aktiviert Lernen auf dem KI-Spieler', () => {
+    const svc = new GameEngineService();
+    svc.toggleLearnMode(true);
+    expect(svc.learnMode()).toBe(true);
+    expect(localStorage.getItem('spoooky.learnMode')).toBe('true');
+    svc.newGame(createTicTacToe);
+    const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
+    expect(ai.learningEnabled).toBe(true);
+  });
+
+  it('mit aktiver Erinnerung lädt ein neues Spiel das gelernte Ensemble (3 Agenten)', async () => {
+    const svc = new GameEngineService();
+    svc.toggleUseMemory(true);
+    await flush();
+    svc.newGame(createTicTacToe);
+    const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
+    expect(ai.agents.length).toBe(3);
+  });
+
+  it('resetMemory lädt die mitgelieferte Erinnerung neu (3 Agenten, kein localStorage-Eintrag)', async () => {
+    const svc = new GameEngineService();
+    svc.toggleUseMemory(true);
+    await flush();
+    svc.resetMemory();
+    await flush();
+    svc.newGame(createTicTacToe);
+    const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
+    expect(ai.agents.length).toBe(3);
+    expect(svc.hasStoredMemory()).toBe(false);
+  });
+
+  it('ohne Erinnerung nutzt ein neues Spiel das Standard-Ensemble (Fallback)', () => {
+    const svc = new GameEngineService();
+    svc.newGame(createTicTacToe);
+    const ai = (svc as any).game.raw.getPlayers().find((p: any) => p.type === 'ARTIFICIAL');
+    expect(ai.agents.length).toBeGreaterThanOrEqual(1);
+    expect(isMemoryEnabled()).toBe(false);
+  });
+
+  it('nach einem vollständigen Lern-Spiel liegt eine gespeicherte Erinnerung vor', async () => {
+    setAiConfig({ difficulty: 'easy', thinkingTimeMs: 30, uctConstant: 0.9 });  // kurze Züge, damit der Test zügig bleibt
+    const svc = new GameEngineService();
+    svc.toggleLearnMode(true);
+    svc.newGame(createTicTacToe);
+    // Mensch zieht jeweils auf die erste freie Zelle; der sync-Worker zieht die KI sofort.
+    for (let guard = 0; guard < 9 && svc.gameState() !== 'END'; guard++) {
+      const idx = svc.board().findIndex((c) => !c.image);
+      if (idx < 0 || svc.currentPlayerType() !== 'HUMAN') { break; }
+      svc.cellClicked(idx % 3, Math.floor(idx / 3));
+    }
+    expect(svc.gameState()).toBe('END');
+    await flush();  // der saveAs-Shim liest den Blob asynchron
+    expect(hasStoredMemory('1')).toBe(true);  // saveAs-Shim hat exportiert
+  }, 20000);
+
+  describe('withConfig-Laufzeiteffekt (respektiere Agenten-UCT)', () => {
+    const playOneMove = (svc: GameEngineService): number[] => {
+      const seen: number[] = [];
+      setAiConfig({ difficulty: 'medium', thinkingTimeMs: 50, uctConstant: 0.9 });
+      svc.newGame(createTicTacToe);
+      // Sink NACH newGame setzen (überschreibt den Service-Sink), um die uctConstant der Entscheidungen zu erfassen.
+      setAiDecisionSink((d) => { if (typeof d.uctConstant === 'number') { seen.push(d.uctConstant); } });
+      svc.cellClicked(1, 1);
+      return seen;
+    };
+
+    it('Erinnerung an: die uctConstant des Ensemble-Agenten bleibt erhalten (nicht die Config)', async () => {
+      const svc = new GameEngineService();
+      svc.toggleUseMemory(true);
+      await flush();
+      const seen = playOneMove(svc);
+      expect(seen.length).toBeGreaterThan(0);
+      expect(seen.some((u) => u !== 0.9)).toBe(true);
+      expect(seen.every((u) => [1.0, 0.5, 0].includes(u))).toBe(true);
+    });
+
+    it('Erinnerung aus: jede Entscheidung nutzt die uctConstant der Config', () => {
+      const svc = new GameEngineService();
+      const seen = playOneMove(svc);
+      expect(seen.length).toBeGreaterThan(0);
+      expect(seen.every((u) => u === 0.9)).toBe(true);
+    });
   });
 });

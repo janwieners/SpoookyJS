@@ -1,8 +1,17 @@
 import { Injectable, signal } from '@angular/core';
 import { SpooookyGame, PlayerType, Spoooky } from 'spoooky-core';
-import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, setGenerateTree, runAnalysis } from './engine-runtime';
+import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, setGenerateTree, runAnalysis, setRespectAgentTuning } from './engine-runtime';
 import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
 import { toTreeNode, TreeNode } from './mcts-tree-adapter';
+import {
+  preloadMemory, setMemoryEnabled, gameStatesCount, hasStoredMemory as hasStored,
+  exportMemory as exportMem, resetMemory as resetMem, onMemorySaved,
+} from './agent-memory';
+
+/** TicTacToe-KI-Spieler (metaAgentID 1); SP4 verallgemeinert das je Spiel. */
+const MEMORY_ID = '1';
+const MEMORY_KEY = 'agentmemory_1.json';
+const MEMORY_ASSET = '/agentmemory_1.json';
 
 @Injectable({ providedIn: 'root' })
 export class GameEngineService {
@@ -19,6 +28,9 @@ export class GameEngineService {
   readonly showAnalysis = signal<boolean>(this.readShowAnalysis());
   readonly mctsTree = signal<TreeNode | null>(null);
   readonly showTree = signal<boolean>(this.readShowTree());
+  readonly useMemory = signal<boolean>(this.readFlag('spoooky.useMemory', false));
+  readonly learnMode = signal<boolean>(this.readFlag('spoooky.learnMode', false));
+  readonly memoryStatus = signal<string>('');
   /** Wird bei jeder echten Stellungsänderung erhöht; verwirft veraltete/doppelte Analysen. */
   private analysisToken = 0;
   private analysisStartedFor = -1;
@@ -33,7 +45,69 @@ export class GameEngineService {
       this.error.set('Die KI-Berechnung ist fehlgeschlagen. Bitte starte ein neues Spiel.');
       this.aiThinking.set(false);
     });
+    setMemoryEnabled(this.useMemory());
+    setRespectAgentTuning(this.useMemory());
+    onMemorySaved(() => this.refreshMemoryStatus());
+    if (this.useMemory()) { void this.ensurePreloaded(); }
+    this.refreshMemoryStatus();
   }
+
+  private preloaded = false;
+  private preloading: Promise<void> | null = null;
+  /** Lädt die mitgelieferte Erinnerung in den Cache; die Engine liest sie synchron beim Spielaufbau. */
+  private ensurePreloaded(): Promise<void> {
+    if (this.preloaded) { return Promise.resolve(); }
+    if (this.preloading) { return this.preloading; }
+    const p = preloadMemory([{ key: MEMORY_KEY, assetUrl: MEMORY_ASSET }]).then(() => {
+      this.preloaded = true;
+      this.preloading = null;
+      this.refreshMemoryStatus();
+    });
+    this.preloading = p;
+    return p;
+  }
+
+  /** Löst auf, sobald ein laufendes Vorladen der Erinnerung fertig ist (sofort, wenn keins läuft). */
+  whenMemoryReady(): Promise<void> { return this.preloading ?? Promise.resolve(); }
+
+  private readFlag(k: string, dflt: boolean): boolean {
+    try { const v = localStorage.getItem(k); return v === null ? dflt : v === 'true'; } catch { return dflt; }
+  }
+
+  private refreshMemoryStatus(): void {
+    if (!this.useMemory()) { this.memoryStatus.set('Gelernte KI aus — Standard-Agenten.'); return; }
+    const n = gameStatesCount(MEMORY_KEY);
+    const src = hasStored(MEMORY_ID) ? 'localStorage' : 'mitgeliefert';
+    this.memoryStatus.set(`Gelernte KI an (${src}): ${n} gelernte Spielzustände.`);
+  }
+
+  toggleUseMemory(on: boolean): void {
+    this.useMemory.set(on);
+    setMemoryEnabled(on);
+    setRespectAgentTuning(on);
+    try { localStorage.setItem('spoooky.useMemory', String(on)); } catch { /* ignore */ }
+    if (on) { void this.ensurePreloaded(); } else { this.refreshMemoryStatus(); }
+  }
+
+  toggleLearnMode(on: boolean): void {
+    this.learnMode.set(on);
+    try { localStorage.setItem('spoooky.learnMode', String(on)); } catch { /* ignore */ }
+  }
+
+  exportMemory(): void { exportMem(MEMORY_ID); }
+
+  /**
+   * resetMem() verwirft auch den gecachten Asset-Eintrag; daher wird das mitgelieferte Asset neu geladen:
+   * "Auf Standard zurücksetzen" muss die mitgelieferte Erinnerung wiederherstellen, nicht auf Standard-Agenten fallen.
+   */
+  resetMemory(): void {
+    resetMem(MEMORY_ID);
+    this.preloaded = false;
+    if (this.useMemory()) { void this.ensurePreloaded(); }
+    this.refreshMemoryStatus();
+  }
+
+  hasStoredMemory(): boolean { return hasStored(MEMORY_ID); }
 
   newGame(factory: () => SpooookyGame): void {
     this.lastFactory = factory;
@@ -49,6 +123,8 @@ export class GameEngineService {
     this.error.set(null);
     const game = factory();
     this.game = game;
+    if (this.learnMode()) { game.enableLearning(); }
+    this.refreshMemoryStatus();
     connectNoopViews(game.raw);
     game.connectView(() => this.sync());
     game.start();

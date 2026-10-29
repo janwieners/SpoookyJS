@@ -38,6 +38,29 @@ import { Difficulty } from '../ai-config';
                (change)="engine.toggleTree($any($event.target).checked)" />
         MCTS-Baum anzeigen
       </label>
+
+      <label class="toggle">
+        <input type="checkbox" data-test="use-memory" [checked]="engine.useMemory()"
+               (change)="engine.toggleUseMemory($any($event.target).checked)" />
+        Gelernte KI verwenden
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" data-test="learn-mode" [checked]="engine.learnMode()"
+               (change)="engine.toggleLearnMode($any($event.target).checked)" />
+        Lern-Modus (lernt am Spielende)
+      </label>
+
+      <p class="memory-status">{{ engine.memoryStatus() }}</p>
+
+      <div class="memory-actions">
+        <button type="button" (click)="engine.exportMemory()" [disabled]="!engine.hasStoredMemory()">
+          Erinnerung exportieren
+        </button>
+        <button type="button" (click)="engine.resetMemory()" [disabled]="!engine.hasStoredMemory()">
+          Auf Standard zurücksetzen
+        </button>
+      </div>
     </section>
   `,
   styles: [`
@@ -54,6 +77,15 @@ import { Difficulty } from '../ai-config';
     .field { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .5rem; }
     .field input { width: 6rem; }
     .toggle { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; }
+    .memory-status { font-size: .85rem; color: var(--text); opacity: .8; margin: .25rem 0 0; }
+    .memory-actions { display: inline-flex; gap: .5rem; flex-wrap: wrap; }
+    .memory-actions button {
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      border-radius: var(--radius); padding: .3rem .7rem; cursor: pointer;
+    }
+    .memory-actions button:hover:not(:disabled) { border-color: var(--accent); }
+    .memory-actions button:disabled { opacity: .45; cursor: default; }
+    .memory-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   `],
 })
 export class AiConfigPanel {
