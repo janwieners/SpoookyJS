@@ -1,0 +1,12 @@
+<div class="board" [class.thinking]="aiThinking()">
+  @for (cell of cells(); track $index) {
+    <button class="cell" type="button" (click)="onCellClick($index)">
+      @if (cell.image) {
+        <img [src]="cell.image" alt="" />
+      }
+    </button>
+  }
+  @if (aiThinking()) {
+    <div class="overlay">Die KI denkt …</div>
+  }
+</div>

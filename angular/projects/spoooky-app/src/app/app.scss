@@ -1,0 +1,9 @@
+.layout {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-md, 16px);
+  display: grid;
+  gap: var(--space-md, 16px);
+}
+h1 { font-size: 1.25rem; }
+.error { color: var(--color-danger, #b00020); margin: 0; }
