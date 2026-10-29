@@ -13,7 +13,7 @@ import { GameDescriptor, gameById, DEFAULT_GAME_ID } from './games/registry';
 export class GameEngineService {
   private game: SpooookyGame | null = null;
 
-  readonly board = signal<Array<{ image: string | null }>>([]);
+  readonly board = signal<Array<{ image: string | null; baseClass: string; cellClass: string }>>([]);
   readonly currentPlayerType = signal<PlayerType>('HUMAN');
   readonly gameState = signal<string>('INGAME');
   readonly log = signal<string[]>([]);
@@ -26,6 +26,7 @@ export class GameEngineService {
   readonly showTree = signal<boolean>(this.readShowTree());
   readonly useMemory = signal<boolean>(this.readFlag('spoooky.useMemory', false));
   readonly learnMode = signal<boolean>(this.readFlag('spoooky.learnMode', false));
+  readonly statusText = signal<string>('');
   readonly memoryStatus = signal<string>('');
   /** Aktives Spiel (persistiert); Brettgröße kommt aus der Engine (newGame); hasMemory = Spiel hat ein Memory-Ziel. */
   readonly activeGameId = signal<string>(this.readActiveGame());
@@ -250,8 +251,8 @@ export class GameEngineService {
     // (index = y * columns + x) so the board component can render it directly.
     const grid = game.getGrid();
     const cells = Array.isArray(grid) ? grid.flat() : [];
-    // Resolve each piece's image via the engine (entity INSTANCE id -> view), not by guessing.
-    this.board.set(cells.map((cell: any) => ({ image: game.getEntityAt(cell)?.view ?? null })));
+    // Bild (Entity-INSTANZ-id -> view), Brettquadrat-Klasse und Highlight-Klasse je Zelle via Facade.
+    this.board.set(cells.map((cell: any) => game.cellView(cell)));
     this.currentPlayerType.set(game.getCurrentPlayerType());
     this.gameState.set(game.getState());
     const msgs = (Spoooky as any)?.GameProcess?.messages;
@@ -266,5 +267,11 @@ export class GameEngineService {
       this.applyEvaluation();
       void this.analyzeIfEnabled();
     }
+    this.refreshStatus();
+  }
+
+  private refreshStatus(): void {
+    if (this.gameState() === 'END') { this.statusText.set('Spiel beendet.'); return; }
+    this.statusText.set(this.currentPlayerType() === 'ARTIFICIAL' ? 'KI denkt …' : 'Du bist am Zug.');
   }
 }

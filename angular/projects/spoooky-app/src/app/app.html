@@ -13,7 +13,10 @@
   }
 
   <div class="content">
-    <section class="board-area"><app-board /></section>
+    <section class="board-area">
+      <app-board />
+      <p class="status" aria-live="polite">{{ statusText() }}</p>
+    </section>
     <aside class="side">
       <app-ai-config-panel />
       <app-decision-panel />

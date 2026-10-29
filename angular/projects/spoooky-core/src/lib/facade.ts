@@ -30,4 +30,13 @@ export class SpooookyGame {
     const entity = this.raw.getPlayerWithID(ref.playerID).getEntityWithID(ref.entityID);
     return { name: entity.getName(), view: entity.getView() };
   }
+
+  /** Bild + Brettquadrat-Klasse (baseClass) + Highlight-Klasse (cellClass) einer Zelle (SP4b). */
+  cellView(cell: any): { image: string | null; baseClass: string; cellClass: string } {
+    return {
+      image: this.getEntityAt(cell)?.view ?? null,
+      baseClass: cell?.view?.baseClass ?? '',
+      cellClass: cell?.view?.cellClass ?? '',
+    };
+  }
 }

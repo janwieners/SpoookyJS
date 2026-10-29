@@ -1,11 +1,19 @@
 <div class="board" [class.thinking]="aiThinking()" [style.--cols]="columns()">
   @for (cell of cells(); track $index) {
     <button class="cell" type="button" (click)="onCellClick($index)"
+            [class.sq-dark]="squareClass($index) === 'sq-dark'"
+            [class.sq-light]="squareClass($index) === 'sq-light'"
+            [class.sel]="markClass($index) === 'sel'"
+            [class.target]="markClass($index) === 'target'"
+            [class.capture]="markClass($index) === 'capture'"
             [class.candidate]="evalAt($index)"
             [class.chosen]="evalAt($index)?.chosen"
             [style]="evalAt($index) ? heatStyle(evalAt($index)!) : null">
       @if (cell.image) {
         <img [src]="cell.image" alt="" />
+      }
+      @if (markClass($index) === 'target' || markClass($index) === 'capture') {
+        <span class="move-marker" [class.capture]="markClass($index) === 'capture'"></span>
       }
       @if (evalAt($index); as e) {
         <span class="eval">

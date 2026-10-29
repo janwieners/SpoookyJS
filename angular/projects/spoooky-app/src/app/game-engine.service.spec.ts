@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
+import { createCheckers } from './games/checkers.game';
 import { setWorkerMode, setAiErrorHandler, setGenerateTree, setAiConfig, setAiDecisionSink } from './engine-runtime';
 import { DEFAULT_AI_CONFIG } from './ai-config';
 import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory, setActiveMemory, onMemorySaved } from './agent-memory';
@@ -473,5 +474,31 @@ describe('GameEngineService: Mehr-Spiel + per-Spiel-Memory', () => {
     const svc = new GameEngineService();
     expect(svc.activeGameId()).toBe('gomoku15x15');
     expect(svc.hasMemory()).toBe(true);
+  });
+});
+
+describe('GameEngineService: Zellmodell + Highlights (SP4b)', () => {
+  const reset = () => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+  };
+  beforeEach(() => { reset(); setWorkerMode('sync'); setSeed(12345); });
+  afterEach(() => { reset(); setWorkerMode('sync'); });
+
+  it('legt baseClass + cellClass je Zelle ab und zeigt Highlights nach Figur-Auswahl', () => {
+    const svc = new GameEngineService();
+    svc.newGame(createCheckers);
+    // Brettmuster ist in jeder Zelle vorhanden:
+    expect(svc.board()[0].baseClass).toBe('gridCellWhite');
+    expect(svc.board()[1].baseClass).toBe('gridCellBlack');
+    expect(svc.board().every((c) => 'cellClass' in c)).toBe(true);
+    // Eine spielbare menschliche Figur auswählen (vordere Reihe unten, z. B. (0,5)): Highlights erscheinen.
+    svc.cellClicked(0, 5);
+    const classes = svc.board().map((c) => c.cellClass);
+    expect(classes).toContain('clickedEntity');
+    expect(classes.some((c) => c === 'move_standard' || c === 'move_goal')).toBe(true);
   });
 });

@@ -19,6 +19,7 @@ export class App implements OnInit {
   private readonly engine = inject(GameEngineService);
 
   readonly error = this.engine.error;
+  readonly statusText = this.engine.statusText;
   readonly gameName = computed(() => gameById(this.engine.activeGameId()).name);
 
   ngOnInit(): void {
