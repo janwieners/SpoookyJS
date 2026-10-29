@@ -16,6 +16,14 @@ export class SpooookyGame {
   getState(): string { return this.raw.getGameState(); }
   getCurrentPlayerType(): PlayerType { return this.raw.getCurrentPlayerType(); }
   serialize(): string { return this.raw.stringifyModels(); }
+
+  /** Aktiviert das Lernen auf allen künstlichen Spielern (SP3c). */
+  enableLearning(): void {
+    for (const p of this.raw.getPlayers()) {
+      if (p.type === 'ARTIFICIAL') { p.enableLearning(); }
+    }
+  }
+
   getEntityAt(cell: any): { name: string; view: any } | null {
     if (!cell.contains || cell.contains.length === 0) { return null; }
     const ref = cell.contains[cell.contains.length - 1];
