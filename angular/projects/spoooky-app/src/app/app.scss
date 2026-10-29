@@ -9,6 +9,7 @@
 .restart:hover { border-color: var(--accent); }
 .restart:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .error { color: var(--color-danger); margin: 0; }
+.status { margin: var(--space-sm, 8px) 0 0; }
 .content { display: grid; grid-template-columns: auto 1fr; gap: var(--space-md); align-items: start; }
 .side {
   display: grid; gap: var(--space-md);

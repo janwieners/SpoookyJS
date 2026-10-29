@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from '../games/tictactoe.game';
+import { createCheckers } from '../games/checkers.game';
 import { setWorkerMode } from '../engine-runtime';
 import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 import { GameEngineService } from '../game-engine.service';
@@ -125,5 +126,31 @@ describe('Board – dynamische Brettgröße', () => {
     expect(spy).toHaveBeenCalledWith(1, 1);
     expect(comp.columns()).toBe(9);
     expect(fixture.nativeElement.querySelectorAll('.cell').length).toBe(81);
+  });
+});
+
+describe('Board – Dame (Brettmuster + Highlights)', () => {
+  beforeEach(() => {
+    setWorkerMode('sync');
+    setSeed(42);
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
+
+  it('rendert Brettquadrat-Klassen und Highlight-Klassen (Dame)', async () => {
+    await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
+    const engine = TestBed.inject(GameEngineService);
+    engine.newGame(createCheckers);
+    const fixture = TestBed.createComponent(Board);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    // Brettmuster: mindestens eine dunkle und eine helle Zelle.
+    expect(el.querySelectorAll('.cell.sq-dark').length).toBeGreaterThan(0);
+    expect(el.querySelectorAll('.cell.sq-light').length).toBeGreaterThan(0);
+    // Figur wählen -> Auswahl- + Ziel-Marker erscheinen.
+    engine.cellClicked(0, 5);
+    await fixture.whenStable();
+    expect(el.querySelectorAll('.cell.sel').length).toBe(1);
+    expect(el.querySelectorAll('.cell.target, .cell.capture').length).toBeGreaterThan(0);
+    expect(el.querySelectorAll('.cell .move-marker').length).toBeGreaterThan(0);
   });
 });

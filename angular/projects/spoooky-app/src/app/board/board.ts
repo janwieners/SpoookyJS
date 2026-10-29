@@ -36,6 +36,18 @@ export class Board {
     return { 'background-color': `color-mix(in srgb, hsl(${hue} 70% 50%) 45%, var(--surface, #fff))` };
   }
 
+  /** Brettquadrat-Klasse aus baseClass (nur Dame nutzt dunkel/hell; TicTacToe/Gomoku -> neutral). */
+  squareClass(i: number): string {
+    const b = this.cells()[i]?.baseClass;
+    return b === 'gridCellBlack' ? 'sq-dark' : b === 'gridCellWhite' ? 'sq-light' : '';
+  }
+
+  /** Highlight-Klasse aus cellClass (Auswahl / normales Ziel / Schlag-Ziel). */
+  markClass(i: number): string {
+    const c = this.cells()[i]?.cellClass;
+    return c === 'clickedEntity' ? 'sel' : c === 'move_standard' ? 'target' : c === 'move_goal' ? 'capture' : '';
+  }
+
   /** Board is a flat row-major array; cells carry no x/y, so derive them from the index. */
   onCellClick(index: number): void {
     const cols = this.columns();

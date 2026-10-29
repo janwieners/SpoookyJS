@@ -20,6 +20,17 @@
       text-shadow: 0 0 2px var(--surface);
     }
     .eval .rate { font-weight: 700; }
+    &.sq-dark { background: var(--board-dark, #6b4f3a); }
+    &.sq-light { background: var(--board-light, #e8d6b3); }
+    &.sel { outline: 3px solid var(--accent); outline-offset: -3px; }
+    .move-marker {
+      position: absolute; width: 34%; height: 34%; border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 70%, transparent); pointer-events: none;
+      &.capture {
+        background: transparent; width: 70%; height: 70%;
+        border: 3px solid var(--color-danger, #c0392b);
+      }
+    }
     &.chosen { outline: 3px solid var(--accent); outline-offset: -3px; }
   }
   .overlay {

@@ -26,6 +26,7 @@ export class GameEngineService {
   readonly showTree = signal<boolean>(this.readShowTree());
   readonly useMemory = signal<boolean>(this.readFlag('spoooky.useMemory', false));
   readonly learnMode = signal<boolean>(this.readFlag('spoooky.learnMode', false));
+  readonly statusText = signal<string>('');
   readonly memoryStatus = signal<string>('');
   /** Aktives Spiel (persistiert); Brettgröße kommt aus der Engine (newGame); hasMemory = Spiel hat ein Memory-Ziel. */
   readonly activeGameId = signal<string>(this.readActiveGame());
@@ -266,5 +267,11 @@ export class GameEngineService {
       this.applyEvaluation();
       void this.analyzeIfEnabled();
     }
+    this.refreshStatus();
+  }
+
+  private refreshStatus(): void {
+    if (this.gameState() === 'END') { this.statusText.set('Spiel beendet.'); return; }
+    this.statusText.set(this.currentPlayerType() === 'ARTIFICIAL' ? 'KI denkt …' : 'Du bist am Zug.');
   }
 }
