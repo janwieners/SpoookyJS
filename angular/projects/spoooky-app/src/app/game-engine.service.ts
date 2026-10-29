@@ -4,14 +4,10 @@ import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHa
 import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
 import { toTreeNode, TreeNode } from './mcts-tree-adapter';
 import {
-  preloadMemory, setMemoryEnabled, gameStatesCount, hasStoredMemory as hasStored,
+  preloadMemory, setMemoryEnabled, gameStatesCount, setActiveMemory, hasStoredMemory as hasStored,
   exportMemory as exportMem, resetMemory as resetMem, onMemorySaved,
 } from './agent-memory';
-
-/** TicTacToe-KI-Spieler (metaAgentID 1); SP4 verallgemeinert das je Spiel. */
-const MEMORY_ID = '1';
-const MEMORY_KEY = 'agentmemory_1.json';
-const MEMORY_ASSET = '/agentmemory_1.json';
+import { GameDescriptor, gameById, DEFAULT_GAME_ID } from './games/registry';
 
 @Injectable({ providedIn: 'root' })
 export class GameEngineService {
@@ -31,6 +27,12 @@ export class GameEngineService {
   readonly useMemory = signal<boolean>(this.readFlag('spoooky.useMemory', false));
   readonly learnMode = signal<boolean>(this.readFlag('spoooky.learnMode', false));
   readonly memoryStatus = signal<string>('');
+  /** Aktives Spiel (persistiert); Brettgröße kommt aus der Engine (newGame); hasMemory = Spiel hat ein Memory-Ziel. */
+  readonly activeGameId = signal<string>(this.readActiveGame());
+  readonly columns = signal<number>(3);
+  readonly rows = signal<number>(3);
+  readonly hasMemory = signal<boolean>(true);
+  private active: GameDescriptor = gameById(this.activeGameId());
   /** Wird bei jeder echten Stellungsänderung erhöht; verwirft veraltete/doppelte Analysen. */
   private analysisToken = 0;
   private analysisStartedFor = -1;
@@ -48,17 +50,32 @@ export class GameEngineService {
     setMemoryEnabled(this.useMemory());
     setRespectAgentTuning(this.useMemory());
     onMemorySaved(() => this.refreshMemoryStatus());
+    this.applyActiveMemory();
     if (this.useMemory()) { void this.ensurePreloaded(); }
     this.refreshMemoryStatus();
   }
 
   private preloaded = false;
   private preloading: Promise<void> | null = null;
-  /** Lädt die mitgelieferte Erinnerung in den Cache; die Engine liest sie synchron beim Spielaufbau. */
+
+  private readActiveGame(): string {
+    try { return localStorage.getItem('spoooky.activeGame') ?? DEFAULT_GAME_ID; } catch { return DEFAULT_GAME_ID; }
+  }
+
+  /** Übernimmt das aktive Spiel: Descriptor, hasMemory und das aktive localStorage-Ziel des Agentenspeichers. */
+  private applyActiveMemory(): void {
+    this.active = gameById(this.activeGameId());
+    this.hasMemory.set(!!this.active.memory);
+    setActiveMemory(this.active.memory?.storageId ?? null);
+  }
+
+  /** Lädt die mitgelieferte Erinnerung des aktiven Spiels in den Cache; die Engine liest sie synchron beim Spielaufbau. */
   private ensurePreloaded(): Promise<void> {
+    const target = this.active.memory;
+    if (!target) { this.preloaded = true; this.preloading = null; this.refreshMemoryStatus(); return Promise.resolve(); }
     if (this.preloaded) { return Promise.resolve(); }
     if (this.preloading) { return this.preloading; }
-    const p = preloadMemory([{ key: MEMORY_KEY, assetUrl: MEMORY_ASSET }]).then(() => {
+    const p = preloadMemory([{ key: target.key, assetUrl: target.asset }]).then(() => {
       this.preloaded = true;
       this.preloading = null;
       this.refreshMemoryStatus();
@@ -75,10 +92,25 @@ export class GameEngineService {
   }
 
   private refreshMemoryStatus(): void {
+    if (!this.active.memory) { this.memoryStatus.set('Dieses Spiel hat keine gelernte KI.'); return; }
     if (!this.useMemory()) { this.memoryStatus.set('Gelernte KI aus — Standard-Agenten.'); return; }
-    const n = gameStatesCount(MEMORY_KEY);
-    const src = hasStored(MEMORY_ID) ? 'localStorage' : 'mitgeliefert';
+    const n = gameStatesCount(this.active.memory.key);
+    const src = hasStored() ? 'localStorage' : 'mitgeliefert';
     this.memoryStatus.set(`Gelernte KI an (${src}): ${n} gelernte Spielzustände.`);
+  }
+
+  /**
+   * Wechselt das Spiel: Memory-Ziel umstellen, Cache für das neue Spiel neu vorladen
+   * (alle Spiele teilen den Cache-Key agentmemory_1.json) und erst danach das Spiel bauen.
+   */
+  selectGame(id: string): void {
+    this.activeGameId.set(id);
+    try { localStorage.setItem('spoooky.activeGame', id); } catch { /* ignore */ }
+    this.applyActiveMemory();
+    this.preloaded = false;
+    this.preloading = null;
+    if (this.useMemory()) { void this.ensurePreloaded(); }
+    void this.whenMemoryReady().then(() => this.newGame(this.active.factory));
   }
 
   toggleUseMemory(on: boolean): void {
@@ -94,20 +126,21 @@ export class GameEngineService {
     try { localStorage.setItem('spoooky.learnMode', String(on)); } catch { /* ignore */ }
   }
 
-  exportMemory(): void { exportMem(MEMORY_ID); }
+  exportMemory(): void { exportMem(); }
 
   /**
    * resetMem() verwirft auch den gecachten Asset-Eintrag; daher wird das mitgelieferte Asset neu geladen:
    * "Auf Standard zurücksetzen" muss die mitgelieferte Erinnerung wiederherstellen, nicht auf Standard-Agenten fallen.
    */
   resetMemory(): void {
-    resetMem(MEMORY_ID);
+    resetMem();
     this.preloaded = false;
+    this.preloading = null;
     if (this.useMemory()) { void this.ensurePreloaded(); }
     this.refreshMemoryStatus();
   }
 
-  hasStoredMemory(): boolean { return hasStored(MEMORY_ID); }
+  hasStoredMemory(): boolean { return hasStored(); }
 
   newGame(factory: () => SpooookyGame): void {
     this.lastFactory = factory;
@@ -123,6 +156,8 @@ export class GameEngineService {
     this.error.set(null);
     const game = factory();
     this.game = game;
+    this.columns.set(game.getColumns());
+    this.rows.set(game.getRows());
     if (this.learnMode()) { game.enableLearning(); }
     this.refreshMemoryStatus();
     connectNoopViews(game.raw);
