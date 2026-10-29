@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, inject } from '@angular/core';
+import { Component, OnInit, HostListener, computed, inject } from '@angular/core';
 import { Board } from './board/board';
 import { GameLog } from './game-log/game-log';
 import { DecisionPanel } from './decision-panel/decision-panel';
@@ -7,6 +7,7 @@ import { MctsTree } from './mcts-tree/mcts-tree';
 import { AiConfigPanel } from './ai-config-panel/ai-config-panel';
 import { GamePicker } from './game-picker/game-picker';
 import { GameEngineService } from './game-engine.service';
+import { gameById } from './games/registry';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class App implements OnInit {
   private readonly engine = inject(GameEngineService);
 
   readonly error = this.engine.error;
+  readonly gameName = computed(() => gameById(this.engine.activeGameId()).name);
 
   ngOnInit(): void {
     void this.engine.selectGame(this.engine.activeGameId());

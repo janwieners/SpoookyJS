@@ -1,11 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import { setWorkerMode } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 import { GameEngineService } from '../game-engine.service';
 import { GamePicker } from './game-picker';
 import { GAMES } from '../games/registry';
 
 describe('GamePicker', () => {
-  beforeEach(() => { setWorkerMode('sync'); try { localStorage.clear(); } catch { /* ignore */ } });
+  beforeEach(() => {
+    setWorkerMode('sync');
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  });
+  // selectGame schreibt activeGame/Memory-Ziel; nichts davon darf in andere Specs lecken.
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  });
 
   it('listet alle Spiele und ruft selectGame bei Auswahl', async () => {
     const fixture = TestBed.createComponent(GamePicker);

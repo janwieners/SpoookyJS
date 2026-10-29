@@ -17,8 +17,19 @@ describe('agent-memory', () => {
     resetMemory(); // leert auch den modulweiten Cache (Testisolation)
     setMemoryEnabled(false);
     onMemorySaved(null);
-    (globalThis as any).fetch = vi.fn(async () => ({ ok: true, json: async () => MEM }));
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => MEM })));
   });
+
+  // Isolation: der Agentenspeicher (activeStorageId/cache/memoryEnabled) ist modulglobal.
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  });
+
 
   it('idFromFilename extrahiert die ID', () => {
     expect(idFromFilename('agentmemory_1.json')).toBe('1');
@@ -44,11 +55,11 @@ describe('agent-memory', () => {
     await preloadMemory([{ key: 'agentmemory_1.json', assetUrl: '/agentmemory_1.json' }]);
     setMemoryEnabled(true);
     expect(gameStatesCount('agentmemory_1.json')).toBe(3);
-    expect((globalThis as any).fetch).not.toHaveBeenCalled();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   it('fehlendes Asset -> stiller Fallback, getMemory bleibt null', async () => {
-    (globalThis as any).fetch = vi.fn(async () => ({ ok: false, json: async () => ({}) }));
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, json: async () => ({}) })));
     await preloadMemory([{ key: 'agentmemory_1.json', assetUrl: '/agentmemory_1.json' }]);
     setMemoryEnabled(true);
     expect(getMemory('agentmemory_1.json')).toBeNull();
@@ -80,8 +91,19 @@ describe('agent-memory: per-game namespacing', () => {
     resetMemory();
     setMemoryEnabled(true);
     onMemorySaved(null);
-    (globalThis as any).fetch = vi.fn(async () => ({ ok: true, json: async () => ({ learnModule: { gameStates: { a: {} } } }) }));
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ learnModule: { gameStates: { a: {} } } }) })));
   });
+
+  // Isolation: der Agentenspeicher (activeStorageId/cache/memoryEnabled) ist modulglobal.
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  });
+
 
   it('speichert und liest unter dem aktiven, genamespaceten Schlüssel', async () => {
     setActiveMemory('gomoku9x9.1');

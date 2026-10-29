@@ -1,9 +1,24 @@
 import { setWorkerMode } from '../engine-runtime';
 import { installEngineRuntime } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory } from '../agent-memory';
 import { createGomoku9x9, createGomoku15x15 } from './gomoku.game';
 
 describe('createGomoku', () => {
-  beforeEach(() => { setWorkerMode('sync'); installEngineRuntime(); });
+  beforeEach(() => {
+    setWorkerMode('sync');
+    installEngineRuntime();
+    // Kein geleaktes Memory aus anderen Specs (sonst liest die Engine fremde Erinnerungsdaten).
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
+  afterEach(() => {
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
 
   it('9x9 baut ein 9×9-Brett im PLACING-Modus, Mensch beginnt', () => {
     const g = createGomoku9x9();

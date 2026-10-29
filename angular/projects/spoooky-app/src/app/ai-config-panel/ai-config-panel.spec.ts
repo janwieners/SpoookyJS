@@ -2,10 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { AiConfigPanel } from './ai-config-panel';
 import { AiConfigService } from '../ai-config.service';
 import { GameEngineService } from '../game-engine.service';
+import { setWorkerMode } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 
 describe('AiConfigPanel', () => {
-  beforeEach(() => localStorage.clear());
-  afterEach(() => localStorage.clear());
+  const resetShared = () => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  };
+  beforeEach(() => { setWorkerMode('sync'); resetShared(); });
+  afterEach(resetShared);
 
   async function setup() {
     await TestBed.configureTestingModule({ imports: [AiConfigPanel] }).compileComponents();

@@ -3,10 +3,31 @@ import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
 import { setWorkerMode, setAiErrorHandler, setGenerateTree, setAiConfig, setAiDecisionSink } from './engine-runtime';
 import { DEFAULT_AI_CONFIG } from './ai-config';
-import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory, setActiveMemory } from './agent-memory';
+import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory, setActiveMemory, onMemorySaved } from './agent-memory';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
+
+// Isolation: Agentenspeicher (activeStorageId/cache/memoryEnabled), localStorage und fetch sind prozessweit geteilt.
+beforeEach(() => {
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+  setAiConfig(DEFAULT_AI_CONFIG);
+  setAiDecisionSink(null);
+  setGenerateTree(false);
+  setWorkerMode('sync');
+});
 
 describe('GameEngineService', () => {
   let svc: GameEngineService;

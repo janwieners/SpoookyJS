@@ -1,8 +1,23 @@
 import { setWorkerMode, installEngineRuntime } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory } from '../agent-memory';
 import { GAMES, DEFAULT_GAME_ID, gameById } from './registry';
 
 describe('game registry', () => {
-  beforeEach(() => { setWorkerMode('sync'); installEngineRuntime(); });
+  beforeEach(() => {
+    setWorkerMode('sync');
+    installEngineRuntime();
+    // Kein geleaktes Memory aus anderen Specs (sonst liest die Engine fremde Erinnerungsdaten).
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
+  afterEach(() => {
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
 
   it('hat eindeutige IDs und einen gültigen Default', () => {
     const ids = GAMES.map((g) => g.id);

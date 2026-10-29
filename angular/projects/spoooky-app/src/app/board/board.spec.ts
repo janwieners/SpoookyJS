@@ -2,10 +2,28 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from '../games/tictactoe.game';
 import { setWorkerMode } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 import { GameEngineService } from '../game-engine.service';
 import { Board } from './board';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
+
+// Isolation: Agentenspeicher, localStorage und fetch sind prozessweit geteilt.
+beforeEach(() => {
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
 
 describe('Board', () => {
   let fixture: ComponentFixture<Board>;
