@@ -4,6 +4,8 @@ export interface AgentDecision {
   results: Array<{ target: string; visits: number; wins: number; moveIndex?: number; simulationSteps?: number }>;
   simCount: number;
   simSteps: number;
+  /** Roher MCTS-Graph der Engine (nur wenn generateMctsGraph an war); Adapter: mcts-tree-adapter. */
+  mctsGraph?: unknown;
 }
 export interface EvalCell { x: number; y: number; visits: number; wins: number; winRate: number; chosen: boolean; }
 export interface DecisionStats { candidates: number; simulations: number; steps: number; chosen: string | null; chosenWinRate: number | null; }

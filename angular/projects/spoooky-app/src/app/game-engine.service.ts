@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { SpooookyGame, PlayerType, Spoooky } from 'spoooky-core';
-import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, runAnalysis } from './engine-runtime';
+import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, setGenerateTree, runAnalysis } from './engine-runtime';
 import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
+import { toTreeNode, TreeNode } from './mcts-tree-adapter';
 
 @Injectable({ providedIn: 'root' })
 export class GameEngineService {
@@ -16,6 +17,8 @@ export class GameEngineService {
   readonly evaluation = signal<Evaluation | null>(null);
   readonly showEvaluation = signal<boolean>(this.readShowEvaluation());
   readonly showAnalysis = signal<boolean>(this.readShowAnalysis());
+  readonly mctsTree = signal<TreeNode | null>(null);
+  readonly showTree = signal<boolean>(this.readShowTree());
   /** Wird bei jeder echten Stellungsänderung erhöht; verwirft veraltete/doppelte Analysen. */
   private analysisToken = 0;
   private analysisStartedFor = -1;
@@ -24,6 +27,7 @@ export class GameEngineService {
 
   constructor() {
     installEngineRuntime();
+    setGenerateTree(this.showTree());
     setAiDecisionSink((d) => this.decisionBuffer.push(d));
     setAiErrorHandler(() => {
       this.error.set('Die KI-Berechnung ist fehlgeschlagen. Bitte starte ein neues Spiel.');
@@ -35,6 +39,7 @@ export class GameEngineService {
     this.lastFactory = factory;
     this.decisionBuffer = [];
     this.evaluation.set(null);
+    this.mctsTree.set(null);
     this.analysisToken++;
     // The engine keeps its logs in global singletons; start every game with clean logs.
     const gp = (Spoooky as any)?.GameProcess?.messages;
@@ -78,6 +83,16 @@ export class GameEngineService {
     if (on) { void this.analyzeIfEnabled(); }
   }
 
+  toggleTree(on: boolean): void {
+    this.showTree.set(on);
+    setGenerateTree(on);
+    try { localStorage.setItem('spoooky.showTree', String(on)); } catch { /* ignore */ }
+  }
+
+  private readShowTree(): boolean {
+    try { return localStorage.getItem('spoooky.showTree') === 'true'; } catch { return false; }
+  }
+
   private readShowAnalysis(): boolean {
     try { return localStorage.getItem('spoooky.showAnalysis') === 'true'; } catch { return false; }
   }
@@ -107,6 +122,9 @@ export class GameEngineService {
     const game = this.game;
     if (!game || this.decisionBuffer.length === 0) { return; }
     const ev = aggregateDecision(this.decisionBuffer, game.getColumns(), game.getRows());
+    // Baum des primären Agenten: erste gepufferte Entscheidung mit nicht-leerem mctsGraph (vor dem Leeren des Buffers).
+    const withTree = this.decisionBuffer.find((d) => (d.mctsGraph as any)?.children);
+    if (withTree) { this.mctsTree.set(toTreeNode(withTree.mctsGraph as any)); }
     this.decisionBuffer = [];
     if (ev) { this.evaluation.set(ev); }
   }

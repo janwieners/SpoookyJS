@@ -56,4 +56,17 @@ describe('AiConfigPanel', () => {
     await fixture.whenStable();
     expect(engine.showAnalysis()).toBe(!before);
   });
+
+  it('MCTS-Baum-Checkbox spiegelt und schaltet showTree', async () => {
+    const { fixture, el } = await setup();
+    const engine = TestBed.inject(GameEngineService);
+    const box = el.querySelectorAll('input[type=checkbox]')[1] as HTMLInputElement;
+    expect(box.parentElement?.textContent).toContain('MCTS-Baum anzeigen');
+    expect(box.checked).toBe(engine.showTree());
+    const before = engine.showTree();
+    box.checked = !box.checked;
+    box.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+    expect(engine.showTree()).toBe(!before);
+  });
 });
