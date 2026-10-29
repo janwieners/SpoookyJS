@@ -69,4 +69,23 @@ describe('AiConfigPanel', () => {
     await fixture.whenStable();
     expect(engine.showTree()).toBe(!before);
   });
+
+  it('zeigt die Schalter „Gelernte KI" und „Lern-Modus" und die Statuszeile', async () => {
+    const { el } = await setup();
+    const text = el.textContent as string;
+    expect(text).toContain('Gelernte KI verwenden');
+    expect(text).toContain('Lern-Modus');
+    expect(el.querySelector('.memory-status')).toBeTruthy();
+  });
+
+  it('ruft toggleUseMemory beim Umschalten', async () => {
+    const { fixture, el } = await setup();
+    const engine = TestBed.inject(GameEngineService);
+    const spy = vi.spyOn(engine, 'toggleUseMemory');
+    const cb = el.querySelector('input[data-test="use-memory"]') as HTMLInputElement;
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+    expect(spy).toHaveBeenCalledWith(true);
+  });
 });
