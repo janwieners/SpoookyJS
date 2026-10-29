@@ -376,6 +376,7 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
 });
 
 describe('GameEngineService: Mehr-Spiel + per-Spiel-Memory', () => {
+  const flush = async () => { for (let i = 0; i < 5; i++) { await Promise.resolve(); } };
   beforeEach(() => {
     setWorkerMode('sync');
     try { localStorage.clear(); } catch { /* ignore */ }
@@ -410,23 +411,22 @@ describe('GameEngineService: Mehr-Spiel + per-Spiel-Memory', () => {
     expect(svc.board().length).toBe(81);
   });
 
-  it('Lernen in einem Spiel überschreibt die Erinnerung des anderen nicht', () => {
+  it('Lernen in einem Spiel überschreibt die Erinnerung des anderen nicht', async () => {
     setAiConfig({ difficulty: 'easy', thinkingTimeMs: 30, uctConstant: 0.9 });
     const svc = new GameEngineService();
     svc.toggleLearnMode(true);
-    svc.selectGame('gomoku9x9');
+    await svc.selectGame('gomoku9x9');  // wartet, bis das Spiel gebaut ist
     // ein Gomoku-Spiel (erste freie Zellen) mit Iterationsdeckel spielen
-    const freeCell = () => svc.board().findIndex((c) => !c.image);
-    for (let i = 0; i < 200 && svc.gameState() !== 'END'; i++) {
+    for (let i = 0; i < 100 && svc.gameState() !== 'END'; i++) {
       if (svc.currentPlayerType() !== 'HUMAN') { break; }
-      const idx = freeCell(); if (idx < 0) { break; }
+      const idx = svc.board().findIndex((c) => !c.image);
+      if (idx < 0) { break; }
       svc.cellClicked(idx % svc.columns(), Math.floor(idx / svc.columns()));
     }
-    // Falls das Spiel endete, liegt die Gomoku-Erinnerung vor und TicTacToe ist unberührt.
-    if (svc.gameState() === 'END') {
-      expect(localStorage.getItem('spoooky.agentmemory.gomoku9x9.1')).not.toBeNull();
-      expect(localStorage.getItem('spoooky.agentmemory.tictactoe.1')).toBeNull();
-    }
+    await flush();  // der saveAs-Shim liest den Blob asynchron
+    expect(svc.gameState()).toBe('END');
+    expect(localStorage.getItem('spoooky.agentmemory.gomoku9x9.1')).not.toBeNull();
+    expect(localStorage.getItem('spoooky.agentmemory.tictactoe.1')).toBeNull();
   }, 60000);
 
   it('hasMemory ist true für Spiele mit Memory-Ziel', () => {

@@ -51,6 +51,8 @@ export class GameEngineService {
     setRespectAgentTuning(this.useMemory());
     onMemorySaved(() => this.refreshMemoryStatus());
     this.applyActiveMemory();
+    this.columns.set(this.active.columns);
+    this.rows.set(this.active.rows);
     if (this.useMemory()) { void this.ensurePreloaded(); }
     this.refreshMemoryStatus();
   }
@@ -75,7 +77,8 @@ export class GameEngineService {
     if (!target) { this.preloaded = true; this.preloading = null; this.refreshMemoryStatus(); return Promise.resolve(); }
     if (this.preloaded) { return Promise.resolve(); }
     if (this.preloading) { return this.preloading; }
-    const p = preloadMemory([{ key: target.key, assetUrl: target.asset }]).then(() => {
+    const p: Promise<void> = preloadMemory([{ key: target.key, assetUrl: target.asset }]).then(() => {
+      if (this.preloading !== p) { return; }  // ein neueres Vorladen hat dieses abgelöst
       this.preloaded = true;
       this.preloading = null;
       this.refreshMemoryStatus();
@@ -103,14 +106,14 @@ export class GameEngineService {
    * Wechselt das Spiel: Memory-Ziel umstellen, Cache für das neue Spiel neu vorladen
    * (alle Spiele teilen den Cache-Key agentmemory_1.json) und erst danach das Spiel bauen.
    */
-  selectGame(id: string): void {
+  selectGame(id: string): Promise<void> {
     this.activeGameId.set(id);
     try { localStorage.setItem('spoooky.activeGame', id); } catch { /* ignore */ }
     this.applyActiveMemory();
     this.preloaded = false;
     this.preloading = null;
     if (this.useMemory()) { void this.ensurePreloaded(); }
-    void this.whenMemoryReady().then(() => this.newGame(this.active.factory));
+    return this.whenMemoryReady().then(() => this.newGame(this.active.factory));
   }
 
   toggleUseMemory(on: boolean): void {
