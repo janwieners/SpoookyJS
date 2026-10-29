@@ -1,12 +1,15 @@
 .board {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--cols, 3), 1fr);
+  grid-auto-rows: 1fr;
   gap: var(--space-xs, 4px);
-  width: 100%;
-  max-width: calc(var(--cols, 3) * var(--cell-size, 96px));
+  // Brettgröße skaliert mit der Spaltenzahl (größere Bretter -> kleinere Zellen), gedeckelt
+  // und auf die Viewport-Breite begrenzt, damit 15×15 spielbar bleibt und am Telefon nicht überläuft.
+  width: min(92vw, clamp(240px, calc(var(--cols, 3) * 40px), 560px));
+  aspect-ratio: 1 / 1;
   .cell {
-    aspect-ratio: 1 / 1; min-width: 0; padding: 0;
+    min-width: 0; min-height: 0; padding: 0;
     background: var(--surface, #fff); border: 1px solid var(--border, #ccc);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     position: relative;
