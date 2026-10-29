@@ -26,13 +26,26 @@ Export-Button**.
   serialisiert `{game, metaAgentID, bestAgentEnsemble, learnModule}` und ruft global
   `saveAs(blob, "agentmemory_<ID>.json")`.
 
-### Ehrlicher Hinweis (Risiko)
-Der klar verifizierbare „stärker/anders spielen"-Effekt kommt aus dem **geladenen Ensemble** (konkrete
-Agenten + UCT-Konstanten + Fitness). Ob der geladene/akkumulierte Q-Learner die **Worker-Suche** direkt
-beeinflusst, ist offen: `Spoooky.AI.UCT` erzeugt pro Aufruf einen frischen `QLearner` (AI.js:418), und die
-Worker-Anfrage trägt keine Q-Werte. Der Lern-/Export-Pfad wird daher **alt-workflow-getreu** verdrahtet
-(akkumulieren + trainieren + exportieren), der sichtbare Haupteffekt ist das Ensemble. Beim Umsetzen wird
-geprüft, wie weit die geladene Erinnerung die Spielstärke messbar ändert; das Ergebnis wird dokumentiert.
+### Ehrlicher Hinweis (nach Engine-Verifikation)
+Beim Umsetzen am Engine-Code verifiziert (die Spec-Annahmen waren teils optimistischer):
+
+- **Geladenes Q-Wissen beeinflusst die Zugwahl nicht.** Der Zug wird allein über die MCTS-Besuchszahlen
+  gewählt (`MetaAgent.getBestMove`); der `QLearner.getBestAction`-Pfad ist im Engine-Code auskommentiert
+  (`MetaAgent.js:1698-1702`), und `Spoooky.AI.UCT` legt pro Aufruf einen frischen `QLearner` an
+  (`AI.js:418`), der nur Rewards akkumuliert.
+- **Die mitgelieferte `agentmemory_1.json` enthält 0 gelernte Spielzustände** — sie ist reine
+  Ensemble-Definition (3 Agenten, alle „ALL MOVES", uct 1.0 / 0.5 / 0).
+- **Darum der sichtbare Effekt des Ladens:** die Ensemble-Zusammensetzung **plus** die per-Agent-uctConstant.
+  Vom Autor gewählt („Laden sinnvoll machen"): bei aktiver Erinnerung respektiert der Worker-Boundary die
+  uctConstant jedes geladenen Agenten (statt sie wie in SP3a global zu überschreiben) → das geladene
+  3-Agenten-Ensemble mit uct 1.0 / 0.5 / 0 explorationstechnisch vielfältig, sichtbar anders als das
+  standardmäßig auf einen Regler-uct vereinheitlichte Ensemble. Das **Zeitbudget** (maxTime) bleibt aber am
+  SP3a-Regler, weil die 5000 ms/Agent der Datei einen Zug ~15 s dauern ließen.
+- **Der Lern-/Export-Zyklus ist echt und demonstrierbar:** mit aktivem Lern-Modus akkumuliert ein
+  gespieltes Spiel echte `gameStates`, die als wiederladbare, nicht-leere Datei exportiert werden.
+- **Hinweis zur Vorrang-Regel:** Lernen bei *ausgeschalteter* Erinnerung exportiert eine
+  localStorage-Erinnerung (Standard-Ensemble + echte `gameStates`), die beim nächsten Laden Vorrang vor dem
+  mitgelieferten Asset hat. „Auf Standard zurücksetzen" stellt das Asset wieder her.
 
 ---
 
