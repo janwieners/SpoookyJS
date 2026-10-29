@@ -350,8 +350,10 @@ Note: the `withConfig` behavior is private; its end-to-end effect is asserted in
 
 - [ ] **Step 2: Run tests, verify they fail**
 
-Run: `npx ng test spoooky-app --watch=false -- engine-runtime`
+Run: `npx ng test spoooky-app --watch=false --include='**/engine-runtime.spec.ts'`
 Expected: FAIL (`setRespectAgentTuning` undefined; `saveAs` undefined; ajax calls `error` instead of `success`).
+
+(Note: the Angular CLI rejects the positional `-- <name>` filter — use `--include='**/<spec>.spec.ts'`.)
 
 - [ ] **Step 3: Implement the shim changes**
 
@@ -420,7 +422,7 @@ Install the `saveAs` shim inside `installEngineRuntime()` (after `$` is set):
 
 - [ ] **Step 4: Run tests, verify pass**
 
-Run: `npx ng test spoooky-app --watch=false -- engine-runtime`
+Run: `npx ng test spoooky-app --watch=false --include='**/engine-runtime.spec.ts'`
 Expected: PASS (existing engine-runtime tests + new shim tests).
 
 - [ ] **Step 5: Commit**
@@ -463,7 +465,7 @@ describe('SpooookyGame.enableLearning', () => {
 
 - [ ] **Step 2: Run test, verify it fails**
 
-Run: `npx ng test spoooky-core --watch=false -- facade`
+Run: `npx ng test spoooky-core --watch=false --include='**/facade.spec.ts'`
 Expected: FAIL (`enableLearning` not a function).
 
 - [ ] **Step 3: Implement**
@@ -480,7 +482,7 @@ enableLearning(): void {
 
 - [ ] **Step 4: Run test, verify pass**
 
-Run: `npx ng test spoooky-core --watch=false -- facade`
+Run: `npx ng test spoooky-core --watch=false --include='**/facade.spec.ts'`
 Expected: PASS.
 
 - [ ] **Step 5: Rebuild core (app depends on the built lib) and commit**
@@ -598,7 +600,7 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
 
 - [ ] **Step 2: Run tests, verify they fail**
 
-Run: `npx ng build spoooky-core && npx ng test spoooky-app --watch=false -- game-engine`
+Run: `npx ng build spoooky-core && npx ng test spoooky-app --watch=false --include='**/game-engine.service.spec.ts'`
 Expected: FAIL (`toggleUseMemory` etc. undefined).
 
 - [ ] **Step 3: Implement the service changes**
@@ -670,7 +672,14 @@ toggleLearnMode(on: boolean): void {
 }
 
 exportMemory(): void { exportMem(MEMORY_ID); }
-resetMemory(): void { resetMem(MEMORY_ID); this.refreshMemoryStatus(); }
+// resetMem() also drops the cached asset entry, so re-preload the shipped asset: "Auf Standard
+// zurücksetzen" must restore the bundled memory, not fall through to the standard agents.
+resetMemory(): void {
+  resetMem(MEMORY_ID);
+  this.preloaded = false;
+  if (this.useMemory()) { void this.ensurePreloaded(); }
+  this.refreshMemoryStatus();
+}
 hasStoredMemory(): boolean { return hasStored(MEMORY_ID); }
 ```
 
@@ -682,7 +691,7 @@ this.refreshMemoryStatus();
 
 - [ ] **Step 4: Run tests, verify pass**
 
-Run: `npx ng test spoooky-app --watch=false -- game-engine`
+Run: `npx ng test spoooky-app --watch=false --include='**/game-engine.service.spec.ts'`
 Expected: PASS (existing + new tests).
 
 - [ ] **Step 5: Commit**
@@ -731,7 +740,7 @@ it('ruft toggleUseMemory beim Umschalten', async () => {
 
 - [ ] **Step 2: Run test, verify it fails**
 
-Run: `npx ng test spoooky-app --watch=false -- ai-config-panel`
+Run: `npx ng test spoooky-app --watch=false --include='**/ai-config-panel.spec.ts'`
 Expected: FAIL (toggles/status not present).
 
 - [ ] **Step 3: Implement** — add to the template after the MCTS-tree toggle, inside `<section class="panel">`:
@@ -776,7 +785,7 @@ Add styles:
 
 - [ ] **Step 4: Run test, verify pass**
 
-Run: `npx ng test spoooky-app --watch=false -- ai-config-panel`
+Run: `npx ng test spoooky-app --watch=false --include='**/ai-config-panel.spec.ts'`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
