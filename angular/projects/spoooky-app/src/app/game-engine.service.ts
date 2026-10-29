@@ -13,7 +13,7 @@ import { GameDescriptor, gameById, DEFAULT_GAME_ID } from './games/registry';
 export class GameEngineService {
   private game: SpooookyGame | null = null;
 
-  readonly board = signal<Array<{ image: string | null }>>([]);
+  readonly board = signal<Array<{ image: string | null; baseClass: string; cellClass: string }>>([]);
   readonly currentPlayerType = signal<PlayerType>('HUMAN');
   readonly gameState = signal<string>('INGAME');
   readonly log = signal<string[]>([]);
@@ -250,8 +250,8 @@ export class GameEngineService {
     // (index = y * columns + x) so the board component can render it directly.
     const grid = game.getGrid();
     const cells = Array.isArray(grid) ? grid.flat() : [];
-    // Resolve each piece's image via the engine (entity INSTANCE id -> view), not by guessing.
-    this.board.set(cells.map((cell: any) => ({ image: game.getEntityAt(cell)?.view ?? null })));
+    // Bild (Entity-INSTANZ-id -> view), Brettquadrat-Klasse und Highlight-Klasse je Zelle via Facade.
+    this.board.set(cells.map((cell: any) => game.cellView(cell)));
     this.currentPlayerType.set(game.getCurrentPlayerType());
     this.gameState.set(game.getState());
     const msgs = (Spoooky as any)?.GameProcess?.messages;
