@@ -31,6 +31,10 @@ let aiErrorHandler: (() => void) | null = null;
 /** Registriert den Empfänger für Worker-Fehler (sonst bliebe die UI unter "KI denkt" gesperrt, Spec §5). */
 export function setAiErrorHandler(cb: (() => void) | null): void { aiErrorHandler = cb; }
 
+let generateTree = false;
+/** Schaltet die MCTS-Graph-Erzeugung NUR für den KI-Zug ein/aus (SP3b-Baumansicht); die Analyse bleibt ohne Graph. */
+export function setGenerateTree(on: boolean): void { generateTree = on; }
+
 let workerMode: 'real' | 'sync' = 'real';
 /** 'real' = echter Off-Thread-Module-Worker (Produktion), 'sync' = In-Thread-Fallback (jsdom-Tests). */
 export function setWorkerMode(mode: 'real' | 'sync'): void { workerMode = mode; }
@@ -46,6 +50,7 @@ function decisionSinkFrom(msg: AiWorkerDecision): void {
     results: msg.results ?? [],
     simCount: msg.simCount ?? 0,
     simSteps: msg.simSteps ?? 0,
+    mctsGraph: msg.mctsGraph,
   });
 }
 
@@ -74,6 +79,7 @@ class EngineWorker {
   postMessage(data: AiWorkerRequest): void {
     if (data?.command !== 'monte carlo tree search with uct') { return; }
     const req = withConfig(data);
+    req.generateMctsGraph = generateTree;
     if (this.real) { this.real.postMessage(req); return; }
     // Synchroner Fallback (Tests): UCT inline ausfuehren.
     const S: any = Spoooky;

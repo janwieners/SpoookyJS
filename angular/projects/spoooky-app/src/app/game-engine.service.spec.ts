@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
-import { setWorkerMode, setAiErrorHandler } from './engine-runtime';
+import { setWorkerMode, setAiErrorHandler, setGenerateTree } from './engine-runtime';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
@@ -164,6 +164,47 @@ describe('GameEngineService Analyse', () => {
     for (const c of ev!.cells) {
       expect(occupiedIdx).not.toContain(c.y * cols + c.x);
     }
+  });
+});
+
+describe('GameEngineService MCTS-Baum (SP3b)', () => {
+  let svc: GameEngineService;
+  beforeEach(() => { setWorkerMode('sync'); setSeed(12345); localStorage.removeItem('spoooky.showTree'); svc = new GameEngineService(); svc.newGame(createTicTacToe); });
+  afterEach(() => { localStorage.removeItem('spoooky.showTree'); setGenerateTree(false); });
+
+  it('setzt mctsTree aus dem mctsGraph einer KI-Entscheidung, wenn der Baum an ist', () => {
+    localStorage.setItem('spoooky.showTree', 'true');
+    const s = new GameEngineService();
+    expect(s.showTree()).toBe(true);
+    s.newGame(createTicTacToe);
+    s.cellClicked(0, 0);
+    // Sync-Worker: der KI-Zug ist abgeschlossen, generateMctsGraph war an -> Baum vorhanden.
+    expect(s.mctsTree()).not.toBeNull();
+    expect(s.mctsTree()!.children.length).toBeGreaterThan(0);
+  });
+
+  it('erzeugt ohne Baum-Toggle keinen mctsTree', () => {
+    const s = new GameEngineService();
+    expect(s.showTree()).toBe(false);
+    s.newGame(createTicTacToe);
+    s.cellClicked(0, 0);
+    expect(s.mctsTree()).toBeNull();
+  });
+
+  it('toggleTree schaltet das Signal um und persistiert es', () => {
+    svc.toggleTree(true);
+    expect(svc.showTree()).toBe(true);
+    expect(localStorage.getItem('spoooky.showTree')).toBe('true');
+    svc.cellClicked(0, 0);
+    expect(svc.mctsTree()).not.toBeNull();
+  });
+
+  it('setzt mctsTree bei newGame zurück', () => {
+    svc.toggleTree(true);
+    svc.cellClicked(0, 0);
+    expect(svc.mctsTree()).not.toBeNull();
+    svc.newGame(createTicTacToe);
+    expect(svc.mctsTree()).toBeNull();
   });
 });
 
