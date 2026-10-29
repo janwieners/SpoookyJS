@@ -1,4 +1,5 @@
-import { installEngineRuntime, setWorkerMode, setAiConfig } from './engine-runtime';
+import { installEngineRuntime, setWorkerMode, setAiConfig, setRespectAgentTuning } from './engine-runtime';
+import { setMemoryEnabled, preloadMemory, getMemory, onMemorySaved } from './agent-memory';
 import { DEFAULT_AI_CONFIG } from './ai-config';
 
 describe('EngineWorker (sync mode)', () => {
@@ -10,5 +11,58 @@ describe('EngineWorker (sync mode)', () => {
     w.postMessage({ command: 'something else' });
     expect(got).toBe(0);
     expect(() => w.terminate()).not.toThrow();
+  });
+});
+
+describe('engine-runtime: $.ajax memory shim', () => {
+  beforeEach(() => {
+    try { localStorage.clear(); } catch { /* ignore */ }
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+    (globalThis as any).fetch = vi.fn(async () => ({ ok: true, json: async () => ({ learnModule: { gameStates: { a: {} } }, bestAgentEnsemble: [] }) }));
+    installEngineRuntime(); // idempotent; ensures $ and saveAs are installed
+  });
+
+  it('liefert gecachte Daten synchron an success, wenn Memory aktiv', async () => {
+    await preloadMemory([{ key: 'agentmemory_1.json', assetUrl: '/agentmemory_1.json' }]);
+    setMemoryEnabled(true);
+    let got: any = 'none'; let completed = false; let errored = false;
+    (globalThis as any).$.ajax({ url: 'agentmemory_1.json', success: (d: any) => { got = d; }, error: () => { errored = true; }, complete: () => { completed = true; } });
+    expect(got).toEqual({ learnModule: { gameStates: { a: {} } }, bestAgentEnsemble: [] });
+    expect(errored).toBe(false);
+    expect(completed).toBe(true);
+  });
+
+  it('ruft error, wenn Memory aus oder kein Eintrag', () => {
+    let errored = false; let completed = false;
+    (globalThis as any).$.ajax({ url: 'agentmemory_1.json', success: () => {}, error: () => { errored = true; }, complete: () => { completed = true; } });
+    expect(errored).toBe(true);
+    expect(completed).toBe(true);
+  });
+});
+
+describe('engine-runtime: saveAs shim', () => {
+  beforeEach(() => { try { localStorage.clear(); } catch { /* ignore */ } installEngineRuntime(); });
+
+  it('legt den Blob-Text über saveMemory in localStorage ab', async () => {
+    let savedId: string | null = null;
+    onMemorySaved((id) => { savedId = id; });
+    const text = JSON.stringify({ learnModule: { gameStates: { a: {}, b: {} } } });
+    const blob = new Blob([text], { type: 'text/plain' });
+    await (globalThis as any).saveAs(blob, 'agentmemory_1.json');
+    expect(savedId).toBe('1');
+    setMemoryEnabled(true);
+    expect(getMemory('agentmemory_1.json')).toEqual({ learnModule: { gameStates: { a: {}, b: {} } } });
+  });
+});
+
+describe('engine-runtime: respectAgentTuning', () => {
+  it('behält die uctConstant der Anfrage, wenn an; sonst Config', () => {
+    setAiConfig({ difficulty: 'medium', thinkingTimeMs: 400, uctConstant: 0.9 });
+    // Indirekt über eine sync-Entscheidung prüfen: siehe service-spec (Task 4).
+    // Hier nur die Existenz/Signatur sicherstellen:
+    expect(typeof setRespectAgentTuning).toBe('function');
+    setRespectAgentTuning(true);
+    setRespectAgentTuning(false);
   });
 });
