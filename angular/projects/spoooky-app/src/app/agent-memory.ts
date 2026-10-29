@@ -13,10 +13,13 @@ const LS_PREFIX = 'spoooky.agentmemory.';
 const cache = new Map<string, unknown>();
 let memoryEnabled = false;
 let onSavedCb: ((id: string) => void) | null = null;
+let activeStorageId: string | null = null;
 
 export function setMemoryEnabled(on: boolean): void { memoryEnabled = on; }
 export function isMemoryEnabled(): boolean { return memoryEnabled; }
 export function onMemorySaved(cb: ((id: string) => void) | null): void { onSavedCb = cb; }
+/** Setzt das aktive, pro Spiel genamespacete localStorage-Ziel (z. B. "gomoku9x9.1"); null = keins. */
+export function setActiveMemory(storageId: string | null): void { activeStorageId = storageId; }
 
 /** "agentmemory_1.json" -> "1" (defensiv: Ziffern vor ".json"). */
 export function idFromFilename(filename: string): string {
@@ -24,9 +27,12 @@ export function idFromFilename(filename: string): string {
   return m ? m[1] : filename;
 }
 
+/** localStorage-ID: aktives Spielziel, sonst (defensiv) die aus dem Dateinamen abgeleitete ID. */
+function storageIdFor(key: string): string { return activeStorageId ?? idFromFilename(key); }
+
 function readStored(key: string): unknown | null {
   try {
-    const raw = localStorage.getItem(LS_PREFIX + idFromFilename(key));
+    const raw = localStorage.getItem(LS_PREFIX + storageIdFor(key));
     return raw === null ? null : JSON.parse(raw);
   } catch { return null; }
 }
@@ -59,29 +65,32 @@ export function gameStatesCount(key: string): number {
   return gs && typeof gs === 'object' ? Object.keys(gs).length : 0;
 }
 
-/** Vom `saveAs`-Shim aufgerufen: aktualisierte Erinnerung in localStorage ablegen. */
+/** Vom `saveAs`-Shim aufgerufen: aktualisierte Erinnerung unter dem aktiven Ziel in localStorage ablegen. */
 export function saveMemory(filename: string, text: string): void {
-  const id = idFromFilename(filename);
-  try { localStorage.setItem(LS_PREFIX + id, text); } catch { /* ignore */ }
+  const storageId = activeStorageId ?? idFromFilename(filename);
+  try { localStorage.setItem(LS_PREFIX + storageId, text); } catch { /* ignore */ }
   try { cache.set(filename, JSON.parse(text)); } catch { /* ignore */ }
-  onSavedCb?.(id);
+  onSavedCb?.(storageId);
 }
 
-export function hasStoredMemory(id: string): boolean {
-  try { return localStorage.getItem(LS_PREFIX + id) !== null; } catch { return false; }
+/** Gibt es für das aktive Ziel eine gespeicherte Erinnerung? */
+export function hasStoredMemory(): boolean {
+  if (activeStorageId === null) { return false; }
+  try { return localStorage.getItem(LS_PREFIX + activeStorageId) !== null; } catch { return false; }
 }
 
-/** Lädt die gespeicherte Erinnerung als Datei herunter (Nutzeraktion im eigenen Dev-App). */
-export function exportMemory(id: string): void {
+/** Lädt die gespeicherte Erinnerung des aktiven Ziels als Datei herunter (Nutzeraktion im eigenen Dev-App). */
+export function exportMemory(): void {
+  if (activeStorageId === null) { return; }
   let text: string | null = null;
-  try { text = localStorage.getItem(LS_PREFIX + id); } catch { /* ignore */ }
+  try { text = localStorage.getItem(LS_PREFIX + activeStorageId); } catch { /* ignore */ }
   if (text === null) { return; }
   try {
     const blob = new Blob([text], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `agentmemory_${id}.json`;
+    a.download = 'agentmemory_1.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -89,8 +98,8 @@ export function exportMemory(id: string): void {
   } catch { /* ignore */ }
 }
 
-/** Entfernt die gespeicherte Version; nächstes Laden nimmt wieder das Asset. */
-export function resetMemory(id: string): void {
-  try { localStorage.removeItem(LS_PREFIX + id); } catch { /* ignore */ }
-  cache.delete(`agentmemory_${id}.json`);
+/** Entfernt die gespeicherte Version des aktiven Ziels; nächstes Laden nimmt wieder das Asset. */
+export function resetMemory(): void {
+  if (activeStorageId !== null) { try { localStorage.removeItem(LS_PREFIX + activeStorageId); } catch { /* ignore */ } }
+  cache.delete('agentmemory_1.json');
 }

@@ -2,10 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { AiConfigPanel } from './ai-config-panel';
 import { AiConfigService } from '../ai-config.service';
 import { GameEngineService } from '../game-engine.service';
+import { setWorkerMode } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 
 describe('AiConfigPanel', () => {
-  beforeEach(() => localStorage.clear());
-  afterEach(() => localStorage.clear());
+  const resetShared = () => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    onMemorySaved(null);
+  };
+  beforeEach(() => { setWorkerMode('sync'); resetShared(); });
+  afterEach(resetShared);
 
   async function setup() {
     await TestBed.configureTestingModule({ imports: [AiConfigPanel] }).compileComponents();
@@ -87,5 +97,16 @@ describe('AiConfigPanel', () => {
     cb.dispatchEvent(new Event('change'));
     await fixture.whenStable();
     expect(spy).toHaveBeenCalledWith(true);
+  });
+
+  it('blendet die Erinnerungs-Bedienelemente aus, wenn das Spiel kein Memory hat', async () => {
+    const { fixture, el } = await setup();
+    const engine = TestBed.inject(GameEngineService);
+    engine.hasMemory.set(false);
+    await fixture.whenStable();
+    expect(el.querySelector('input[data-test="use-memory"]')).toBeNull();
+    expect(el.querySelector('input[data-test="learn-mode"]')).toBeNull();
+    expect(el.querySelector('.memory-status')).toBeNull();
+    expect(el.querySelector('.memory-actions')).toBeNull();
   });
 });

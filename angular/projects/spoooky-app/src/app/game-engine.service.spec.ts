@@ -3,10 +3,31 @@ import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
 import { setWorkerMode, setAiErrorHandler, setGenerateTree, setAiConfig, setAiDecisionSink } from './engine-runtime';
 import { DEFAULT_AI_CONFIG } from './ai-config';
-import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory } from './agent-memory';
+import { setMemoryEnabled, isMemoryEnabled, hasStoredMemory, resetMemory, setActiveMemory, onMemorySaved } from './agent-memory';
 import { GameEngineService } from './game-engine.service';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
+
+// Isolation: Agentenspeicher (activeStorageId/cache/memoryEnabled), localStorage und fetch sind prozessweit geteilt.
+beforeEach(() => {
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+  setAiConfig(DEFAULT_AI_CONFIG);
+  setAiDecisionSink(null);
+  setGenerateTree(false);
+  setWorkerMode('sync');
+});
 
 describe('GameEngineService', () => {
   let svc: GameEngineService;
@@ -273,7 +294,8 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     try { localStorage.clear(); } catch { /* ignore */ }
-    resetMemory('1');
+    setActiveMemory('tictactoe.1');  // TicTacToe ist das Default-Spiel
+    resetMemory();
     setMemoryEnabled(false);
     setAiConfig(DEFAULT_AI_CONFIG);
     setAiDecisionSink(null);
@@ -340,7 +362,8 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
     }
     expect(svc.gameState()).toBe('END');
     await flush();  // der saveAs-Shim liest den Blob asynchron
-    expect(hasStoredMemory('1')).toBe(true);  // saveAs-Shim hat exportiert
+    expect(hasStoredMemory()).toBe(true);  // saveAs-Shim hat exportiert
+    expect(localStorage.getItem('spoooky.agentmemory.tictactoe.1')).not.toBeNull();  // pro Spiel genamespacet
   }, 20000);
 
   describe('withConfig-Laufzeiteffekt (respektiere Agenten-UCT)', () => {
@@ -370,5 +393,85 @@ describe('GameEngineService: Erinnerung + Lernen', () => {
       expect(seen.length).toBeGreaterThan(0);
       expect(seen.every((u) => u === 0.9)).toBe(true);
     });
+  });
+});
+
+describe('GameEngineService: Mehr-Spiel + per-Spiel-Memory', () => {
+  const flush = async () => { for (let i = 0; i < 5; i++) { await Promise.resolve(); } };
+  beforeEach(() => {
+    setWorkerMode('sync');
+    try { localStorage.clear(); } catch { /* ignore */ }
+    setSeed(12345);
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        bestAgentEnsemble: [{ ID: 1, role: 'ANALYZE POSSIBLE MOVES', focus: 'ALL MOVES', fitness: 5, uctConstant: 0.5, thinkingTime: 5000, maximumSteps: 5000 }],
+        learnModule: { rewards: {}, gameStates: {} },
+      }),
+    })));
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+    setActiveMemory('tictactoe.1');
+    resetMemory();
+    setActiveMemory(null);
+    setMemoryEnabled(false);
+    setAiConfig(DEFAULT_AI_CONFIG);
+    setAiDecisionSink(null);
+  });
+
+  it('selectGame wechselt Spiel, Brettgröße-Signale folgen der Engine', async () => {
+    const svc = new GameEngineService();
+    svc.selectGame('gomoku9x9');
+    await svc.whenMemoryReady();
+    expect(svc.activeGameId()).toBe('gomoku9x9');
+    expect(localStorage.getItem('spoooky.activeGame')).toBe('gomoku9x9');
+    expect(svc.columns()).toBe(9);
+    expect(svc.rows()).toBe(9);
+    expect(svc.board().length).toBe(81);
+  });
+
+  it('Lernen in einem Spiel überschreibt die Erinnerung des anderen nicht', async () => {
+    setAiConfig({ difficulty: 'easy', thinkingTimeMs: 30, uctConstant: 0.9 });
+    const svc = new GameEngineService();
+    svc.toggleLearnMode(true);
+    await svc.selectGame('gomoku9x9');  // wartet, bis das Spiel gebaut ist
+    // ein Gomoku-Spiel (erste freie Zellen) mit Iterationsdeckel spielen
+    for (let i = 0; i < 100 && svc.gameState() !== 'END'; i++) {
+      if (svc.currentPlayerType() !== 'HUMAN') { break; }
+      const idx = svc.board().findIndex((c) => !c.image);
+      if (idx < 0) { break; }
+      svc.cellClicked(idx % svc.columns(), Math.floor(idx / svc.columns()));
+    }
+    await flush();  // der saveAs-Shim liest den Blob asynchron
+    expect(svc.gameState()).toBe('END');
+    expect(localStorage.getItem('spoooky.agentmemory.gomoku9x9.1')).not.toBeNull();
+    expect(localStorage.getItem('spoooky.agentmemory.tictactoe.1')).toBeNull();
+  }, 60000);
+
+  it('hasMemory ist true für Spiele mit Memory-Ziel', () => {
+    const svc = new GameEngineService();
+    svc.selectGame('tictactoe');
+    expect(svc.hasMemory()).toBe(true);
+  });
+
+  it('gespeicherte Erinnerung ist pro Spiel getrennt (hasStoredMemory folgt dem aktiven Spiel)', async () => {
+    localStorage.setItem('spoooky.agentmemory.gomoku9x9.1', JSON.stringify({ bestAgentEnsemble: [], learnModule: { rewards: {}, gameStates: {} } }));
+    const svc = new GameEngineService();
+    expect(svc.hasStoredMemory()).toBe(false);   // TicTacToe aktiv
+    svc.selectGame('gomoku9x9');
+    await svc.whenMemoryReady();
+    expect(svc.hasStoredMemory()).toBe(true);
+    svc.selectGame('tictactoe');
+    await svc.whenMemoryReady();
+    expect(svc.hasStoredMemory()).toBe(false);
+  });
+
+  it('activeGameId wird aus localStorage gelesen', () => {
+    localStorage.setItem('spoooky.activeGame', 'gomoku15x15');
+    const svc = new GameEngineService();
+    expect(svc.activeGameId()).toBe('gomoku15x15');
+    expect(svc.hasMemory()).toBe(true);
   });
 });

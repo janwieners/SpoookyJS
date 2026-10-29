@@ -1,16 +1,17 @@
-import { Component, OnInit, HostListener, inject } from '@angular/core';
+import { Component, OnInit, HostListener, computed, inject } from '@angular/core';
 import { Board } from './board/board';
 import { GameLog } from './game-log/game-log';
 import { DecisionPanel } from './decision-panel/decision-panel';
 import { EvaluationToggle } from './evaluation-toggle/evaluation-toggle';
 import { MctsTree } from './mcts-tree/mcts-tree';
 import { AiConfigPanel } from './ai-config-panel/ai-config-panel';
+import { GamePicker } from './game-picker/game-picker';
 import { GameEngineService } from './game-engine.service';
-import { createTicTacToe } from './games/tictactoe.game';
+import { gameById } from './games/registry';
 
 @Component({
   selector: 'app-root',
-  imports: [Board, GameLog, DecisionPanel, EvaluationToggle, AiConfigPanel, MctsTree],
+  imports: [Board, GameLog, DecisionPanel, EvaluationToggle, AiConfigPanel, MctsTree, GamePicker],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -18,9 +19,10 @@ export class App implements OnInit {
   private readonly engine = inject(GameEngineService);
 
   readonly error = this.engine.error;
+  readonly gameName = computed(() => gameById(this.engine.activeGameId()).name);
 
   ngOnInit(): void {
-    void this.engine.whenMemoryReady().then(() => this.engine.newGame(createTicTacToe));
+    void this.engine.selectGame(this.engine.activeGameId());
   }
 
   restart(): void { this.engine.restart(); }

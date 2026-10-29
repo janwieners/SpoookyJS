@@ -2,10 +2,28 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from '../games/tictactoe.game';
 import { setWorkerMode } from '../engine-runtime';
+import { setMemoryEnabled, setActiveMemory, resetMemory, onMemorySaved } from '../agent-memory';
 import { GameEngineService } from '../game-engine.service';
 import { Board } from './board';
 
 const occupied = (board: any[]): number[] => board.map((c) => (c?.image ? 1 : 0));
+
+// Isolation: Agentenspeicher, localStorage und fetch sind prozessweit geteilt.
+beforeEach(() => {
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+  try { localStorage.clear(); } catch { /* ignore */ }
+  resetMemory();
+  setActiveMemory(null);
+  setMemoryEnabled(false);
+  onMemorySaved(null);
+});
 
 describe('Board', () => {
   let fixture: ComponentFixture<Board>;
@@ -77,5 +95,35 @@ describe('Board – evaluation overlay', () => {
     svc.toggleEvaluation(false);
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelectorAll('.cell .eval').length).toBe(0);
+  });
+});
+
+describe('Board – dynamische Brettgröße', () => {
+  beforeEach(() => {
+    setWorkerMode('sync');
+    setSeed(42);
+    try { localStorage.clear(); } catch { /* ignore */ }
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ bestAgentEnsemble: [], learnModule: { rewards: {}, gameStates: {} } }),
+    })));
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
+
+  it('leitet die Spaltenzahl aus der Engine ab und rechnet Klicks korrekt um (9×9)', async () => {
+    await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
+    const engine = TestBed.inject(GameEngineService);
+    await engine.selectGame('gomoku9x9');
+    const fixture = TestBed.createComponent(Board);
+    await fixture.whenStable();
+    const spy = vi.spyOn(engine, 'cellClicked');
+    const comp = fixture.componentInstance as any;
+    comp.onCellClick(10); // Index 10 bei 9 Spalten => (1,1)
+    expect(spy).toHaveBeenCalledWith(1, 1);
+    expect(comp.columns()).toBe(9);
+    expect(fixture.nativeElement.querySelectorAll('.cell').length).toBe(81);
   });
 });
