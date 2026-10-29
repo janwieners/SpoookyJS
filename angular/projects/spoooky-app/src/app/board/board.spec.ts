@@ -56,3 +56,44 @@ describe('Board', () => {
     expect(el.querySelector('.board')!.classList.contains('thinking')).toBe(false);
   });
 });
+
+describe('Board – evaluation overlay', () => {
+  let fixture: ComponentFixture<Board>;
+  let svc: GameEngineService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
+    setSeed(42);
+    localStorage.clear();
+    svc = TestBed.inject(GameEngineService);
+    svc.newGame(createTicTacToe);
+    fixture = TestBed.createComponent(Board);
+    await fixture.whenStable();
+  });
+
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('zeigt kein Overlay, solange keine Bewertung vorliegt', () => {
+    expect(fixture.nativeElement.querySelectorAll('.cell .eval').length).toBe(0);
+  });
+
+  it('zeigt Bewertungen nach einem KI-Zug und markiert genau eine gewählte Zelle', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    svc.cellClicked(0, 0);
+    vi.runAllTimers();
+    vi.useRealTimers();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelectorAll('.cell .eval').length).toBeGreaterThan(0);
+    expect(fixture.nativeElement.querySelectorAll('.cell.chosen').length).toBe(1);
+  });
+
+  it('blendet das Overlay aus, wenn showEvaluation false ist', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    svc.cellClicked(0, 0);
+    vi.runAllTimers();
+    vi.useRealTimers();
+    svc.toggleEvaluation(false);
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelectorAll('.cell .eval').length).toBe(0);
+  });
+});

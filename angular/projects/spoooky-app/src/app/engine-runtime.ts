@@ -1,4 +1,5 @@
 import { Spoooky } from 'spoooky-core';
+import { AgentDecision } from './evaluation-adapter';
 
 /**
  * Produktions-Laufzeit für die Legacy-Engine im Browser (SP1).
@@ -14,6 +15,11 @@ import { Spoooky } from 'spoooky-core';
 
 /** Zeitbudget der UCT-Suche pro KI-Entscheidung in Millisekunden (blockiert den Thread so lange). */
 export const AI_TIME_BUDGET_MS = 300;
+
+export type AiDecisionSink = (d: AgentDecision) => void;
+let aiDecisionSink: AiDecisionSink | null = null;
+/** Registriert den Empfänger der Einzelentscheidungen je Ensemble-Agent (SP2-Bewertung). */
+export function setAiDecisionSink(sink: AiDecisionSink | null): void { aiDecisionSink = sink; }
 
 class SyncWorker {
   private listeners: Array<(e: { data: any }) => void> = [];
@@ -34,6 +40,13 @@ class SyncWorker {
         type: 'decision', agentID: data.agentID, agentRole: data.agentRole, agentFocus: data.agentFocus,
         results: res.results, simCount: res.simCount, uctConstant: data.uctConstant,
         simSteps: res.simSteps, mctsGraph: res.mctsGraph, QLearner: JSON.stringify(res.QLearner),
+      });
+      aiDecisionSink?.({
+        agentID: data.agentID,
+        uctConstant: data.uctConstant,
+        results: res.results ?? [],
+        simCount: res.simCount ?? 0,
+        simSteps: res.simSteps ?? 0,
       });
     }
   }

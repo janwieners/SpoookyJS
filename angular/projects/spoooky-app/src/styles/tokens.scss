@@ -3,12 +3,19 @@
   --text: #1c1c1f; --accent: #5b4b8a;
   --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
   --cell-size: 96px;
+  --radius: 10px;
+  --color-danger: #b00020;
+  --panel: #ffffff;
+  --shadow: 0 1px 3px rgba(0,0,0,.12);
   font-family: system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #17171a; --surface: #1f1f24; --border: #34343c;
     --text: #ececf0; --accent: #a99bd6;
+    --panel: #1f1f24;
+    --color-danger: #ff6b81;
+    --shadow: 0 1px 3px rgba(0,0,0,.5);
   }
 }
 body { margin: 0; background: var(--bg); color: var(--text); }

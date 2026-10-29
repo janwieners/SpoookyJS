@@ -1,12 +1,14 @@
 import { Component, OnInit, HostListener, inject } from '@angular/core';
 import { Board } from './board/board';
 import { GameLog } from './game-log/game-log';
+import { DecisionPanel } from './decision-panel/decision-panel';
+import { EvaluationToggle } from './evaluation-toggle/evaluation-toggle';
 import { GameEngineService } from './game-engine.service';
 import { createTicTacToe } from './games/tictactoe.game';
 
 @Component({
   selector: 'app-root',
-  imports: [Board, GameLog],
+  imports: [Board, GameLog, DecisionPanel, EvaluationToggle],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

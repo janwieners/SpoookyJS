@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { setSeed } from 'spoooky-core';
 import { createTicTacToe } from './games/tictactoe.game';
 import { GameEngineService } from './game-engine.service';
@@ -85,5 +86,43 @@ describe('GameEngineService', () => {
     const images = svc.board().map((c) => c.image).filter((i): i is string => !!i);
     expect(images.some((i) => i.endsWith('white.png'))).toBe(true);
     expect(images.some((i) => i.endsWith('black.png'))).toBe(true);
+  });
+});
+
+describe('GameEngineService – evaluation', () => {
+  let svc: GameEngineService;
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    svc = TestBed.inject(GameEngineService);
+    setSeed(42);
+    localStorage.clear();
+  });
+
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('startet ohne Bewertung und mit sichtbarem Overlay (Default)', () => {
+    svc.newGame(createTicTacToe);
+    expect(svc.evaluation()).toBeNull();
+    expect(svc.showEvaluation()).toBe(true);
+  });
+
+  it('setzt nach einem KI-Zug eine Bewertung mit einem gewählten Feld', () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    svc.newGame(createTicTacToe);
+    svc.cellClicked(0, 0);
+    vi.runAllTimers();
+    vi.useRealTimers();
+    const ev = svc.evaluation();
+    expect(ev).not.toBeNull();
+    expect(ev!.cells.some(c => c.chosen)).toBe(true);
+  });
+
+  it('toggleEvaluation schreibt nach localStorage und newGame setzt die Bewertung zurück', () => {
+    svc.newGame(createTicTacToe);
+    svc.toggleEvaluation(false);
+    expect(svc.showEvaluation()).toBe(false);
+    expect(localStorage.getItem('spoooky.showEvaluation')).toBe('false');
+    svc.newGame(createTicTacToe);
+    expect(svc.evaluation()).toBeNull();
   });
 });
