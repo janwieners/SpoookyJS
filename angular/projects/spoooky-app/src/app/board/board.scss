@@ -22,13 +22,32 @@
     .eval .rate { font-weight: 700; }
     &.sq-dark { background: var(--board-dark, #6b4f3a); }
     &.sq-light { background: var(--board-light, #e8d6b3); }
-    &.sel { outline: 3px solid var(--accent); outline-offset: -3px; }
+    // Gewählte Figur: deutlicher Rahmen + leichte Einfärbung des Feldes.
+    &.sel {
+      outline: 3px solid var(--accent); outline-offset: -3px;
+      background-image: linear-gradient(color-mix(in srgb, var(--accent) 28%, transparent),
+                                        color-mix(in srgb, var(--accent) 28%, transparent));
+    }
+    // Erreichbare Zielfelder: das ganze Feld dezent einfärben, damit die Zugmöglichkeiten gut scanbar sind.
+    &.target {
+      background-image: linear-gradient(color-mix(in srgb, var(--accent) 22%, transparent),
+                                        color-mix(in srgb, var(--accent) 22%, transparent));
+    }
+    // Schlag-Ziele auffällig in Warnfarbe abheben.
+    &.capture {
+      background-image: linear-gradient(color-mix(in srgb, var(--color-danger, #c0392b) 28%, transparent),
+                                        color-mix(in srgb, var(--color-danger, #c0392b) 28%, transparent));
+    }
     .move-marker {
-      position: absolute; width: 34%; height: 34%; border-radius: 50%;
-      background: color-mix(in srgb, var(--accent) 70%, transparent); pointer-events: none;
+      position: absolute; width: 42%; height: 42%; border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 90%, transparent);
+      // Kontrastring, damit der Marker auf hellen UND dunklen Feldern gut sichtbar ist.
+      box-shadow: 0 0 0 2px color-mix(in srgb, #fff 70%, transparent), 0 1px 3px rgba(0, 0, 0, .35);
+      pointer-events: none;
       &.capture {
-        background: transparent; width: 70%; height: 70%;
-        border: 3px solid var(--color-danger, #c0392b);
+        background: transparent; width: 84%; height: 84%;
+        border: 4px solid color-mix(in srgb, var(--color-danger, #c0392b) 92%, transparent);
+        box-shadow: 0 0 0 2px color-mix(in srgb, #fff 55%, transparent);
       }
     }
     &.chosen { outline: 3px solid var(--accent); outline-offset: -3px; }
