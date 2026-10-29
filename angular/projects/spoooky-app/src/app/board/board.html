@@ -1,4 +1,4 @@
-<div class="board" [class.thinking]="aiThinking()">
+<div class="board" [class.thinking]="aiThinking()" [style.--cols]="columns()">
   @for (cell of cells(); track $index) {
     <button class="cell" type="button" (click)="onCellClick($index)"
             [class.candidate]="evalAt($index)"

@@ -79,3 +79,33 @@ describe('Board – evaluation overlay', () => {
     expect(fixture.nativeElement.querySelectorAll('.cell .eval').length).toBe(0);
   });
 });
+
+describe('Board – dynamische Brettgröße', () => {
+  beforeEach(() => {
+    setWorkerMode('sync');
+    setSeed(42);
+    try { localStorage.clear(); } catch { /* ignore */ }
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ bestAgentEnsemble: [], learnModule: { rewards: {}, gameStates: {} } }),
+    })));
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    try { localStorage.clear(); } catch { /* ignore */ }
+  });
+
+  it('leitet die Spaltenzahl aus der Engine ab und rechnet Klicks korrekt um (9×9)', async () => {
+    await TestBed.configureTestingModule({ imports: [Board] }).compileComponents();
+    const engine = TestBed.inject(GameEngineService);
+    await engine.selectGame('gomoku9x9');
+    const fixture = TestBed.createComponent(Board);
+    await fixture.whenStable();
+    const spy = vi.spyOn(engine, 'cellClicked');
+    const comp = fixture.componentInstance as any;
+    comp.onCellClick(10); // Index 10 bei 9 Spalten => (1,1)
+    expect(spy).toHaveBeenCalledWith(1, 1);
+    expect(comp.columns()).toBe(9);
+    expect(fixture.nativeElement.querySelectorAll('.cell').length).toBe(81);
+  });
+});

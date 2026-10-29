@@ -1,10 +1,12 @@
 .board {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, var(--cell-size, 96px));
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   gap: var(--space-xs, 4px);
+  width: 100%;
+  max-width: calc(var(--cols, 3) * var(--cell-size, 96px));
   .cell {
-    width: var(--cell-size, 96px); height: var(--cell-size, 96px);
+    aspect-ratio: 1 / 1; min-width: 0; padding: 0;
     background: var(--surface, #fff); border: 1px solid var(--border, #ccc);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     position: relative;

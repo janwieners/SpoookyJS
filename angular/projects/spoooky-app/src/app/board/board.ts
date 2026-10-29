@@ -13,7 +13,8 @@ export class Board {
   private readonly engine = inject(GameEngineService);
   readonly cells = computed(() => this.engine.board());
   readonly aiThinking = this.engine.aiThinking;
-  readonly columns = 3;
+  /** Spaltenzahl kommt von der Engine (3 bei TicTacToe, 9/15 bei Gomoku). */
+  readonly columns = this.engine.columns;
 
   /** Lookup flat index -> evaluation cell; empty unless the overlay is enabled and an evaluation exists. */
   readonly evalByIndex = computed<Map<number, EvalCell>>(() => {
@@ -21,7 +22,8 @@ export class Board {
     if (!this.engine.showEvaluation()) { return map; }
     const ev = this.engine.evaluation();
     if (!ev) { return map; }
-    for (const c of ev.cells) { map.set(c.y * this.columns + c.x, c); }
+    const cols = this.columns();
+    for (const c of ev.cells) { map.set(c.y * cols + c.x, c); }
     return map;
   });
 
@@ -36,8 +38,9 @@ export class Board {
 
   /** Board is a flat row-major array; cells carry no x/y, so derive them from the index. */
   onCellClick(index: number): void {
-    const x = index % this.columns;
-    const y = Math.floor(index / this.columns);
+    const cols = this.columns();
+    const x = index % cols;
+    const y = Math.floor(index / cols);
     this.engine.cellClicked(x, y);
   }
 }
