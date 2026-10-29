@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { SpooookyGame, PlayerType, Spoooky } from 'spoooky-core';
-import { installEngineRuntime, connectNoopViews, setAiDecisionSink } from './engine-runtime';
+import { installEngineRuntime, connectNoopViews, setAiDecisionSink, setAiErrorHandler, runAnalysis } from './engine-runtime';
 import { aggregateDecision, AgentDecision, Evaluation } from './evaluation-adapter';
 
 @Injectable({ providedIn: 'root' })
@@ -15,18 +15,27 @@ export class GameEngineService {
   readonly error = signal<string | null>(null);
   readonly evaluation = signal<Evaluation | null>(null);
   readonly showEvaluation = signal<boolean>(this.readShowEvaluation());
+  readonly showAnalysis = signal<boolean>(this.readShowAnalysis());
+  /** Wird bei jeder echten Stellungsänderung erhöht; verwirft veraltete/doppelte Analysen. */
+  private analysisToken = 0;
+  private analysisStartedFor = -1;
   private decisionBuffer: AgentDecision[] = [];
   private lastFactory: (() => SpooookyGame) | null = null;
 
   constructor() {
     installEngineRuntime();
     setAiDecisionSink((d) => this.decisionBuffer.push(d));
+    setAiErrorHandler(() => {
+      this.error.set('Die KI-Berechnung ist fehlgeschlagen. Bitte starte ein neues Spiel.');
+      this.aiThinking.set(false);
+    });
   }
 
   newGame(factory: () => SpooookyGame): void {
     this.lastFactory = factory;
     this.decisionBuffer = [];
     this.evaluation.set(null);
+    this.analysisToken++;
     // The engine keeps its logs in global singletons; start every game with clean logs.
     const gp = (Spoooky as any)?.GameProcess?.messages;
     if (Array.isArray(gp)) { gp.length = 0; }
@@ -48,22 +57,46 @@ export class GameEngineService {
   cellClicked(x: number, y: number): void {
     const game = this.game;
     if (!game || this.gameState() === 'END' || game.getCurrentPlayerType() !== 'HUMAN') { return; }
-    // AI runs synchronously inside clickCell (~300ms); defer so the overlay can paint.
     this.error.set(null);
-    this.aiThinking.set(true);
-    setTimeout(() => {
-      try { game.clickCell(x, y); }
-      catch (e) {
-        this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
-        console.error(e);
-      }
-      finally { this.sync(); this.applyEvaluation(); this.aiThinking.set(false); }
-    }, 0);
+    this.analysisToken++;
+    try { game.clickCell(x, y); }
+    catch (e) {
+      this.error.set('Ein Fehler ist aufgetreten. Bitte starte ein neues Spiel.');
+      console.error(e);
+    }
+    this.sync();
   }
 
   toggleEvaluation(on: boolean): void {
     this.showEvaluation.set(on);
     try { localStorage.setItem('spoooky.showEvaluation', String(on)); } catch { /* ignore */ }
+  }
+
+  toggleAnalysis(on: boolean): void {
+    this.showAnalysis.set(on);
+    try { localStorage.setItem('spoooky.showAnalysis', String(on)); } catch { /* ignore */ }
+    if (on) { void this.analyzeIfEnabled(); }
+  }
+
+  private readShowAnalysis(): boolean {
+    try { return localStorage.getItem('spoooky.showAnalysis') === 'true'; } catch { return false; }
+  }
+
+  /** Bewertet die aktuelle Stellung des Menschen ("bester Zug für dich"), ohne zu ziehen. */
+  private async analyzeIfEnabled(): Promise<void> {
+    const game = this.game;
+    if (!game || !this.showAnalysis()) { return; }
+    if (this.gameState() === 'END' || game.getCurrentPlayerType() !== 'HUMAN') { return; }
+    const token = this.analysisToken;
+    if (this.analysisStartedFor === token) { return; }
+    this.analysisStartedFor = token;
+    let dec: AgentDecision | null = null;
+    try { dec = await runAnalysis(game.serialize(), 'ALL MOVES'); }
+    catch (e) { console.error(e); return; }
+    if (!dec || token !== this.analysisToken || game !== this.game) { return; }
+    if (this.gameState() === 'END' || game.getCurrentPlayerType() !== 'HUMAN' || !this.showAnalysis()) { return; }
+    const ev = aggregateDecision([dec], game.getColumns(), game.getRows());
+    if (ev) { this.evaluation.set(ev); }
   }
 
   private readShowEvaluation(): boolean {
@@ -92,5 +125,14 @@ export class GameEngineService {
     const msgs = (Spoooky as any)?.GameProcess?.messages;
     // Entries are objects ({ message, id, type }); the log signal exposes just the text.
     if (Array.isArray(msgs)) { this.log.set(msgs.map((m: any) => (typeof m === 'string' ? m : String(m?.message ?? '')))); }
+    // Sync worker: the AI move completes inside clickCell, so the turn is already HUMAN here.
+    // Async worker: clickCell returns while it is ARTIFICIAL's turn; the worker callback later
+    // triggers refreshView -> sync(), which then sees HUMAN/END, clears the flag and applies the decision.
+    const aiTurn = this.gameState() !== 'END' && game.getCurrentPlayerType() === 'ARTIFICIAL';
+    this.aiThinking.set(aiTurn);
+    if (!aiTurn) {
+      this.applyEvaluation();
+      void this.analyzeIfEnabled();
+    }
   }
 }

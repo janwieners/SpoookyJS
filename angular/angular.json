@@ -48,6 +48,7 @@
           "options": {
             "browser": "projects/spoooky-app/src/main.ts",
             "tsConfig": "projects/spoooky-app/tsconfig.app.json",
+            "webWorkerTsConfig": "projects/spoooky-app/tsconfig.worker.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
