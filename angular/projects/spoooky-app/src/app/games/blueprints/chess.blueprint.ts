@@ -1227,6 +1227,10 @@ export const CHESS_BLUEPRINT = {
                         ]
                     },{
                         name : "Short Castling",
+                        // Fix ggü. src/js/blueprints/chess.js: fehlendes `type` ergänzt. Ohne `type` überspringt
+                        // getMoves (switch über move.type) den Zug -> die WEISSE kurze Rochade wurde nie generiert.
+                        // Die schwarze kurze Rochade und beide langen Rochaden haben dieses Feld bereits.
+                        type : "Default",
                         direction : [2, 0],
                         frequency : 1,
                         conditions : [
